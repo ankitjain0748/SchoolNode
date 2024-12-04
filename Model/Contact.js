@@ -11,6 +11,10 @@ const contactSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    subject: {
+        type: String,
+        required: true,
+    },
     message: {
         type: String,
         required: true
@@ -21,11 +25,11 @@ const contactSchema = mongoose.Schema({
     phone_number: {
         type: Number,
     },
-    phone_code: Number,
     contact_status: {
         type: String,
         default: "unread"
     },
+    role :String,
     created_at: {
         type: Date,
         default: Date.now

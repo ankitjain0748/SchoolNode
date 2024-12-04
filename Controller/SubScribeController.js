@@ -1,7 +1,8 @@
 const subscribemodal = require("../Model/Subscribe");
+const catchAsync = require("../utill/catchAsync");
 
 
-exports.ContactPost = (async (req, res) => {
+exports.SubscribePost = (async (req, res) => {
     const { email } = req.body;
 
     const record = new subscribemodal({
@@ -24,19 +25,19 @@ exports.ContactPost = (async (req, res) => {
 });
 
 
-exports.ContactGet = catchAsync(async (req, res, next) => {
+exports.Subscribeget = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
         const totalsubscribemodal = await subscribemodal.countDocuments();
-        const Contactget = await subscribemodal.find({}).sort({ created_at: -1 })
+        const subscribedata = await subscribemodal.find({}).sort({ created_at: -1 })
             .skip(skip)
             .limit(limit);
         const totalPages = Math.ceil(totalsubscribemodal / limit);
         res.status(200).json({
             data: {
-                Contactget: Contactget,
+                subscribedata: subscribedata,
                 totalsubscribemodal: totalsubscribemodal,
                 totalPages: totalPages,
                 currentPage: page,
@@ -44,11 +45,11 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
                 nextPage: page < totalPages ? page + 1 : null,
                 previousPage: page > 1 ? page - 1 : null,
             },
-            msg: "Contact Get",
+            msg: "Subscribe Get",
         });
     } catch (error) {
         res.status(500).json({
-            msg: "Failed to fetch Contact get",
+            msg: "Failed to fetch Subscribe get",
             error: error.message,
         });
     }

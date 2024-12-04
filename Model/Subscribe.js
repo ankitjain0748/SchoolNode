@@ -7,6 +7,10 @@ const subscribeSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    status: {
+        type: String,
+        default: "unread"
+    },
     created_at: {
         type: Date,
         default: Date.now
@@ -14,4 +18,4 @@ const subscribeSchema = mongoose.Schema({
 })
 
 const Subscribe = mongoose.model("Subscribe", subscribeSchema);
-module.exports = Contact;
+module.exports = Subscribe;

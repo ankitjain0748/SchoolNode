@@ -1,6 +1,6 @@
 
 const dotenv = require("dotenv");
-// require("./dbconfigration");
+require("./dbconfigration");
 dotenv.config();
 
 const express = require("express");
@@ -19,10 +19,14 @@ app.use(express.json({ limit: '2000mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 const userRoute = require("./Route/User")
+const contactRoute  = require("./Route/Contact") 
+const SubscribeRoute  = require("./Route/Subscribe") 
+
 
 
 app.use("/user", userRoute)
-
+app.use("/contact", contactRoute)
+app.use("/subscribe" ,SubscribeRoute)
 const PORT = 8000;
 
 app.get("/", (req, res) => {

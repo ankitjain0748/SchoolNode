@@ -1,8 +1,11 @@
-const ContactRoute = require("express").Router();
+const subscribeget = require("express").Router();
 
-const { ContactPost } = require("../Controller/SubScribeController");
+const { SubscribePost, Subscribeget } = require("../Controller/SubScribeController");
 
-ContactRoute.post("/contact-add", ContactPost)
+subscribeget.post("/subscribe-add", SubscribePost)
+
+subscribeget.get("/subscribe-get", Subscribeget)
 
 
-module.exports = ContactRoute;
+
+module.exports = subscribeget;
