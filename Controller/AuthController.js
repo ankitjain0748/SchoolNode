@@ -307,18 +307,9 @@ exports.profile = catchAsync(async (req, res, next) => {
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
 
-    const users = await User.find({ role: "user", isDeleted: false })
-      .select("-password")
-      .sort({ created_at: -1 })
-      .skip(skip)
-      .limit(limit);
 
-    const updates = users.map(async (user) => {
-      const enquiryCount = await Booking.countDocuments({ userId: user._id }); // Count bookings for the user
-      return User.updateOne({ _id: user._id }, { $set: { enquiry_count: enquiryCount } }); // Update user
-    });
+    
 
-    await Promise.all(updates);
 
     const updatedUsers = await User.find({ role: "user", isDeleted: false })
       .select("-password")
