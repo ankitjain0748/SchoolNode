@@ -76,19 +76,15 @@ exports.signup = catchAsync(async (req, res) => {
     const {
       email,
       password,
-      username,
-      address,
+      name,
+      role,
       phone_number,
-      country_code,
-      phone_code,
-      country,
-      state,
-      city,
+      refral_code
     } = req.body;
 
-console.log("req.body",req.body)
+    console.log("req.body", req.body)
     // Check if required fields are provided
-    if (!password || !phone_number || !username || !email || !address || !country || !city) {
+    if (!password || !phone_number || !name || !email) {
       return res.status(401).json({
         status: false,
         message: 'All fields are required',
@@ -97,7 +93,7 @@ console.log("req.body",req.body)
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
-    console.log("existingUser",existingUser)
+    console.log("existingUser", existingUser)
     if (existingUser) {
       const errors = {};
       if (existingUser.email === email) {
@@ -119,49 +115,45 @@ console.log("req.body",req.body)
     // Create new user record
     const record = new User({
       email,
-      country,
-      state,
-      phone_code,
-      country_code,
-      city,
       password: hashedPassword,
-      username,
-      address,
+      name,
+      role,
+      refral_code,
       phone_number,
     });
 
-    const result = await record.save();
+    await record.save();
 
-    if (result) {
-      const id = record._id;
-      const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-        expiresIn: "24h",
-      });
-      const resetLink = `https://user-event.vercel.app/verify/${token}`;
-      const customerUser = record.username;
+    // if (result) {
+    //   const id = record._id;
+    //   const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
+    //     expiresIn: "24h",
+    //   });
+    //   const resetLink = `https://user-event.vercel.app/verify/${token}`;
+    //   const customerUser = record.username;
 
-      let transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
-        auth: {
-          user: process.env.user,
-          pass: process.env.password,
-        },
-      });
+    //   let transporter = nodemailer.createTransport({
+    //     host: "smtp.gmail.com",
+    //     port: 587,
+    //     secure: false,
+    //     auth: {
+    //       user: process.env.user,
+    //       pass: process.env.password,
+    //     },
+    //   });
 
-      const emailHtml = VerifyAccount(resetLink, customerUser);
-      await transporter.sendMail({
-        from: process.env.user,
-        to: result.email,
-        subject: "Verify your Account",
-        html: emailHtml,
-      });
+    //   const emailHtml = VerifyAccount(resetLink, customerUser);
+    //   await transporter.sendMail({
+    //     from: process.env.user,
+    //     to: result.email,
+    //     subject: "Verify your Account",
+    //     html: emailHtml,
+    //   });
 
-      return successResponse(res, "You have been registered successfully !!", 201);
-    } else {
-      return errorResponse(res, "Failed to create user.", 500);
-    }
+    //   return successResponse(res, "You have been registered successfully !!", 201);
+    // } else {
+    //   return errorResponse(res, "Failed to create user.", 500);
+    // }
   } catch (error) {
     return errorResponse(res, error.message || "Internal Server Error", 500);
   }
@@ -169,9 +161,12 @@ console.log("req.body",req.body)
 
 
 
-exports.login = catchAsync(async (req, res, next) => {
+
+exports.adminlogin = catchAsync(async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
+
+    // Check if email and password are provided
     if (!email || !password) {
       return res.status(401).json({
         status: false,
@@ -179,6 +174,7 @@ exports.login = catchAsync(async (req, res, next) => {
       });
     }
 
+    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
@@ -186,6 +182,8 @@ exports.login = catchAsync(async (req, res, next) => {
         message: "Invalid Email or password",
       });
     }
+
+    // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({
@@ -194,18 +192,31 @@ exports.login = catchAsync(async (req, res, next) => {
       });
     }
 
+    // Check if the user account is inactive
     if (user.user_status === "inactive") {
       return res.status(403).json({
         status: false,
         message: "Your account is inactive. Please contact support.",
       });
     }
-    if (!user.verified) {
+
+    // Check if the user is verified
+    // if (!user.verified) {
+    //   return res.status(403).json({
+    //     status: false,
+    //     message: "Your account is not verified. Please verify it.",
+    //   });
+    // }
+
+    // Validate user role
+    if (user.role !== role) {
       return res.status(403).json({
         status: false,
-        message: "Your account is not verified. Please verify it.",
+        message: "Access denied. Only admins can log in.",
       });
     }
+
+    // Generate a token for the user
     const token = await signToken(user._id);
     res.json({
       status: true,
@@ -215,7 +226,76 @@ exports.login = catchAsync(async (req, res, next) => {
   } catch (error) {
     return res.status(500).json({
       error,
-      message: "An unknown error occured. Please try later"
+      message: "An unknown error occurred. Please try later.",
+    });
+  }
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  try {
+    const { email, password, role } = req.body;
+
+    // Check if email and password are provided
+    if (!email || !password) {
+      return res.status(401).json({
+        status: false,
+        message: "Email and password are required!",
+      });
+    }
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "Invalid Email or password",
+      });
+    }
+
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        status: false,
+        message: "Incorrect password. Please try again.",
+      });
+    }
+
+    // Check if the user account is inactive
+    if (user.user_status === "inactive") {
+      return res.status(403).json({
+        status: false,
+        message: "Your account is inactive. Please contact support.",
+      });
+    }
+
+    // Check if the user is verified
+    // if (!user.verified) {
+    //   return res.status(403).json({
+    //     status: false,
+    //     message: "Your account is not verified. Please verify it.",
+    //   });
+    // }
+
+    // Validate user role
+    if (user.role !== role) {
+      return res.status(403).json({
+        status: false,
+        message: "Access denied. Only user can log in.",
+      });
+    }
+
+    // Generate a token for the user
+    const token = await signToken(user._id);
+    res.json({
+      status: true,
+      message: "Login Successfully!",
+      token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error,
+      message: "An unknown error occurred. Please try later.",
     });
   }
 });
@@ -273,6 +353,8 @@ exports.profile = catchAsync(async (req, res, next) => {
     });
   }
 });
+
+
 
 
 

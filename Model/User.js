@@ -1,58 +1,49 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-    username: {
+    name: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, "Name is required."],
     },
     password: {
         type: String,
-        required: true
+        required: [true, "Password is required."]
     },
     email: {
         type: String,
-        required: true,
+        required: [true, "Email is required."],
         unique: true,
     },
-    address: {
-        type: String,
-        required: true
-    },
-    city: {
-        type: String,
-        required: true
-    },
-    country: {
+    refral_code: {
         type: String,
     },
     country_code: {
         type: String,
+        default: "IN"
     },
     phone_code: {
         type: String,
-    },
-    state: {
-        type: String,
+        default: "+91"
     },
     phone_number: {
         type: Number,
+        required: [true, "Phone number is required."],
+        validate: {
+            validator: function (v) {
+                // Check if the number has exactly 10 digits
+                return /^[0-9]{10}$/.test(v);
+            },
+            message: "Phone number must be exactly 10 digits."
+        }
     },
     role: {
         type: String,
-        required: true,
+        required: [true, "Role is required."],
         default: "user"
-    },
-    enquiry_count: {
-        type :Number
     },
     user_status: {
         type: String,
         default: "active"
-    },
-    verified: {
-        type: Boolean,
-        default: false,
     },
     isDeleted: {
         type: Boolean,
@@ -62,8 +53,7 @@ const userSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     }
-
-})
+});
 
 const User = mongoose.model("User", userSchema);
 
