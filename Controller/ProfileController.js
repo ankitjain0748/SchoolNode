@@ -6,10 +6,10 @@ exports.profileAdd = catchAsync(async (req, res) => {
     const {
         firstname,
         lastname,
-        username, 
+        username,
         phone_number,
         designation,
-        bio
+        bio,
     } = req.body;
 
 
@@ -17,10 +17,12 @@ exports.profileAdd = catchAsync(async (req, res) => {
     const record = new Profile({
         firstname,
         lastname,
-        username, 
+        username,
         phone_number,
         designation,
-        bio
+        bio,
+        userId
+
     });
 
     const result = await record.save();
@@ -38,6 +40,28 @@ exports.profileAdd = catchAsync(async (req, res) => {
     }
 });
 
+
+exports.profile = catchAsync(async (req, res, next) => {
+    try {
+        const userId = req?.User?._id;
+        const updatedUsers = await Profile.findOne({ userId: userId })
+        const updatedSocials = await Social.findOne({ userId: userId })
+
+        return res.status(200).json({
+            status: true,
+            user: updatedUsers,
+            social: updatedSocials,
+            message: "Users retrieved successfully with enquiry counts updated",
+        });
+    } catch (error) {
+        console.error("Error fetching users and updating enquiry counts:", error); // Log full error for debugging
+        return res.status(500).json({
+            status: false,
+            message: "An error occurred while fetching users and updating enquiry counts.",
+            error: error.message || "Internal Server Error", // Provide a fallback error message
+        });
+    }
+});
 // exports.packageget = catchAsync(async (req, res, next) => {
 //     try {
 //         const page = parseInt(req.query.page) || 1;
@@ -105,47 +129,47 @@ exports.profileAdd = catchAsync(async (req, res) => {
 //     }
 // });
 
-exports.PackageUpdate = catchAsync(async (req, res, next) => {
-    try {
-        const { Id, package_name,
-        package_description,
-            
-            package_price_min,package_subtitle , image_filed, package_services, services_provider_phone, services_provider_name, services_provider_email, package_price_max, package_categories,  package_status, package_image, package_duration, package_discount, package_people, package_availability, } = req.body;
-        if (!Id) {
-            return res.status(400).json({
-                status: false,
-                message: "Package ID is required.",
-            });
-        }
+// exports.PackageUpdate = catchAsync(async (req, res, next) => {
+//     try {
+//         const { Id, package_name,
+//             package_description,
 
-        const updatedRecord = await packages.findByIdAndUpdate(
-            Id,
-            { package_name, package_price_min, package_subtitle ,fileId: image_filed, package_services, services_provider_phone, services_provider_name, services_provider_email, package_price_max, package_categories, package_description, package_status, package_image, package_duration, package_discount, package_people, package_availability, },
-            { new: true, runValidators: true }
-        );
+//             package_price_min, package_subtitle, image_filed, package_services, services_provider_phone, services_provider_name, services_provider_email, package_price_max, package_categories, package_status, package_image, package_duration, package_discount, package_people, package_availability, } = req.body;
+//         if (!Id) {
+//             return res.status(400).json({
+//                 status: false,
+//                 message: "Package ID is required.",
+//             });
+//         }
 
-        if (!updatedRecord) {
-            return res.status(404).json({
-                status: false,
-                message: "packages not found!",
-            });
-        }
-        res.status(200).json({
-            status: true,
-            data: updatedRecord,
-            message: "packages updated successfully.",
-        });
+//         const updatedRecord = await packages.findByIdAndUpdate(
+//             Id,
+//             { package_name, package_price_min, package_subtitle, fileId: image_filed, package_services, services_provider_phone, services_provider_name, services_provider_email, package_price_max, package_categories, package_description, package_status, package_image, package_duration, package_discount, package_people, package_availability, },
+//             { new: true, runValidators: true }
+//         );
 
-    } catch (error) {
-        console.error("Error updating packages record:", error);
+//         if (!updatedRecord) {
+//             return res.status(404).json({
+//                 status: false,
+//                 message: "packages not found!",
+//             });
+//         }
+//         res.status(200).json({
+//             status: true,
+//             data: updatedRecord,
+//             message: "packages updated successfully.",
+//         });
 
-        res.status(500).json({
-            status: false,
-            message: "An error occurred while updating the packages. Please try again later.",
-            error: error.message,
-        });
-    }
-});
+//     } catch (error) {
+//         console.error("Error updating packages record:", error);
+
+//         res.status(500).json({
+//             status: false,
+//             message: "An error occurred while updating the packages. Please try again later.",
+//             error: error.message,
+//         });
+//     }
+// });
 
 // exports.PackageUpdateStatus = catchAsync(async (req, res, next) => {
 //     try {

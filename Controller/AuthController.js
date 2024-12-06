@@ -71,29 +71,28 @@ const signEmail = async (id) => {
   });
   return token;
 };
+
 exports.signup = catchAsync(async (req, res) => {
   try {
     const {
       email,
       password,
       name,
-      role,
       phone_number,
-      refral_code
+      refral_code,
     } = req.body;
 
-    console.log("req.body", req.body)
     // Check if required fields are provided
-    if (!password || !phone_number || !name || !email) {
-      return res.status(401).json({
-        status: false,
-        message: 'All fields are required',
-      });
-    }
+    // if (!password || !phone_number || !username || !email || !address || !country || !city) {
+    //   return res.status(401).json({
+    //     status: false,
+    //     message: 'All fields are required',
+    //   });
+    // }
 
     // Check if user already exists
+    // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
-    console.log("existingUser", existingUser)
     if (existingUser) {
       const errors = {};
       if (existingUser.email === email) {
@@ -104,7 +103,7 @@ exports.signup = catchAsync(async (req, res) => {
       }
       return res.status(400).json({
         status: false,
-        message: 'User already exists',
+        message: 'Email or phone number already exists',
         errors,
       });
     }
@@ -115,15 +114,15 @@ exports.signup = catchAsync(async (req, res) => {
     // Create new user record
     const record = new User({
       email,
-      password: hashedPassword,
+      password :hashedPassword,
       name,
-      role,
-      refral_code,
       phone_number,
+      refral_code,
     });
 
-    await record.save();
+    const result = await record.save();
 
+    console.log(result)
     // if (result) {
     //   const id = record._id;
     //   const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -137,27 +136,27 @@ exports.signup = catchAsync(async (req, res) => {
     //     port: 587,
     //     secure: false,
     //     auth: {
-    //       user: process.env.user,
-    //       pass: process.env.password,
+    //       user: process.env.EMAIL_USER,
+    //       pass: process.env.EMAIL_PASS,
     //     },
     //   });
 
     //   const emailHtml = VerifyAccount(resetLink, customerUser);
     //   await transporter.sendMail({
-    //     from: process.env.user,
+    //     from: process.env.EMAIL_USER,
     //     to: result.email,
     //     subject: "Verify your Account",
     //     html: emailHtml,
     //   });
 
-    //   return successResponse(res, "You have been registered successfully !!", 201);
-    // } else {
-    //   return errorResponse(res, "Failed to create user.", 500);
-    // }
+      return successResponse(res, "You have been registered successfully !!", 201);
   } catch (error) {
     return errorResponse(res, error.message || "Internal Server Error", 500);
   }
 });
+
+
+
 
 
 
