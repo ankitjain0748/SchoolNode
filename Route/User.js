@@ -1,4 +1,5 @@
 const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser } = require("../Controller/AuthController");
+const { profileAdd } = require("../Controller/ProfileController");
 
 const userRoute = require("express").Router();
 
@@ -28,6 +29,10 @@ userRoute.get("/profile-token", verifyToken, profilegettoken)
 userRoute.post("/verifyaccount", VerifyUser)
 
 userRoute.post("/user-filter", userfilter);
+
+// Profile Manage
+userRoute.post("/user-profile", profileAdd);
+
 
 
 
