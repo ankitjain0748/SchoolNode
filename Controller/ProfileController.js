@@ -1,5 +1,6 @@
 const catchAsync = require("../utill/catchAsync");
-const Profile = require("../Model/Profile")
+const Profile = require("../Model/Profile");
+const User = require("../Model/User");
 
 exports.profileAdd = catchAsync(async (req, res) => {
     const userId = req?.User?._id
@@ -11,8 +12,6 @@ exports.profileAdd = catchAsync(async (req, res) => {
         designation,
         bio,
     } = req.body;
-
-
 
     const record = new Profile({
         firstname,
@@ -41,15 +40,16 @@ exports.profileAdd = catchAsync(async (req, res) => {
 });
 
 
-exports.profile = catchAsync(async (req, res, next) => {
+exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.User?._id;
-        const updatedUsers = await Profile.findOne({ userId: userId })
+        const UserData = User?.findOne({ _id: userId })
+        const ProfileData = await Profile.findOne({ userId: userId })
         const updatedSocials = await Social.findOne({ userId: userId })
-
         return res.status(200).json({
             status: true,
-            user: updatedUsers,
+            user: UserData,
+            profile: ProfileData,
             social: updatedSocials,
             message: "Users retrieved successfully with enquiry counts updated",
         });
