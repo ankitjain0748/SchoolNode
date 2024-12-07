@@ -1,5 +1,4 @@
 const catchAsync = require("../utill/catchAsync");
-const Profile = require("../Model/Profile");
 const SocialSection = require("../Model/Social");
 
 exports.socailAdd = catchAsync(async (req, res) => {
@@ -24,7 +23,7 @@ exports.socailAdd = catchAsync(async (req, res) => {
     if (result) {
         res.json({
             status: true,
-            message: "Profile has been successfully added!",
+            message: "Social has been successfully added!",
         });
     } else {
         res.json({

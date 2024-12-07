@@ -4,7 +4,7 @@ const { SubscribePost, Subscribeget } = require("../Controller/SubScribeControll
 
 subscribeget.post("/subscribe-add", SubscribePost)
 
-subscribeget.get("/subscribe-get", Subscribeget)
+subscribeget.get("/subscribe-list", Subscribeget)
 
 
 

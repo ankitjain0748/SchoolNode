@@ -1,5 +1,6 @@
 const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser } = require("../Controller/AuthController");
 const { profileAdd } = require("../Controller/ProfileController");
+const { socailAdd } = require("../Controller/SocialController");
 
 const userRoute = require("express").Router();
 
@@ -31,8 +32,13 @@ userRoute.post("/verifyaccount", VerifyUser)
 userRoute.post("/user-filter", userfilter);
 
 // Profile Manage
-userRoute.post("/user-profile", profileAdd);
+userRoute.post("/user-profile",verifyToken, profileAdd);
 
+
+
+// social icon 
+
+userRoute.post("/user-social" ,verifyToken , socailAdd)
 
 
 
