@@ -1,11 +1,13 @@
 const catchAsync = require("../utill/catchAsync");
 const Profile = require("../Model/Profile");
 const User = require("../Model/User");
+const SocialSection = require("../Model/Social");
 
 exports.profileAdd = catchAsync(async (req, res) => {
     const userId = req?.User?._id
     const {
         firstname,
+        address,
         lastname,
         username,
         phone_number,
@@ -20,7 +22,8 @@ exports.profileAdd = catchAsync(async (req, res) => {
         phone_number,
         designation,
         bio,
-        userId
+        userId,
+        address
 
     });
 
@@ -43,9 +46,10 @@ exports.profileAdd = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.User?._id;
-        const UserData = User?.findOne({ _id: userId })
-        const ProfileData = await Profile.findOne({ userId: userId })
-        const updatedSocials = await Social.findOne({ userId: userId })
+        const UserData = await User.findOne({ _id: userId }).lean(); // Convert to plain object
+        const ProfileData = await Profile.findOne({ userId: userId }).lean();
+        const updatedSocials = await SocialSection.findOne({ userId: userId }).lean();
+
         return res.status(200).json({
             status: true,
             user: UserData,
@@ -62,6 +66,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         });
     }
 });
+
+
 // exports.packageget = catchAsync(async (req, res, next) => {
 //     try {
 //         const page = parseInt(req.query.page) || 1;

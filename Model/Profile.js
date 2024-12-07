@@ -31,6 +31,10 @@ const Profile = mongoose.Schema({
         type: String,
         required: [true, "Bio is required."],
     },
+    address: {
+        type: String,
+        required: [true, "Address is required."],
+    },
     created_at: {
         type: Date,
         default: Date.now,
