@@ -1,7 +1,7 @@
 const catchAsync = require("../utill/catchAsync");
-const SocialSection = require("../Model/Social");
+const Bank = require("../Model/Bank");
 
-exports.SocialAddOrEdit = catchAsync(async (req, res) => {
+exports.BankAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
 
     // Validate if userId exists
@@ -12,13 +12,13 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
         });
     }
 
-    const { website, linkedin, github, facebook, twitter, _id } = req.body;
+    const { BankName, BankNumber, BranchName, IFSC, _id } = req.body;
 
-    // Validate at least one field is provided
-    if (!website && !linkedin && !github && !facebook && !twitter) {
+    // Validate required fields
+    if (!BankName || !BankNumber || !BranchName || !IFSC) {
         return res.status(400).json({
             status: false,
-            message: "At least one social field (website, linkedin, github, facebook, twitter) is required.",
+            message: "All fields (BankName, BankNumber, BranchName, IFSC) are required.",
         });
     }
 
@@ -27,32 +27,31 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
 
         if (_id) {
             // Edit existing record
-            result = await SocialSection.findByIdAndUpdate(
+            result = await Bank.findByIdAndUpdate(
                 _id,
-                { website, linkedin, github, facebook, twitter, userId },
+                { BankName, BankNumber, BranchName, IFSC, userId },
                 { new: true, runValidators: true }
             );
 
             if (!result) {
                 return res.status(404).json({
                     status: false,
-                    message: "Social record not found.",
+                    message: "Bank record not found.",
                 });
             }
 
             return res.status(200).json({
                 status: true,
-                message: "Social details have been successfully updated!",
+                message: "Bank details have been successfully updated!",
                 data: result,
             });
         } else {
             // Add new record
-            const record = new SocialSection({
-                website,
-                linkedin,
-                github,
-                facebook,
-                twitter,
+            const record = new Bank({
+                BankName,
+                BankNumber,
+                BranchName,
+                IFSC,
                 userId,
             });
 
@@ -60,18 +59,15 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
 
             return res.status(201).json({
                 status: true,
-                message: "Social details have been successfully added!",
+                message: "Bank details have been successfully added!",
                 data: result,
             });
         }
     } catch (error) {
         return res.status(500).json({
             status: false,
-            message: "Failed to process social details.",
+            message: "Failed to process bank details.",
             error: error.message,
         });
     }
 });
-
-
-

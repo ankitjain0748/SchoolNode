@@ -2,9 +2,10 @@ const catchAsync = require("../utill/catchAsync");
 const Profile = require("../Model/Profile");
 const User = require("../Model/User");
 const SocialSection = require("../Model/Social");
+const Bank = require("../Model/Bank");
 
-exports.profileAdd = catchAsync(async (req, res) => {
-    const userId = req?.User?._id
+exports.profileAddOrUpdate = catchAsync(async (req, res) => {
+    const userId = req?.User?._id; // Assuming `User` is attached to the request object
     const {
         firstname,
         address,
@@ -15,46 +16,77 @@ exports.profileAdd = catchAsync(async (req, res) => {
         bio,
     } = req.body;
 
-    const record = new Profile({
-        firstname,
-        lastname,
-        username,
-        phone_number,
-        designation,
-        bio,
-        userId,
-        address
+    try {
+        // Check if a profile already exists for this user
+        const existingProfile = await Profile.findOne({ userId });
 
-    });
+        if (existingProfile) {
+            // Update existing profile
+            existingProfile.firstname = firstname || existingProfile.firstname;
+            existingProfile.lastname = lastname || existingProfile.lastname;
+            existingProfile.username = username || existingProfile.username;
+            existingProfile.phone_number = phone_number || existingProfile.phone_number;
+            existingProfile.designation = designation || existingProfile.designation;
+            existingProfile.bio = bio || existingProfile.bio;
+            existingProfile.address = address || existingProfile.address;
 
-    const result = await record.save();
-    if (result) {
-        res.json({
-            status: true,
-            message: "Profile has been successfully added!",
-        });
-    } else {
-        res.json({
+            const updatedProfile = await existingProfile.save();
+
+            res.json({
+                status: true,
+                message: "Profile has been successfully updated!",
+                data: updatedProfile,
+            });
+        } else {
+            // Create a new profile if one doesn't exist
+            const newProfile = new Profile({
+                firstname,
+                lastname,
+                username,
+                phone_number,
+                designation,
+                bio,
+                userId,
+                address,
+            });
+
+            const savedProfile = await newProfile.save();
+
+            res.json({
+                status: true,
+                message: "Profile has been successfully created!",
+                data: savedProfile,
+            });
+        }
+    } catch (error) {
+        console.error("Error updating or creating profile:", error);
+
+        res.status(500).json({
             status: false,
-            error: result,
-            message: "Failed to create package.",
+            message: "An error occurred while processing the profile.",
+            error: error.message,
         });
     }
 });
 
 
+
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
-        const userId = req?.User?._id;
+        const userId = req?.body?.id;
+        console.log("userId0", userId)
         const UserData = await User.findOne({ _id: userId }).lean(); // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId }).lean();
         const updatedSocials = await SocialSection.findOne({ userId: userId }).lean();
+        const BankData = await Bank.findOne({ userId: userId }).lean();
+
 
         return res.status(200).json({
             status: true,
             user: UserData,
             profile: ProfileData,
             social: updatedSocials,
+            BankData: BankData,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
@@ -66,6 +98,36 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         });
     }
 });
+
+
+exports.ProfileDataId = catchAsync(async (req, res, next) => {
+    try {
+        const userId = req?.User?._id;
+        console.log("userId0", userId)
+        const UserData = await User.findOne({ _id: userId }).lean(); // Convert to plain object
+        const ProfileData = await Profile.findOne({ userId: userId }).lean();
+        const updatedSocials = await SocialSection.findOne({ userId: userId }).lean();
+        const BankData = await Bank.findOne({ userId: userId }).lean();
+
+
+        return res.status(200).json({
+            status: true,
+            user: UserData,
+            profile: ProfileData,
+            social: updatedSocials,
+            Bank: BankData,
+            message: "Users retrieved successfully with enquiry counts updated",
+        });
+    } catch (error) {
+        console.error("Error fetching users and updating enquiry counts:", error); // Log full error for debugging
+        return res.status(500).json({
+            status: false,
+            message: "An error occurred while fetching users and updating enquiry counts.",
+            error: error.message || "Internal Server Error", // Provide a fallback error message
+        });
+    }
+});
+
 
 
 // exports.packageget = catchAsync(async (req, res, next) => {

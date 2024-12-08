@@ -1,6 +1,7 @@
 const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser } = require("../Controller/AuthController");
-const { profileAdd, ProfileData } = require("../Controller/ProfileController");
-const { socailAdd } = require("../Controller/SocialController");
+const { BankAddOrEdit } = require("../Controller/BankController");
+const {  ProfileData, ProfileDataId, profileAddOrUpdate } = require("../Controller/ProfileController");
+const { SocialAddOrEdit } = require("../Controller/SocialController");
 
 const userRoute = require("express").Router();
 
@@ -32,13 +33,22 @@ userRoute.post("/verifyaccount", VerifyUser)
 userRoute.post("/user-filter", userfilter);
 
 // Profile Manage
-userRoute.post("/user-profile",verifyToken, profileAdd);
-userRoute.get("/profile-data" , verifyToken , ProfileData)
+userRoute.post("/user-profile",verifyToken, profileAddOrUpdate);
+userRoute.post("/profile-data"  , ProfileData)
+
+userRoute.post("/profile_id" ,verifyToken , ProfileDataId)
+
 
 
 // social icon 
 
-userRoute.post("/user-social" ,verifyToken , socailAdd)
+userRoute.post("/user-social" ,verifyToken , SocialAddOrEdit)
+
+
+// Bank 
+
+userRoute.post("/bank-data" ,  verifyToken , BankAddOrEdit)
+
 
 
 
