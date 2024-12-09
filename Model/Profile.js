@@ -15,7 +15,6 @@ const Profile = mongoose.Schema({
         type: String,
     },
     username: {
-        required: [true, "Username is required."],
         type: String,
     },
     phone_number: {
