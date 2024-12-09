@@ -9,7 +9,6 @@ const { validationErrorResponse, errorResponse, successResponse } = require("../
 const VerifyAccount = require("../Mail/VerifyAccount");
 
 
-
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer")) {
@@ -122,7 +121,6 @@ exports.signup = catchAsync(async (req, res) => {
 
     const result = await record.save();
 
-    console.log(result)
     // if (result) {
     //   const id = record._id;
     //   const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -532,6 +530,7 @@ exports.forgotpassword = async (req, res) => {
 exports.profilegettoken = catchAsync(async (req, res, next) => {
   try {
     const user = req?.User?._id
+    console.log("req",user)
     const userprofile = await User.findById({ _id: user }).select('-password');
     res.status(200).json({
       data: userprofile,

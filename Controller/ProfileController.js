@@ -9,6 +9,8 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const {
         firstname,
         address,
+        policy,
+term,
         lastname,
         username,
         phone_number,
@@ -29,7 +31,8 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             existingProfile.designation = designation || existingProfile.designation;
             existingProfile.bio = bio || existingProfile.bio;
             existingProfile.address = address || existingProfile.address;
-
+            existingProfile.policy = policy || existingProfile.policy;  
+            existingProfile.term = address || existingProfile.term;
             const updatedProfile = await existingProfile.save();
 
             res.json({
@@ -48,6 +51,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
                 bio,
                 userId,
                 address,
+                policy,term
             });
 
             const savedProfile = await newProfile.save();
@@ -74,7 +78,6 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
-        console.log("userId0", userId)
         const UserData = await User.findOne({ _id: userId }).lean(); // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId }).lean();
         const updatedSocials = await SocialSection.findOne({ userId: userId }).lean();
@@ -103,7 +106,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 exports.ProfileDataId = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.User?._id;
-        console.log("userId0", userId)
         const UserData = await User.findOne({ _id: userId }).lean(); // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId }).lean();
         const updatedSocials = await SocialSection.findOne({ userId: userId }).lean();

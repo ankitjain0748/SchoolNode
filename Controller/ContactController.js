@@ -37,7 +37,6 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
             .skip(skip)
             .limit(limit);
         const totalPages = Math.ceil(totalcontactmodal / limit);
-        console.log("contactget",contactget)
         res.status(200).json({
             data: {
                 contactget: contactget,

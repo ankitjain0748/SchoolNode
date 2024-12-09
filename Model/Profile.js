@@ -17,10 +17,13 @@ const Profile = mongoose.Schema({
     username: {
         type: String,
     },
+    email :String,
     phone_number: {
         required: [true, "Phone number is required."],
         type: Number,
     },
+    policy:String,
+    term:String,
     designation: {
         required: [true, "Designation is required."],
         type: String,
