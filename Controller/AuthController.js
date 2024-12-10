@@ -378,8 +378,9 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
 
 exports.resetpassword = catchAsync(async (req, res) => {
   try {
-    const { email, newPassword } = req.body;
-    const user = await User.findOne({ email });
+    const email = req?.User?._id;
+    const {newPassword } = req.body;
+    const user = await User.findById({ _id:email});
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

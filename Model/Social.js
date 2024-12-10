@@ -5,7 +5,7 @@ const socialSectionSchema = new mongoose.Schema(
         website: {
             type: String,
             trim: true,
-            required: [true, "Website is required."],
+            // required: [true, "Website is required."],
         },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
