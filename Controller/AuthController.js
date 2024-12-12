@@ -379,6 +379,7 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
 exports.resetpassword = catchAsync(async (req, res) => {
   try {
     const email = req?.User?._id;
+    console.log("email",email)
     const {newPassword } = req.body;
     const user = await User.findById({ _id:email});
     if (!user) {

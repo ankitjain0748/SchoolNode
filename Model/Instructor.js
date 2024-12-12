@@ -42,12 +42,6 @@ const instructorSchema = new mongoose.Schema(
       type: [String], // Array of expertise topics
       required: true,
     },
-    socialProfiles: {
-      linkedin: { type: String, trim: true },
-      twitter: { type: String, trim: true },
-      facebook: { type: String, trim: true },
-      instagram: { type: String, trim: true },
-    },
     profilePicture: {
       type: String, // URL of the profile picture
     },
@@ -61,12 +55,12 @@ const instructorSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course", // Reference to Course Model
-      },
-    ],
+    // courses: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Course", // Reference to Course Model
+    //   },
+    // ],
     createdAt: {
       type: Date,
       default: Date.now,
