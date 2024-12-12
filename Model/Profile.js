@@ -25,13 +25,11 @@ const Profile = mongoose.Schema({
     policy:String,
     term:String,
     designation: {
-        required: [true, "Designation is required."],
         type: String,
     },
     profileImage :String,
     bio: {
         type: String,
-        required: [true, "Bio is required."],
     },
     address: {
         type: String,
