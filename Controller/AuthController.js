@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer");
 const ForgetPassword = require("../Mail/ForgetPassword");
 const { validationErrorResponse, errorResponse, successResponse } = require("../utill/ErrorHandling");
 const VerifyAccount = require("../Mail/VerifyAccount");
+const ProfileData = require("../Model/Profile");
 
 
 exports.verifyToken = async (req, res, next) => {
@@ -152,11 +153,6 @@ exports.signup = catchAsync(async (req, res) => {
     return errorResponse(res, error.message || "Internal Server Error", 500);
   }
 });
-
-
-
-
-
 
 
 exports.adminlogin = catchAsync(async (req, res, next) => {
@@ -336,9 +332,6 @@ exports.profile = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
-
 
 
 
@@ -531,20 +524,39 @@ exports.forgotpassword = async (req, res) => {
 
 exports.profilegettoken = catchAsync(async (req, res, next) => {
   try {
-    const user = req?.User?._id
-    console.log("req",user)
-    const userprofile = await User.findById({ _id: user }).select('-password');
+    // Ensure req.User is populated properly from middleware
+    const userId = req?.User?._id;
+    if (!userId) {
+      return res.status(400).json({ msg: "User not authenticated" });
+    }
+
+    // Fetch user profile excluding password
+    const userProfile = await User.findById(userId).select('-password');
+    if (!userProfile) {
+      return res.status(404).json({ msg: "User profile not found" });
+    }
+
+    // Fetch additional profile data by userId
+    const profileData = await ProfileData.findOne({ userId });
+    if (!profileData) {
+      return res.status(404).json({ msg: "Profile data not found" });
+    }
+
+    // Respond with data
     res.status(200).json({
-      data: userprofile,
-      msg: "Profile Get",
+      data: userProfile,
+      profileData: profileData,
+      msg: "Profile retrieved successfully",
     });
   } catch (error) {
+    console.error("Error fetching profile:", error);
     res.status(500).json({
       msg: "Failed to fetch profile",
       error: error.message,
     });
   }
 });
+
 
 
 
@@ -599,6 +611,32 @@ exports.VerifyUser = async (req, res) => {
     return errorResponse(res, "Failed to verify account");
   }
 };
+
+
+exports.UserIdDelete = catchAsync(async (req, res, next) => {
+  try {
+      const { Id } = req.body;
+      if (!Id) {
+          return res.status(400).json({
+              status: false,
+              message: 'User ID is required.',
+          });
+      }
+      await User.findByIdAndDelete(Id);
+
+      res.status(200).json({
+          status: true,
+          data: record,
+          message: 'User and associated images deleted successfully.',
+      });
+  } catch (error) {
+      console.error('Error deleting User record:', error);
+      res.status(500).json({
+          status: false,
+          message: 'Internal Server Error. Please try again later.',
+      });
+  }
+});
 
 
 

@@ -1,4 +1,4 @@
-const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser } = require("../Controller/AuthController");
+const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete } = require("../Controller/AuthController");
 const { BankAddOrEdit } = require("../Controller/BankController");
 const {  ProfileData, ProfileDataId, profileAddOrUpdate } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
@@ -32,6 +32,9 @@ userRoute.post("/verifyaccount", VerifyUser)
 
 userRoute.post("/user-filter", userfilter);
 
+userRoute.post("/delete" ,  UserIdDelete )
+
+
 // Profile Manage
 userRoute.post("/user-profile",verifyToken, profileAddOrUpdate);
 userRoute.post("/profile-data"  , ProfileData)
@@ -52,4 +55,4 @@ userRoute.post("/bank-data" ,  verifyToken , BankAddOrEdit)
 
 
 
-module.exports = userRoute
+module.exports = userRoute;
