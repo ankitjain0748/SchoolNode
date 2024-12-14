@@ -21,12 +21,13 @@ app.use(express.urlencoded({ extended: true }));
 const userRoute = require("./Route/User")
 const contactRoute  = require("./Route/Contact") 
 const SubscribeRoute  = require("./Route/Subscribe") 
-
-
+const instrutorroute  =require("./Route/Instructor")
+ 
 
 app.use("/user", userRoute)
 app.use("/contact", contactRoute)
 app.use("/subscribe" ,SubscribeRoute)
+app.use("/instrutor",instrutorroute)
 const PORT = 8000;
 
 app.get("/", (req, res) => {

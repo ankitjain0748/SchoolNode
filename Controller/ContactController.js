@@ -3,7 +3,6 @@ const contactmodal = require("../Model/Contact");
 const catchAsync = require('../utill/catchAsync');
 // const sendEmail = require("../utill/EmailMailler");
 
-
 exports.ContactPost = (async (req, res) => {
     const { email, name, message,  subject, role,phone_number } = req.body;
 

@@ -5,6 +5,7 @@ const Profile = mongoose.Schema({
         required: [true, "First name is required."],
         type: String,
     },
+    
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

@@ -1,4 +1,5 @@
 const Instructor = require("../Model/Instructor");
+const catchAsync = require("../utill/catchAsync");
 
 
 exports.InstructorPost = (async (req, res) => {
@@ -82,7 +83,9 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
 
 exports.InstructorUpdate = catchAsync(async (req, res, next) => {
     try {
-        const { Id,   firstName,
+        const {
+            _id, // Instructor ID
+            firstName,
             lastName,
             designation,
             lessions,
@@ -91,20 +94,31 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
             email,
             phoneNumber,
             address,
-            profileImage,  // For profile image
-            bio,            // For bio
-            gender,         // Gender
-            rating } = req.body;
-        if (!Id) {
+            profileImage,
+            bio,
+            gender,
+            rating,
+        } = req.body;
+
+        if (!_id) {
             return res.status(400).json({
                 status: false,
-                message: "Package ID is required.",
+                message: "Instructor ID is required.",
             });
         }
 
-        const updatedRecord = await packages.findByIdAndUpdate(
-            Id,
-            {   firstName,
+        // const isValidObjectId = mongoose.Types.ObjectId.isValid(Id);
+        // if (!isValidObjectId) {
+        //     return res.status(400).json({
+        //         status: false,
+        //         message: "Invalid Instructor ID format.",
+        //     });
+        // }
+
+        const updatedRecord = await Instructor.findByIdAndUpdate(
+            _id,
+            {
+                firstName,
                 lastName,
                 designation,
                 lessions,
@@ -113,31 +127,32 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
                 email,
                 phoneNumber,
                 address,
-                profileImage,  // For profile image
-                bio,            // For bio
-                gender,         // Gender
-                rating},
+                profileImage,
+                bio,
+                gender,
+                rating,
+            },
             { new: true, runValidators: true }
         );
 
         if (!updatedRecord) {
             return res.status(404).json({
                 status: false,
-                message: "packages not found!",
+                message: "Instructor not found!",
             });
         }
+
         res.status(200).json({
             status: true,
             data: updatedRecord,
-            message: "packages updated successfully.",
+            message: "Instructor updated successfully.",
         });
-
     } catch (error) {
-        console.error("Error updating packages record:", error);
+        console.error("Error updating instructor record:", error);
 
         res.status(500).json({
             status: false,
-            message: "An error occurred while updating the packages. Please try again later.",
+            message: "An error occurred while updating the instructor. Please try again later.",
             error: error.message,
         });
     }
@@ -157,7 +172,6 @@ exports.InstructorIdDelete = catchAsync(async (req, res, next) => {
 
         res.status(200).json({
             status: true,
-            data: record,
             message: 'Instructor and associated images deleted successfully.',
         });
     } catch (error) {
@@ -165,6 +179,37 @@ exports.InstructorIdDelete = catchAsync(async (req, res, next) => {
         res.status(500).json({
             status: false,
             message: 'Internal Server Error. Please try again later.',
+        });
+    }
+});
+
+
+exports.InstructorGetId = catchAsync(async (req, res, next) => {
+    try {
+        // Extract ID from request parameters
+        const { Id } = req.params; // Use params if it's part of the URL
+
+        console.log("Id:", Id);
+        if (!Id) {
+            return res.status(400).json({ msg: "Instructor ID is required" });
+        }
+
+        // Fetch instructor profile from MongoDB
+        const InstrutorProfile = await Instructor.findById(Id);
+        if (!InstrutorProfile) {
+            return res.status(404).json({ msg: "Instructor profile not found" });
+        }
+
+        // Respond with the profile data
+        res.status(200).json({
+            data: InstrutorProfile,
+            msg: "Profile retrieved successfully",
+        });
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).json({
+            msg: "Failed to fetch profile",
+            error: error.message,
         });
     }
 });

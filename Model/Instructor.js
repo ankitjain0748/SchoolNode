@@ -7,6 +7,13 @@ const instructorSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    skill:String,
+    designation :String,
+    lessions:String,
+    students :String,
+    address:String,
+    profileImage:String,  // For profile image
+    gender :String,         // Gender
     lastName: {
       type: String,
       required: true,
@@ -42,9 +49,7 @@ const instructorSchema = new mongoose.Schema(
       type: [String], // Array of expertise topics
       required: true,
     },
-    profilePicture: {
-      type: String, // URL of the profile picture
-    },
+   
     rating: {
       type: Number,
       default: 0,
