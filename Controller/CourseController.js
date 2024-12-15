@@ -1,0 +1,1 @@
+const courseData = require("../Model/Course")
