@@ -15,15 +15,15 @@ const courseSchema = new mongoose.Schema({
     trim: true,
     maxlength: [500, 'Description cannot exceed 500 characters']
   },
-  instructor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming a User model exists for instructors
-    required: [true, 'Instructor is required']
-  },
+//   instructor: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'User', // Assuming a User model exists for instructors
+//     required: [true, 'Instructor is required']
+//   },
   category: {
     type: String,
     required: [true, 'Course category is required'],
-    enum: ['Programming', 'Design', 'Marketing', 'Business', 'Others'], // Example categories
+    // enum: ['Programming', 'Design', 'Marketing', 'Business', 'Others'], // Example categories
     default: 'Others'
   },
   duration: {
@@ -53,9 +53,7 @@ const courseSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  lessons: [
-    {
-      title: {
+      lessiontitle: {
         type: String,
         required: [true, 'Lesson title is required']
       },
@@ -63,12 +61,11 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Lesson content is required']
       },
-      duration: {
+      lessionduration: {
         type: Number, // Duration in minutes
         required: [true, 'Lesson duration is required']
-      }
-    }
-  ]
+      },
+      courseImage :String
 });
 
 // Middleware to update the updatedAt field on save

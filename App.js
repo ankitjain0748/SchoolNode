@@ -19,15 +19,19 @@ app.use(express.json({ limit: '2000mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 const userRoute = require("./Route/User")
-const contactRoute  = require("./Route/Contact") 
-const SubscribeRoute  = require("./Route/Subscribe") 
-const instrutorroute  =require("./Route/Instructor")
- 
+const contactRoute = require("./Route/Contact")
+const SubscribeRoute = require("./Route/Subscribe")
+const instrutorroute = require("./Route/Instructor")
+const CourseRoute = require("./Route/Course")
+
+
 
 app.use("/user", userRoute)
 app.use("/contact", contactRoute)
-app.use("/subscribe" ,SubscribeRoute)
-app.use("/instrutor",instrutorroute)
+app.use("/subscribe", SubscribeRoute)
+app.use("/instrutor", instrutorroute)
+app.use("/course", CourseRoute)
+
 const PORT = 8000;
 
 app.get("/", (req, res) => {
