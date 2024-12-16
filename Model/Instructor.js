@@ -7,7 +7,7 @@ const instructorSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    skill:String,
+    Skill:String,
     designation :String,
     lessions:String,
     students :String,
