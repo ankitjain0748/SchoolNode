@@ -36,7 +36,7 @@ const userSchema = mongoose.Schema({
     },
     user_status: {
         type: String,
-        default: "active"
+        default: "registerd"
     },
     isDeleted: {
         type: Boolean,
