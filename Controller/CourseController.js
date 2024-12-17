@@ -10,9 +10,6 @@ exports.CoursePost = (async (req, res) => {
         duration,
         price,
         level,
-        lessiontitle,
-        content,
-        lessionduration,
         courseImage  // For profile image
     } = req.body;
 
@@ -23,9 +20,6 @@ exports.CoursePost = (async (req, res) => {
         duration,
         price,
         level,
-        lessiontitle,
-        content,
-        lessionduration,
         courseImage
     })
     const result = await record.save();
@@ -85,9 +79,6 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             duration,
             price,
             level,
-            lessiontitle,
-            content,
-            lessionduration,
             courseImage
         } = req.body;
 
@@ -115,9 +106,6 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
                 duration,
                 price,
                 level,
-                lessiontitle,
-                content,
-                lessionduration,
                 courseImage
             },
             { new: true, runValidators: true }
