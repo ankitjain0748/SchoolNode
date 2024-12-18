@@ -2,40 +2,60 @@ const Course = require("../Model/Course");
 const catchAsync = require("../utill/catchAsync");
 
 
-exports.CoursePost = (async (req, res) => {
+
+// Configure Multer for file uploads
+
+
+// Course Post API
+exports.CoursePost = async (req, res) => {
+  try {
     const {
-        title,
-        description,
-        category,
-        duration,
-        price,
-        level,
-        courseImage  // For profile image
+      title,
+      description,
+      category,
+      duration,
+      price,
+      level,
+      courseImage,
+      lectures,
     } = req.body;
 
+
     const record = new Course({
-        title,
-        description,
-        category,
-        duration,
-        price,
-        level,
-        courseImage
-    })
+      title,
+      description,
+      category,
+      duration,
+      price,
+      level,
+      courseImage,
+      lectures: lectures, // Include lectures
+    });
+
     const result = await record.save();
+
     if (result) {
-        res.json({
-            status: true,
-            message: "Course Added Successfully!!.",
-        });
+      res.json({
+        status: true,
+        message: "Course Added Successfully!",
+      });
     } else {
-        res.json({
-            status: false,
-            error: result,
-            message: "Failed to Contact.",
-        });
+      res.status(400).json({
+        status: false,
+        message: "Failed to add course.",
+      });
     }
-});
+  } catch (error) {
+    console.error("Error adding course:", error);
+    res.status(500).json({
+      status: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
+
+// Middleware for handling file uploads
+
 
 
 exports.CourseGet = catchAsync(async (req, res, next) => {
