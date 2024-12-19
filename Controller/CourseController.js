@@ -61,22 +61,26 @@ exports.CoursePost = async (req, res) => {
 // Middleware for handling file uploads
 
 
-
 exports.CourseGet = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
         const totalCourse = await Course.countDocuments();
-        const Courseget = await Course.find({}).sort({ created_at: -1 })
+
+        const Courseget = await Course.find({})
+            .sort({ createdAt: -1 })
+            .populate('InstrutorId')  // Fetch related fields from Instructor
             .skip(skip)
             .limit(limit);
+
         const totalPages = Math.ceil(totalCourse / limit);
+
         res.status(200).json({
             data: {
-                Courseget: Courseget,
-                totalCourse: totalCourse,
-                totalPages: totalPages,
+                Courseget,
+                totalCourse,
+                totalPages,
                 currentPage: page,
                 perPage: limit,
                 nextPage: page < totalPages ? page + 1 : null,
@@ -91,6 +95,7 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
         });
     }
 });
+
 
 
 exports.CourseUpdate = catchAsync(async (req, res, next) => {
@@ -195,27 +200,28 @@ exports.CourseGetId = catchAsync(async (req, res, next) => {
         // Extract ID from request parameters
         const { Id } = req.params; // Use params if it's part of the URL
 
-        console.log("Id:", Id);
         if (!Id) {
-            return res.status(400).json({ msg: "Instructor ID is required" });
+            return res.status(400).json({ msg: "Course ID is required" });
         }
 
-        // Fetch instructor profile from MongoDB
-        const CourseProfile = await Course.findById(Id);
+        // Fetch the Course and populate Instructor data
+        const CourseProfile = await Course.findById(Id).populate('InstrutorId'); // Fetch full Instructor data
+
         if (!CourseProfile) {
-            return res.status(404).json({ msg: "Instructor profile not found" });
+            return res.status(404).json({ msg: "Course not found" });
         }
 
         // Respond with the profile data
         res.status(200).json({
             data: CourseProfile,
-            msg: "Profile retrieved successfully",
+            msg: "Course and Instructor details retrieved successfully",
         });
     } catch (error) {
-        console.error("Error fetching profile:", error);
+        console.error("Error fetching course profile:", error);
         res.status(500).json({
-            msg: "Failed to fetch profile",
+            msg: "Failed to fetch course profile",
             error: error.message,
         });
     }
 });
+
