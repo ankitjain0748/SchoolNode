@@ -13,9 +13,11 @@ exports.CoursePost = async (req, res) => {
       title,
       description,
       category,
+      discountPrice,
       duration,
       price,
       level,
+      InstrutorId,
       courseImage,
       lectures,
     } = req.body;
@@ -29,6 +31,8 @@ exports.CoursePost = async (req, res) => {
       price,
       level,
       courseImage,
+      discountPrice,
+      InstrutorId,
       lectures: lectures, // Include lectures
     });
 
@@ -99,7 +103,10 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             duration,
             price,
             level,
-            courseImage
+            InstrutorId,
+            courseImage,
+            discountPrice,
+            lectures
         } = req.body;
 
         if (!_id) {
@@ -121,11 +128,14 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             _id,
             {
                 title,
+                discountPrice,
                 description,
                 category,
                 duration,
                 price,
+                lectures,
                 level,
+                InstrutorId,
                 courseImage
             },
             { new: true, runValidators: true }

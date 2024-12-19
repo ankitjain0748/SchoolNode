@@ -72,6 +72,11 @@ const courseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  InstrutorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Instructor",
+    required: [true, "Instructor ID is required."],
+},
 });
 
 // Middleware to update the updatedAt field on save
