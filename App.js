@@ -23,6 +23,8 @@ const contactRoute = require("./Route/Contact")
 const SubscribeRoute = require("./Route/Subscribe")
 const instrutorroute = require("./Route/Instructor")
 const CourseRoute = require("./Route/Course")
+const PaymentRoute = require("./Route/Payment")
+
 
 
 
@@ -31,6 +33,7 @@ app.use("/contact", contactRoute)
 app.use("/subscribe", SubscribeRoute)
 app.use("/instrutor", instrutorroute)
 app.use("/course", CourseRoute)
+app.use("/payment", PaymentRoute)
 
 const PORT = 8000;
 

@@ -9,6 +9,16 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+   CourseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+      required: [true, "Course ID is required."],
+  },
+  UserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "User ID is required."],
+},
   amount: {
     type: Number,
     required: true,
