@@ -33,5 +33,5 @@ const ReviewSection = mongoose.Schema({
     },
 });
 
-const Review = mongoose.model("Subscribe", ReviewSection);
+const Review = mongoose.model("Review", ReviewSection);
 module.exports = Review;

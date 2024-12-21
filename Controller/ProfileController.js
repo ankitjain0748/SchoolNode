@@ -3,6 +3,7 @@ const Profile = require("../Model/Profile");
 const User = require("../Model/User");
 const SocialSection = require("../Model/Social");
 const Bank = require("../Model/Bank");
+const logger = require("../utill/logger");
 
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object
@@ -63,8 +64,7 @@ term,
             });
         }
     } catch (error) {
-        console.error("Error updating or creating profile:", error);
-
+logger.error(error)
         res.status(500).json({
             status: false,
             message: "An error occurred while processing the profile.",
@@ -93,7 +93,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
-        console.error("Error fetching users and updating enquiry counts:", error); // Log full error for debugging
+        logger.error(error)
         return res.status(500).json({
             status: false,
             message: "An error occurred while fetching users and updating enquiry counts.",
@@ -121,7 +121,7 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
-        console.error("Error fetching users and updating enquiry counts:", error); // Log full error for debugging
+        logger.error(error)
         return res.status(500).json({
             status: false,
             message: "An error occurred while fetching users and updating enquiry counts.",

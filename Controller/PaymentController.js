@@ -1,57 +1,44 @@
-require('dotenv').config(); 
 const Payment = require("../Model/Payment");
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
-  
-  console.log('Razorpay Key:', process.env.RAZORPAY_KEY_ID);
-  console.log('Razorpay Secret:', process.env.RAZORPAY_KEY_SECRET);
-  
-  const razorpayInstance = new Razorpay({
-    key_id:process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-  });
-  
-  exports.createOrder = catchAsync(
-    async (req, res) => {
-      const { amount, currency = 'INR', receipt } = req.body;
-    
-      try {
-        if (!amount || !receipt) {
-          return res.status(400).json({ success: false, message: 'Amount and Receipt are required' });
-        }
-    
-        const options = {
-          amount: amount, // Amount in paise
-          currency,
-          receipt,
-          payment_capture: 1,
-        };
-        console.log("order",razorpayInstance)
-    
-        const order = await razorpayInstance.orders.create(options);
-  
-        res.status(200).json({
-          success: true,
-          orderId: order.id,
-          currency: order.currency,
-          amount: order.amount,
-        });
-      } catch (error) {
-        console.error('Order creation error:', error);
-        res.status(500).json({ success: false, message: 'Order creation failed', error: error.message });
-      }
-    }
-  )
-  
-  
-  
-  
+const logger = require("../utill/logger");
+require('dotenv').config();
 
+
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+exports.createOrder = catchAsync(async (req, res) => {
+  const { amount, currency = 'INR', receipt } = req.body;
+console.log("req.body",req.body)
+  try {
+    const options = {
+      amount: amount * 100, // Convert amount to smallest currency unit
+      currency,
+      receipt: String(receipt), // Ensure receipt is a string
+      payment_capture: 1, // Auto-capture payments
+    };
+
+    const order = await razorpayInstance.orders.create(options);
+console.log("order",order)
+    res.status(200).json({
+      success: true,
+      orderId: order.id,
+      currency: order.currency,
+      amount: order.amount,
+    });
+  } catch (error) {
+    logger.error(error)
+    res.status(500).json({ success: false, message: 'Order creation failed', error: error.message });
+  }
+});
 
 exports.paymentAdd = catchAsync(async (req, res) => {
+try {
   console.log("req", req?.body);
-  const UserId = req?.User?._id
-  const { order_id, payment_id, amount, currency, payment_status, product_name, type } = req.body;
+  const { order_id, payment_id, amount, currency, payment_status, product_name, type , CourseId } = req.body;
   const status = payment_status === 'failed' ? 'failed' : 'success';
   const payment = new Payment({
     order_id: order_id,
@@ -61,8 +48,8 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     payment_status: payment_status,
     product_name,
     type,
-    UserId: UserId,
     status: status,
+    CourseId :CourseId
   });
 
   await payment.save();
@@ -71,6 +58,14 @@ exports.paymentAdd = catchAsync(async (req, res) => {
   } else {
     return res.status(200).json({ status: 'success', message: 'Payment verified and saved successfully' });
   }
+} catch (error) {
+  logger.error(error);
+  res.json({
+    status: false,
+    message: "An error occurred while saving payment.",
+    error: error.message,
+  })
+}
 });
 
 
@@ -91,7 +86,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
       Payment: payment,
     });
   } catch (err) {
-    console.error("Error retrieving payments:", err.message);
+    logger.error(err);
     return res.status(500).json({
       status: false,
       message: "An unknown error occurred. Please try again later.",

@@ -24,8 +24,9 @@ const SubscribeRoute = require("./Route/Subscribe")
 const instrutorroute = require("./Route/Instructor")
 const CourseRoute = require("./Route/Course")
 const PaymentRoute = require("./Route/Payment")
-
-
+const BlogRoute = require("./Route/BlogRoute")
+const ReviewRoute = require("./Route/ReviewRoute")
+const RefralRoute = require("./Route/RefralRoute")
 
 
 app.use("/user", userRoute)
@@ -34,8 +35,11 @@ app.use("/subscribe", SubscribeRoute)
 app.use("/instrutor", instrutorroute)
 app.use("/course", CourseRoute)
 app.use("/payment", PaymentRoute)
+app.use("/blog", BlogRoute)
+app.use("/Review", ReviewRoute)
+app.use("/refral", RefralRoute)
 
-const PORT = 8000;
+const PORT = 5000;
 
 app.get("/", (req, res) => {
     res.json({
