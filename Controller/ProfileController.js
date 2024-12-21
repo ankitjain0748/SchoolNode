@@ -3,7 +3,7 @@ const Profile = require("../Model/Profile");
 const User = require("../Model/User");
 const SocialSection = require("../Model/Social");
 const Bank = require("../Model/Bank");
-const logger = require("../utill/Logger");
+const logger = require("../utill/Loggers");
 
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object

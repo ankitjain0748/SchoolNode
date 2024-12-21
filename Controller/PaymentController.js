@@ -1,7 +1,7 @@
 const Payment = require("../Model/Payment");
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
-const logger = require("../utill/Logger");
+const logger = require("../utill/Loggers");
 require('dotenv').config();
 
 

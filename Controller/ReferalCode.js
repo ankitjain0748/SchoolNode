@@ -1,6 +1,6 @@
 const RefralModel = require("../Model/Referal");
 const catchAsync = require("../utill/catchAsync");
-const logger = require("../utill/Logger");
+const logger = require("../utill/Loggers");
 
 exports.RefralCodeAdd = catchAsync(async (req, res) => {
     try {

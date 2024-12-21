@@ -2,19 +2,32 @@
 const mongoose = require('mongoose');
 
 // Define schema for lectures (nested in the course schema)
-const LectureSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    trim: true,
-  },
+const SubtitleSchema = new mongoose.Schema({
   subtitle: {
     type: String,
     trim: true,
+    required: true,
   },
-  video: {
-    type: String, // File path or URL
+  videoLink: {
+    type: String,
+    trim: true,
+    required: true,
   },
 });
+
+const LectureSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  subtitles: {
+    type: [SubtitleSchema],
+    default: [],
+  },
+});
+
+const Lecture = mongoose.model("Lecture", LectureSchema);
 
 // Define the schema for a course
 const courseSchema = new mongoose.Schema({
@@ -76,7 +89,7 @@ const courseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Instructor",
     required: [true, "Instructor ID is required."],
-},
+  },
 });
 
 // Middleware to update the updatedAt field on save

@@ -1,6 +1,6 @@
 const catchAsync = require("../utill/catchAsync");
 const SocialSection = require("../Model/Social");
-const logger = require("../utill/Logger");
+const logger = require("../utill/Loggers");
 
 exports.SocialAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;

@@ -1,6 +1,6 @@
 const Course = require("../Model/Course");
 const catchAsync = require("../utill/catchAsync");
-const logger = require("../utill/Logger");
+const logger = require("../utill/Loggers");
 
 
 

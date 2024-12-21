@@ -1,6 +1,6 @@
 const Instructor = require("../Model/Instructor");
 const catchAsync = require("../utill/catchAsync");
-const logger = require("../utill/Logger");
+const logger = require("../utill/Loggers");
 
 exports.InstructorPost = (async (req, res) => {
     const {

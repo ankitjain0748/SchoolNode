@@ -1,6 +1,6 @@
 const Review = require("../Model/Review");
 const catchAsync = require("../utill/catchAsync");
-const logger = require("../utill/Logger");
+const logger = require("../utill/Loggers");
 
 exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
