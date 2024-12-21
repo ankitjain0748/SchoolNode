@@ -37,6 +37,7 @@ console.log("order",order)
 
 exports.paymentAdd = catchAsync(async (req, res) => {
 try {
+  const UserId = req.User._id
   console.log("req", req?.body);
   const { order_id, payment_id, amount, currency, payment_status, product_name, type , CourseId } = req.body;
   const status = payment_status === 'failed' ? 'failed' : 'success';
@@ -48,6 +49,7 @@ try {
     payment_status: payment_status,
     product_name,
     type,
+    UserId :UserId ,
     status: status,
     CourseId :CourseId
   });
