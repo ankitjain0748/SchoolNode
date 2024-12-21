@@ -1,6 +1,6 @@
 const subscribemodal = require("../Model/Subscribe");
 const catchAsync = require("../utill/catchAsync");
-const logger = require("../utill/logger");
+const logger = require("../utill/Logger");
 
 
 exports.SubscribePost = catchAsync(async (req, res) => {

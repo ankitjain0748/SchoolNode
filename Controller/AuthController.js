@@ -8,7 +8,7 @@ const ForgetPassword = require("../Mail/ForgetPassword");
 const { validationErrorResponse, errorResponse, successResponse } = require("../utill/ErrorHandling");
 const VerifyAccount = require("../Mail/VerifyAccount");
 const ProfileData = require("../Model/Profile");
-const logger = require("../utill/logger");
+const logger = require("../utill/Logger");
 
 
 exports.verifyToken = async (req, res, next) => {

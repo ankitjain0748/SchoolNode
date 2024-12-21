@@ -1,7 +1,7 @@
 // const EmailContact = require("../emailTemplates/ContactReply");
 const contactmodal = require("../Model/Contact");
 const catchAsync = require('../utill/catchAsync');
-const logger = require("../utill/logger");
+const logger = require("../utill/Logger");
 // const sendEmail = require("../utill/EmailMailler");
 
 exports.ContactPost = catchAsync(async (req, res) => {
