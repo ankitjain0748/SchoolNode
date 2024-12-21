@@ -1,9 +1,8 @@
 const Instructor = require("../Model/Instructor");
 const catchAsync = require("../utill/catchAsync");
 
-
 exports.InstructorPost = (async (req, res) => {
-    const { 
+    const {
         firstName,
         lastName,
         designation,
@@ -17,7 +16,7 @@ exports.InstructorPost = (async (req, res) => {
         bio,            // For bio
         gender,         // Gender
         rating
-     } = req.body;
+    } = req.body;
 
     const record = new Instructor({
         firstName,
@@ -29,9 +28,9 @@ exports.InstructorPost = (async (req, res) => {
         email,
         phoneNumber,
         address,
-        profileImage,  
-        bio,            
-        gender,        
+        profileImage,
+        bio,
+        gender,
         rating
     })
     const result = await record.save();
