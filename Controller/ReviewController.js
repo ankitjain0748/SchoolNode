@@ -1,5 +1,6 @@
 const Review = require("../Model/Review");
-const catchAsync = require("../utill/catchAsync")
+const catchAsync = require("../utill/catchAsync");
+const logger = require("../utill/logger");
 
 exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
@@ -26,6 +27,7 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
             message: "Review Added Successfully"
         })
     } catch (error) {
+        logger.error(error)
         console.log("erorr", error);
         res.json({
             status: false,
@@ -44,6 +46,8 @@ exports.ReviewGet = catchAsync(async (req, res) => {
             review
         })
     } catch (error) {
+        logger.error(error)
+
         console.log("erorr", error);
         res.json({
             status: false,
@@ -61,6 +65,7 @@ exports.ReviewGetStatus = catchAsync(async (req, res) => {
             review
         })
     } catch (error) {
+        logger.error(error)
         console.log("erorr", error);
         res.json({
             status: false,
@@ -82,6 +87,7 @@ exports.ReviewDelete = catchAsync(async (req, res) => {
 
     } catch (error) {
 
+        logger.error(error)
         console.log("erorr", error);
         res.json({
             status: false,
@@ -101,6 +107,7 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
             message: "Review Status Updated Successfully"
         })
     } catch (error) {
+        logger.error(error)
         res.json({
             status: false,
             message: "Failed to Update Review Status"

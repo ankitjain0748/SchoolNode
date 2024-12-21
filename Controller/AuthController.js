@@ -8,6 +8,7 @@ const ForgetPassword = require("../Mail/ForgetPassword");
 const { validationErrorResponse, errorResponse, successResponse } = require("../utill/ErrorHandling");
 const VerifyAccount = require("../Mail/VerifyAccount");
 const ProfileData = require("../Model/Profile");
+const logger = require("../utill/logger");
 
 
 exports.verifyToken = async (req, res, next) => {
@@ -114,7 +115,7 @@ exports.signup = catchAsync(async (req, res) => {
     // Create new user record
     const record = new User({
       email,
-      password :hashedPassword,
+      password: hashedPassword,
       name,
       phone_number,
       refral_code,
@@ -148,8 +149,9 @@ exports.signup = catchAsync(async (req, res) => {
     //     html: emailHtml,
     //   });
 
-      return successResponse(res, "You have been registered successfully !!", 201);
+    return successResponse(res, "You have been registered successfully !!", 201);
   } catch (error) {
+    logger.error("Error fetching booking:", error);
     return errorResponse(res, error.message || "Internal Server Error", 500);
   }
 });
@@ -217,6 +219,7 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
       token,
     });
   } catch (error) {
+    logger.error("Error fetching booking:", error);
     return res.status(500).json({
       error,
       message: "An unknown error occurred. Please try later.",
@@ -286,6 +289,8 @@ exports.login = catchAsync(async (req, res, next) => {
       token,
     });
   } catch (error) {
+    logger.error("Error fetching booking:", error);
+
     return res.status(500).json({
       error,
       message: "An unknown error occurred. Please try later.",
@@ -324,7 +329,8 @@ exports.profile = catchAsync(async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching users and updating enquiry counts:", error); // Log full error for debugging
+    logger.error("Error fetching booking:", error);
+
     return res.status(500).json({
       status: false,
       message: "An error occurred while fetching users and updating enquiry counts.",
@@ -361,7 +367,8 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
       data: user,
     });
   } catch (error) {
-    console.error(error);
+    logger.error("Error fetching booking:", error);
+
     res.status(500).json({
       message: "Internal Server Error",
       status: false,
@@ -372,9 +379,9 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
 exports.resetpassword = catchAsync(async (req, res) => {
   try {
     const email = req?.User?._id;
-    console.log("email",email)
-    const {newPassword } = req.body;
-    const user = await User.findById({ _id:email});
+    console.log("email", email)
+    const { newPassword } = req.body;
+    const user = await User.findById({ _id: email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -384,6 +391,7 @@ exports.resetpassword = catchAsync(async (req, res) => {
     await user.save();
     res.json({ message: "Password has been reset successfully!" });
   } catch (error) {
+    logger.error("Error fetching booking:", error);
     res.status(500).json({ message: "Error resetting password", error });
   }
 });
@@ -416,7 +424,8 @@ exports.UserListIdDelete = catchAsync(async (req, res, next) => {
       message: "User deleted successfully.",
     });
   } catch (error) {
-    console.error("Error deleting user record:", error);
+
+    logger.error("Error deleting user record:", error);
     res.status(500).json({
       status: false,
       message: "Internal Server Error. Please try again later.",
@@ -451,7 +460,7 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
       message: "User updated successfully.",
     });
   } catch (error) {
-    console.error("Error updating User record:", error);
+    logger.error("Error deleting user record:", error);
 
     res.status(500).json({
       status: false,
@@ -496,7 +505,8 @@ exports.forgotlinkrecord = async (req, res) => {
     return successResponse(res, "Email has been sent to your registered email");
 
   } catch (error) {
-    console.error("Error in forgot password process:", error);
+    logger.error("Error deleting user record:", error);
+
     return errorResponse(res, "Failed to send email");
   }
 };
@@ -516,7 +526,8 @@ exports.forgotpassword = async (req, res) => {
     if (error.name === 'TokenExpiredError') {
       return errorResponse(res, "Token has expired. Please generate a new token.", 401);
     }
-    console.error("Error in password reset process:", error);
+    logger.error("Error deleting user record:", error);
+
     return errorResponse(res, "Failed to reset password");
   }
 };
@@ -549,7 +560,8 @@ exports.profilegettoken = catchAsync(async (req, res, next) => {
       msg: "Profile retrieved successfully",
     });
   } catch (error) {
-    console.error("Error fetching profile:", error);
+    logger.error("Error deleting user record:", error);
+
     res.status(500).json({
       msg: "Failed to fetch profile",
       error: error.message,
@@ -582,7 +594,8 @@ exports.userfilter = catchAsync(async (req, res, next) => {
       users: users,
     });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    logger.error("Error deleting user record:", error);
+
     return res.status(500).json({
       status: false,
       message: "An error occurred while fetching users.",
@@ -607,7 +620,7 @@ exports.VerifyUser = async (req, res) => {
     if (error.name === 'TokenExpiredError') {
       return errorResponse(res, "Token has expired. Please contact support.", 401);
     }
-    console.error("Error in verifying account:", error);
+    logger.error("Error deleting user record:", error);
     return errorResponse(res, "Failed to verify account");
   }
 };
@@ -615,26 +628,27 @@ exports.VerifyUser = async (req, res) => {
 
 exports.UserIdDelete = catchAsync(async (req, res, next) => {
   try {
-      const { Id } = req.body;
-      if (!Id) {
-          return res.status(400).json({
-              status: false,
-              message: 'User ID is required.',
-          });
-      }
-      await User.findByIdAndDelete(Id);
+    const { Id } = req.body;
+    if (!Id) {
+      return res.status(400).json({
+        status: false,
+        message: 'User ID is required.',
+      });
+    }
+    await User.findByIdAndDelete(Id);
 
-      res.status(200).json({
-          status: true,
-          data: record,
-          message: 'User and associated images deleted successfully.',
-      });
+    res.status(200).json({
+      status: true,
+      data: record,
+      message: 'User and associated images deleted successfully.',
+    });
   } catch (error) {
-      console.error('Error deleting User record:', error);
-      res.status(500).json({
-          status: false,
-          message: 'Internal Server Error. Please try again later.',
-      });
+
+    logger.error(error)
+    res.status(500).json({
+      status: false,
+      message: 'Internal Server Error. Please try again later.',
+    });
   }
 });
 

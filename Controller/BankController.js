@@ -1,5 +1,6 @@
 const catchAsync = require("../utill/catchAsync");
 const Bank = require("../Model/Bank");
+const logger = require("../utill/logger");
 
 exports.BankAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
@@ -64,6 +65,7 @@ exports.BankAddOrEdit = catchAsync(async (req, res) => {
             });
         }
     } catch (error) {
+        logger.error(error)
         return res.status(500).json({
             status: false,
             message: "Failed to process bank details.",

@@ -1,5 +1,6 @@
 const Course = require("../Model/Course");
 const catchAsync = require("../utill/catchAsync");
+const logger = require("../utill/logger");
 
 
 
@@ -8,54 +9,54 @@ const catchAsync = require("../utill/catchAsync");
 
 // Course Post API
 exports.CoursePost = async (req, res) => {
-  try {
-    const {
-      title,
-      description,
-      category,
-      discountPrice,
-      duration,
-      price,
-      level,
-      InstrutorId,
-      courseImage,
-      lectures,
-    } = req.body;
+    try {
+        const {
+            title,
+            description,
+            category,
+            discountPrice,
+            duration,
+            price,
+            level,
+            InstrutorId,
+            courseImage,
+            lectures,
+        } = req.body;
 
 
-    const record = new Course({
-      title,
-      description,
-      category,
-      duration,
-      price,
-      level,
-      courseImage,
-      discountPrice,
-      InstrutorId,
-      lectures: lectures, // Include lectures
-    });
+        const record = new Course({
+            title,
+            description,
+            category,
+            duration,
+            price,
+            level,
+            courseImage,
+            discountPrice,
+            InstrutorId,
+            lectures: lectures, // Include lectures
+        });
 
-    const result = await record.save();
+        const result = await record.save();
 
-    if (result) {
-      res.json({
-        status: true,
-        message: "Course Added Successfully!",
-      });
-    } else {
-      res.status(400).json({
-        status: false,
-        message: "Failed to add course.",
-      });
+        if (result) {
+            res.json({
+                status: true,
+                message: "Course Added Successfully!",
+            });
+        } else {
+            res.status(400).json({
+                status: false,
+                message: "Failed to add course.",
+            });
+        }
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            status: false,
+            message: "Internal Server Error.",
+        });
     }
-  } catch (error) {
-    console.error("Error adding course:", error);
-    res.status(500).json({
-      status: false,
-      message: "Internal Server Error.",
-    });
-  }
 };
 
 // Middleware for handling file uploads
@@ -89,6 +90,7 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
             msg: "Course Get",
         });
     } catch (error) {
+        logger.error(error)
         res.status(500).json({
             msg: "Failed to fetch Course get",
             error: error.message,
@@ -159,7 +161,7 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             message: "Instructor updated successfully.",
         });
     } catch (error) {
-        console.error("Error updating instructor record:", error);
+        logger.error(error)
 
         res.status(500).json({
             status: false,
@@ -186,7 +188,8 @@ exports.CourseIdDelete = catchAsync(async (req, res, next) => {
             message: 'CourseUpdate and associated images deleted successfully.',
         });
     } catch (error) {
-        console.error('Error deleting Instructor record:', error);
+        logger.error(error)
+
         res.status(500).json({
             status: false,
             message: 'Internal Server Error. Please try again later.',
@@ -217,7 +220,8 @@ exports.CourseGetId = catchAsync(async (req, res, next) => {
             msg: "Course and Instructor details retrieved successfully",
         });
     } catch (error) {
-        console.error("Error fetching course profile:", error);
+        logger.error(error)
+
         res.status(500).json({
             msg: "Failed to fetch course profile",
             error: error.message,

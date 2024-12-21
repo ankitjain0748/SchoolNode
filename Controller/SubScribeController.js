@@ -1,8 +1,10 @@
 const subscribemodal = require("../Model/Subscribe");
 const catchAsync = require("../utill/catchAsync");
+const logger = require("../utill/logger");
 
 
-exports.SubscribePost = (async (req, res) => {
+exports.SubscribePost = catchAsync(async (req, res) => {
+   try {
     const { email } = req.body;
 
     const record = new subscribemodal({
@@ -22,6 +24,13 @@ exports.SubscribePost = (async (req, res) => {
             message: "Failed to Contact.",
         });
     }
+   } catch (error) {
+    logger.error(error);
+    res.status(500).json({
+        msg: "Failed to Subscribe",
+        error: error.message,
+    });
+   }
 });
 
 
@@ -48,6 +57,7 @@ exports.Subscribeget = catchAsync(async (req, res, next) => {
             msg: "Subscribe Get",
         });
     } catch (error) {
+        logger.error(error)
         res.status(500).json({
             msg: "Failed to fetch Subscribe get",
             error: error.message,

@@ -1,5 +1,6 @@
 const Instructor = require("../Model/Instructor");
 const catchAsync = require("../utill/catchAsync");
+const logger = require("../utill/logger");
 
 exports.InstructorPost = (async (req, res) => {
     const {
@@ -40,6 +41,7 @@ exports.InstructorPost = (async (req, res) => {
             message: "Instructor Added Successfully!!.",
         });
     } else {
+        logger.error(error)
         res.json({
             status: false,
             error: result,
@@ -72,6 +74,8 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
             msg: "Instructorget Get",
         });
     } catch (error) {
+        logger.error(error)
+
         res.status(500).json({
             msg: "Failed to fetch Instructorget get",
             error: error.message,
@@ -147,7 +151,7 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
             message: "Instructor updated successfully.",
         });
     } catch (error) {
-        console.error("Error updating instructor record:", error);
+        logger.error(error)
 
         res.status(500).json({
             status: false,
@@ -174,7 +178,8 @@ exports.InstructorIdDelete = catchAsync(async (req, res, next) => {
             message: 'Instructor and associated images deleted successfully.',
         });
     } catch (error) {
-        console.error('Error deleting Instructor record:', error);
+        logger.error(error)
+
         res.status(500).json({
             status: false,
             message: 'Internal Server Error. Please try again later.',
@@ -205,7 +210,8 @@ exports.InstructorGetId = catchAsync(async (req, res, next) => {
             msg: "Profile retrieved successfully",
         });
     } catch (error) {
-        console.error("Error fetching profile:", error);
+        logger.error(error)
+
         res.status(500).json({
             msg: "Failed to fetch profile",
             error: error.message,

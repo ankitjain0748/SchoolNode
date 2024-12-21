@@ -1,6 +1,7 @@
 const Payment = require("../Model/Payment");
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
+const logger = require("../utill/logger");
 require('dotenv').config();
 
 
@@ -29,12 +30,13 @@ exports.createOrder = catchAsync(async (req, res) => {
       amount: order.amount,
     });
   } catch (error) {
-    console.error('Order creation error:', error);
+    logger.error(error)
     res.status(500).json({ success: false, message: 'Order creation failed', error: error.message });
   }
 });
 
 exports.paymentAdd = catchAsync(async (req, res) => {
+try {
   console.log("req", req?.body);
   const { order_id, payment_id, amount, currency, payment_status, product_name, type , CourseId } = req.body;
   const status = payment_status === 'failed' ? 'failed' : 'success';
@@ -56,6 +58,14 @@ exports.paymentAdd = catchAsync(async (req, res) => {
   } else {
     return res.status(200).json({ status: 'success', message: 'Payment verified and saved successfully' });
   }
+} catch (error) {
+  logger.error(error);
+  res.json({
+    status: false,
+    message: "An error occurred while saving payment.",
+    error: error.message,
+  })
+}
 });
 
 
@@ -76,7 +86,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
       Payment: payment,
     });
   } catch (err) {
-    console.error("Error retrieving payments:", err.message);
+    logger.error(err);
     return res.status(500).json({
       status: false,
       message: "An unknown error occurred. Please try again later.",

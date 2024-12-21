@@ -1,5 +1,6 @@
 const catchAsync = require("../utill/catchAsync");
 const SocialSection = require("../Model/Social");
+const logger = require("../utill/logger");
 
 exports.SocialAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
@@ -65,6 +66,7 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
             });
         }
     } catch (error) {
+        logger.error(error)
         return res.status(500).json({
             status: false,
             message: "Failed to process social details.",

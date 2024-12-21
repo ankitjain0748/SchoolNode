@@ -1,5 +1,6 @@
 const RefralModel = require("../Model/Referal");
 const catchAsync = require("../utill/catchAsync");
+const logger = require("../utill/logger");
 
 exports.RefralCodeAdd = catchAsync(async (req, res) => {
     try {
@@ -14,6 +15,7 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
             status: true
         })
     } catch (error) {
+        logger.error(error);
         console.log("error", error)
         res.json({
             msg: "Refral  Add failed",
@@ -39,6 +41,7 @@ exports.RefralCodeGet = catchAsync(async (
     }
     catch {
         (error) => {
+            logger.error(error);
             res.json(
                 {
                     msg: 'Refral Failed',
@@ -61,6 +64,7 @@ exports.RefralCodeDelete = catchAsync(async (req, res) => {
             message: "Refral deleted successfully"
         })
     } catch (error) {
+        logger.error(error);
         console.log("error", error)
         res.json({
             msg: "Refral  Failed ",
