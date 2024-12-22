@@ -31,6 +31,10 @@ const ReviewSection = mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    courseId : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
 });
 
 const Review = mongoose.model("Review", ReviewSection);

@@ -39,7 +39,7 @@ app.use("/blog", BlogRoute)
 app.use("/Review", ReviewRoute)
 app.use("/refral", RefralRoute)
 
-const PORT = 5000;
+const PORT =process.env.REACT_APP_SERVER_DOMIN ||  5000;
 
 app.get("/", (req, res) => {
     res.json({
