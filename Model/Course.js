@@ -85,6 +85,7 @@ const courseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  courseVideo:String,
   InstrutorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Instructor",
