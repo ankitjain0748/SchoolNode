@@ -11,14 +11,15 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
                 message: "User ID not found. "
             })
         }
-        const { name, email, message, subject } = req.body();
+        const { name, email, message, subject ,courseId } = req.body();
 
         const reviewAdd = new Review({
             name: name,
             email: email,
             message: message,
             subject: subject,
-            userId: userId
+            userId: userId,
+            courseId : courseId
         });
 
         await reviewAdd.save();

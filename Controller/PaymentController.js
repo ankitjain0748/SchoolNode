@@ -1,8 +1,8 @@
 const Payment = require("../Model/Payment");
+require('dotenv').config();
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
 const logger = require("../utill/Loggers");
-require('dotenv').config();
 
 
 const razorpayInstance = new Razorpay({
@@ -15,9 +15,9 @@ exports.createOrder = catchAsync(async (req, res) => {
 console.log("req.body",req.body)
   try {
     const options = {
-      amount: amount * 100, // Convert amount to smallest currency unit
+      amount: amount , // Convert amount to smallest currency unit
       currency,
-      receipt: String(receipt), // Ensure receipt is a string
+      receipt: receipt, // Ensure receipt is a string
       payment_capture: 1, // Auto-capture payments
     };
 
@@ -39,7 +39,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 try {
   const UserId = req.User._id
   console.log("req", req?.body);
-  const { order_id, payment_id, amount, currency, payment_status, product_name, type , CourseId } = req.body;
+  const { order_id, payment_id, amount, currency, payment_status,  CourseId } = req.body;
   const status = payment_status === 'failed' ? 'failed' : 'success';
   const payment = new Payment({
     order_id: order_id,
@@ -47,9 +47,7 @@ try {
     payment_id: payment_id,
     amount: amount,
     payment_status: payment_status,
-    product_name,
-    type,
-    UserId :UserId ,
+    UserId :UserId,
     status: status,
     CourseId :CourseId
   });
