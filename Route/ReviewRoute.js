@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { verifyToken } = require("../Controller/AuthController");
-const { ReviewAdd, ReviewGet, ReviewGetStatus, ReviewDelete, ReviewStatus } = require("../Controller/ReviewController");
+const { ReviewAdd, ReviewGet, ReviewGetStatus, ReviewDelete, ReviewStatus, ReviewCourse } = require("../Controller/ReviewController");
 
 
 
@@ -15,6 +15,9 @@ router.get("/reivew_get_status"  , ReviewGetStatus)
 router.delete("/reivew_delete/:Id" , ReviewDelete)
 
 router.post("/review_status"  , ReviewStatus)
+
+router.post("/review_course"  , ReviewCourse)
+
 
 
 

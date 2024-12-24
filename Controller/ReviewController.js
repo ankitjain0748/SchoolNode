@@ -143,3 +143,46 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
         });
     }
 });
+
+
+exports.ReviewCourse = catchAsync(async (req, res) => {
+    try {
+        const { courseId } = req.body;
+
+        if (!courseId) {
+            return res.status(400).json({
+                status: false,
+                message: "All fields (name, email, message, subject, courseId) are required.",
+            });
+        }
+
+        // Fetch data and populate fields
+        const data = await Review.findOne({ courseId })
+            .populate("courseId")
+            .populate("userId");
+
+        if (!data) {
+            return res.status(404).json({
+                status: false,
+                message: "No review found for the provided courseId.",
+            });
+        }
+
+        console.log("Data retrieved:", {
+            userId: data.userId?._id,
+            courseId: data.courseId?._id,
+        });
+
+        // Send successful response
+        res.status(201).json({
+            status: true,
+            data: data, // You can sanitize this if needed to exclude private fields
+        });
+    } catch (error) {
+        console.error("Error adding review:", error);
+        res.status(500).json({
+            status: false,
+            message: "Failed to add review. Please try again later.",
+        });
+    }
+});

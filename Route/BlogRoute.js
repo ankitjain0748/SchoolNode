@@ -9,8 +9,8 @@ router.get("/get", blogController.getAllBlogs)
 
 router.get("/get/:Id", blogController.getBlogById)
 
-router.post("/update/:Id", blogController.updateBlogById)
+router.post("/update", blogController.updateBlogById)
 
-router.delete("/delete/:Id", blogController.deleteBlogById)
+router.post("/delete", blogController.BlogIdDelete)
 
 module.exports = router;

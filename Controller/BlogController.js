@@ -3,32 +3,32 @@ const catchAsync = require('../utill/catchAsync');
 
 
 // Create a new blog post
-exports.createBlog = catchAsync( async (req, res) => {
-    try {
-      const { title, content, Image } = req.body;
-      if (!title || !content) {
-        return res.status(400).json({
-          status: false,
-          message: "All fields (title, content, Image) are required.",
-        });
-      }
-      const newBlog = new Blog({
-        title,
-        content,
-        Image
-      });
-      await newBlog.save();
-      res.status(201).json({
-        status: true,
-        message: "Blog Success"
-      });
-    } catch (error) {
-      res.status(400).json({
+exports.createBlog = catchAsync(async (req, res) => {
+  try {
+    const { title, content, Image } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({
         status: false,
-        message: error.message,
+        message: "All fields (title, content, Image) are required.",
       });
     }
+    const newBlog = new Blog({
+      title,
+      content,
+      Image
+    });
+    await newBlog.save();
+    res.status(201).json({
+      status: true,
+      message: "Blog Success"
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
   }
+}
 );
 
 
@@ -80,18 +80,14 @@ exports.getBlogById = catchAsync(
 // Update a blog post by ID
 exports.updateBlogById = catchAsync(async (req, res) => {
   try {
-    const { Id } = req.params;
-    console.log("Id:", Id);
 
-    // Check if the Blog ID is provided
-    if (!Id) {
-      return res.status(400).json({ msg: "Blog ID is required" });
-    }
 
-    const { title, content, Image } = req.body;
+
+
+    const { title, content, Image, _id } = req.body;
 
     // Validate required fields
-    if (!title || !content || !Image) {
+    if (!title || !content || !_id) {
       return res.status(400).json({
         status: false,
         message: "All fields (title, content, Image) are required.",
@@ -100,7 +96,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
 
     // Update the blog using correct syntax
     const blog = await Blog.findByIdAndUpdate(
-      Id,
+      _id,
       { title, content, Image }, // Pass an object with the updated fields
       {
         new: true, // Return the updated document
@@ -120,6 +116,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
     res.status(200).json({
       status: true,
       data: blog,
+      message : "Bolg Update"
     });
   } catch (error) {
     res.status(400).json({
@@ -131,39 +128,29 @@ exports.updateBlogById = catchAsync(async (req, res) => {
 
 
 // Delete a blog post by ID
-exports.deleteBlogById = catchAsync(async (req, res) => {
+exports.BlogIdDelete = catchAsync(async (req, res, next) => {
   try {
-    const { Id } = req.params;
-    if (!Id) {
-      return res.status(400).json({ msg: "Blog ID is required" });
-    }
+      const { Id } = req.body;
+      if (!Id) {
+          return res.status(400).json({
+              status: false,
+              message: 'Blog ID is required.',
+          });
+      }
+      await Blog.findByIdAndDelete(Id);
 
-    if (!Id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({ msg: "Invalid Blog ID format" });
-    }
-
-    // Attempt to delete the blog
-    const blog = await Blog.findByIdAndDelete(Id);
-
-    if (!blog) {
-      return res.status(404).json({
-        status: false,
-        message: "Blog not found",
+      res.status(200).json({
+          status: true,
+          message: 'Blog and associated images deleted successfully.',
       });
-    }
-
-    // Return success response
-    res.status(200).json({
-      status: true,
-      message: "Blog deleted successfully",
-      data: null,
-    });
   } catch (error) {
-    // Handle errors
-    res.status(500).json({
-      status: false,
-      message: error.message,
-    });
+      logger.error(error)
+
+      res.status(500).json({
+          status: false,
+          message: 'Internal Server Error. Please try again later.',
+      });
   }
 });
+
 
