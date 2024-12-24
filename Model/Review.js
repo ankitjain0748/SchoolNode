@@ -5,10 +5,6 @@ const ReviewSection = mongoose.Schema({
         type: String,
         required: [true, "Name is required"],
     },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-    },
     email: {
         type: String,
         required: [true, "Email is required"],
@@ -31,10 +27,15 @@ const ReviewSection = mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    courseId : {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "User", // Ensure this matches the User collection
     },
+    courseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course", // Ensure this matches the Course collection
+    },
+    
 });
 
 const Review = mongoose.model("Review", ReviewSection);

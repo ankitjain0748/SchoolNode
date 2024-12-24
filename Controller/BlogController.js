@@ -1,15 +1,14 @@
-const Blog = require('../Controller/BlogController');
+const Blog = require('../Model/Blog');
+
 
 // Create a new blog post
 exports.createBlog = async (req, res) => {
   try {
-    const newBlog = new Blog(req.body);
+    const newBlog = new Blog(req.body);  // This should now work correctly
     await newBlog.save();
     res.status(201).json({
       status: 'success',
-      data: {
-        blog: newBlog,
-      },
+      message: "Blog Success"
     });
   } catch (error) {
     res.status(400).json({
@@ -18,6 +17,7 @@ exports.createBlog = async (req, res) => {
     });
   }
 };
+
 
 // Get all blog posts
 exports.getAllBlogs = async (req, res) => {

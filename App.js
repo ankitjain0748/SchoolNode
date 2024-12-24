@@ -36,7 +36,7 @@ app.use("/instrutor", instrutorroute)
 app.use("/course", CourseRoute)
 app.use("/payment", PaymentRoute)
 app.use("/blog", BlogRoute)
-app.use("/Review", ReviewRoute)
+app.use("/review", ReviewRoute)
 app.use("/refral", RefralRoute)
 
 const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
