@@ -15,7 +15,7 @@ exports.createOrder = catchAsync(async (req, res) => {
   const { amount, currency, receipt } = req.body;
   try {
     const options = {
-      amount: amount, // Convert to smallest currency unit (e.g., paise)
+      amount: amount *100, // Convert to smallest currency unit (e.g., paise)
       currency,
       receipt,
       payment_capture: 1, // Auto-capture payments
@@ -47,9 +47,14 @@ exports.createOrder = catchAsync(async (req, res) => {
 
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
-    const UserId = req.User._id
-    console.log("req", req?.body);
+    console.log("Received request body:", req.body); // Log the request body
+    const UserId = req.User._id;
     const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
+    
+    if (!order_id || !payment_id || !amount || !CourseId) {
+      return res.status(400).json({ status: false, message: "Missing required fields" });
+    }
+
     const status = payment_status === 'failed' ? 'failed' : 'success';
     const payment = new Payment({
       order_id: order_id,
@@ -74,7 +79,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       status: false,
       message: "An error occurred while saving payment.",
       error: error.message,
-    })
+    });
   }
 });
 
