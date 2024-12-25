@@ -45,6 +45,7 @@ const paymentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  receipt :String
 });
 
 const Payment = mongoose.model('Payment', paymentSchema);

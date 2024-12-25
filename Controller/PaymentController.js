@@ -11,18 +11,22 @@ const razorpayInstance = new Razorpay({
 });
 
 exports.createOrder = catchAsync(async (req, res) => {
-  const { amount, currency = 'INR', receipt } = req.body;
-console.log("req.body",req.body)
+  console.log("req.body", req.body)
+  const { amount, currency, receipt } = req.body;
   try {
     const options = {
-      amount: amount , // Convert amount to smallest currency unit
+      amount: amount, // Convert to smallest currency unit (e.g., paise)
       currency,
-      receipt: receipt, // Ensure receipt is a string
+      receipt,
       payment_capture: 1, // Auto-capture payments
     };
 
+    logger.info('Creating Razorpay order with options:', options);
+    console.log("options0", options)
     const order = await razorpayInstance.orders.create(options);
-console.log("order",order)
+
+    logger.info('Order created successfully:', order);
+
     res.status(200).json({
       success: true,
       orderId: order.id,
@@ -30,42 +34,48 @@ console.log("order",order)
       amount: order.amount,
     });
   } catch (error) {
-    logger.error(error)
-    res.status(500).json({ success: false, message: 'Order creation failed', error: error.message });
+    logger.error('Error creating Razorpay order:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Order creation failed',
+      error: error.message,
+    });
   }
 });
 
-exports.paymentAdd = catchAsync(async (req, res) => {
-try {
-  const UserId = req.User._id
-  console.log("req", req?.body);
-  const { order_id, payment_id, amount, currency, payment_status,  CourseId } = req.body;
-  const status = payment_status === 'failed' ? 'failed' : 'success';
-  const payment = new Payment({
-    order_id: order_id,
-    currency: currency,
-    payment_id: payment_id,
-    amount: amount,
-    payment_status: payment_status,
-    UserId :UserId,
-    status: status,
-    CourseId :CourseId
-  });
 
-  await payment.save();
-  if (payment_status === 'failed') {
-    return res.status(200).json({ status: 'failed', message: 'Payment failed and saved successfully' });
-  } else {
-    return res.status(200).json({ status: 'success', message: 'Payment verified and saved successfully' });
+exports.paymentAdd = catchAsync(async (req, res) => {
+  try {
+    const UserId = req.User._id
+    console.log("req", req?.body);
+    const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
+    const status = payment_status === 'failed' ? 'failed' : 'success';
+    const payment = new Payment({
+      order_id: order_id,
+      currency: currency,
+      payment_id: payment_id,
+      amount: amount,
+      payment_status: payment_status,
+      UserId: UserId,
+      status: status,
+      CourseId: CourseId
+    });
+
+    await payment.save();
+    if (payment_status === 'failed') {
+      return res.status(200).json({ status: 'failed', message: 'Payment failed and saved successfully' });
+    } else {
+      return res.status(200).json({ status: 'success', message: 'Payment verified and saved successfully' });
+    }
+  } catch (error) {
+    logger.error(error);
+    res.json({
+      status: false,
+      message: "An error occurred while saving payment.",
+      error: error.message,
+    })
   }
-} catch (error) {
-  logger.error(error);
-  res.json({
-    status: false,
-    message: "An error occurred while saving payment.",
-    error: error.message,
-  })
-}
 });
 
 
