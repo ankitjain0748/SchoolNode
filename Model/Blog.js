@@ -9,6 +9,10 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  short_content: {
+    type: String,
+    required: true,
+  },
   Image: String,
   createdAt: {
     type: Date,

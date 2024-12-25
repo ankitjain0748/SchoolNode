@@ -11,7 +11,7 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
         });
         await referral.save();
         res.json({
-            msg: "Refral  Add ",
+            message: "Refral  Save",
             status: true
         })
     } catch (error) {

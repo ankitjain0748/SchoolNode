@@ -5,7 +5,7 @@ const catchAsync = require('../utill/catchAsync');
 // Create a new blog post
 exports.createBlog = catchAsync(async (req, res) => {
   try {
-    const { title, content, Image } = req.body;
+    const { title, content, Image, short_content } = req.body;
     if (!title || !content) {
       return res.status(400).json({
         status: false,
@@ -15,6 +15,7 @@ exports.createBlog = catchAsync(async (req, res) => {
     const newBlog = new Blog({
       title,
       content,
+      short_content,
       Image
     });
     await newBlog.save();
@@ -84,7 +85,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
 
 
 
-    const { title, content, Image, _id } = req.body;
+    const { title, content, Image, _id, short_content } = req.body;
 
     // Validate required fields
     if (!title || !content || !_id) {
@@ -93,30 +94,24 @@ exports.updateBlogById = catchAsync(async (req, res) => {
         message: "All fields (title, content, Image) are required.",
       });
     }
-
-    // Update the blog using correct syntax
     const blog = await Blog.findByIdAndUpdate(
       _id,
-      { title, content, Image }, // Pass an object with the updated fields
+      { title, content, Image, short_content },
       {
-        new: true, // Return the updated document
-        runValidators: true, // Ensure validation is run
+        new: true,
+        runValidators: true,
       }
     );
-
-    // Handle case where blog is not found
     if (!blog) {
       return res.status(404).json({
         status: false,
         message: 'Blog not found',
       });
     }
-
-    // Send successful response
     res.status(200).json({
       status: true,
       data: blog,
-      message : "Bolg Update"
+      message: "Bolg Update"
     });
   } catch (error) {
     res.status(400).json({
@@ -130,26 +125,26 @@ exports.updateBlogById = catchAsync(async (req, res) => {
 // Delete a blog post by ID
 exports.BlogIdDelete = catchAsync(async (req, res, next) => {
   try {
-      const { Id } = req.body;
-      if (!Id) {
-          return res.status(400).json({
-              status: false,
-              message: 'Blog ID is required.',
-          });
-      }
-      await Blog.findByIdAndDelete(Id);
-
-      res.status(200).json({
-          status: true,
-          message: 'Blog and associated images deleted successfully.',
+    const { Id } = req.body;
+    if (!Id) {
+      return res.status(400).json({
+        status: false,
+        message: 'Blog ID is required.',
       });
+    }
+    await Blog.findByIdAndDelete(Id);
+
+    res.status(200).json({
+      status: true,
+      message: 'Blog and associated images deleted successfully.',
+    });
   } catch (error) {
-      logger.error(error)
+    logger.error(error)
 
-      res.status(500).json({
-          status: false,
-          message: 'Internal Server Error. Please try again later.',
-      });
+    res.status(500).json({
+      status: false,
+      message: 'Internal Server Error. Please try again later.',
+    });
   }
 });
 
