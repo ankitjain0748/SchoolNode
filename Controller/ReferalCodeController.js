@@ -4,8 +4,14 @@ const logger = require("../utill/Loggers");
 
 exports.RefralCodeAdd = catchAsync(async (req, res) => {
     try {
-        console.log(req.body);
         const { referralCode, referred_by, referred_to } = req.body;
+        if (!referralCode || !referred_by || !referred_to) {
+            logger.warn("All fields are required")
+            return res.status(400).json({
+                message: "All fields are required",
+                status: false
+            });
+        };
         const referral = new RefralModel({
             referralCode, referred_by, referred_to
         });
@@ -26,12 +32,17 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 });
 
 
-exports.RefralCodeGet = catchAsync(async (
-    req, res
-) => {
+exports.RefralCodeGet = catchAsync(async (req, res) => {
     try {
-
-        const referrals = await RefralModel.find();
+        const referrals = await RefralModel.find({});
+        if (!referrals) {
+            logger.warn("Refrals not found")
+            return res.status(204).json({
+                status: false,
+                message: "No Refrals found",
+                referrals: []
+            });  // If no referral
+        }
         res.json({
             msg: 'Refrals List',
             status: true,

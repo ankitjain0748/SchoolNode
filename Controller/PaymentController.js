@@ -5,16 +5,21 @@ const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
 const logger = require("../utill/Loggers");
 
-
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 exports.createOrder = catchAsync(async (req, res) => {
-  console.log("req.body", req.body)
   const { amount, currency, receipt } = req.body;
   try {
+    if(!amount || !currency || !receipt){
+      logger.warn('Amount, currency, and receipt are required.')
+      return res.status(400).json({
+        status: false,
+        message: 'Amount, currency, and receipt are required.',
+      });
+    }
     const options = {
       amount: amount * 100, // Convert to smallest currency unit (e.g., paise)
       currency,
@@ -23,11 +28,8 @@ exports.createOrder = catchAsync(async (req, res) => {
     };
 
     logger.info('Creating Razorpay order with options:', options);
-    console.log("options0", options)
     const order = await razorpayInstance.orders.create(options);
-
     logger.info('Order created successfully:', order);
-
     res.status(200).json({
       success: true,
       orderId: order.id,
@@ -36,7 +38,6 @@ exports.createOrder = catchAsync(async (req, res) => {
     });
   } catch (error) {
     logger.error('Error creating Razorpay order:', error);
-
     res.status(500).json({
       success: false,
       message: 'Order creation failed',
@@ -53,9 +54,9 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
 
     if (!order_id || !payment_id || !amount || !CourseId) {
+      logger.warn("Missing required fields")
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
-
     const status = payment_status === 'failed' ? 'failed' : 'success';
     const payment = new Payment({
       order_id: order_id,

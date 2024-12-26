@@ -14,6 +14,7 @@ exports.SubscribePost = catchAsync(async (req, res) => {
                 message: "Request Sent Successfully!!.",
             });
         } else {
+            logger.info(result)
             res.json({
                 status: false,
                 error: result,
@@ -39,6 +40,7 @@ exports.Subscribeget = catchAsync(async (req, res, next) => {
             .skip(skip)
             .limit(limit);
         const totalPages = Math.ceil(totalsubscribemodal / limit);
+        
         res.status(200).json({
             data: {
                 subscribedata: subscribedata,

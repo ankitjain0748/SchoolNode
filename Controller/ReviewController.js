@@ -6,6 +6,7 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
         const userId = req.User?._id;
         if (!userId) {
+            logger.warn("User ID not found. Please log in again.")
             return res.status(400).json({
                 status: false,
                 message: "User ID not found. Please log in again.",
@@ -14,6 +15,7 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 
         const { name, email, message, subject, courseId } = req.body;
         if (!name || !email || !message || !subject || !courseId) {
+            logger.warn("All fields (name, email, message, subject, courseId) are required.")
             return res.status(400).json({
                 status: false,
                 message: "All fields (name, email, message, subject, courseId) are required.",
@@ -106,10 +108,10 @@ exports.ReviewDelete = catchAsync(async (req, res) => {
 
 exports.ReviewStatus = catchAsync(async (req, res) => {
     try {
-        console.log("req.body", req.body);
 
         const { status, _id } = req.body; // Correct destructuring
         if (!_id || !status) {
+            logger.warn("Invalid input: _id or status is missing")
             return res.json({
                 status: false,
                 message: "Invalid input: _id or status is missing",

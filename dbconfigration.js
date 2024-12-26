@@ -12,7 +12,7 @@ mongoose.connect(process.env.DB_URL, {
    family: 4                       
 })
 .then(() => {
-   console.log('MongoDB connected successfully');
+   logger.info('Connected to MongoDB');
 })
 .catch((err) => {
    logger.error(err)

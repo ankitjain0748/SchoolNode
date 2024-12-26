@@ -6,6 +6,7 @@ const { validationErrorResponse } = require("../utill/ErrorHandling");
 exports.BankAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
     if (!userId) {
+        logger.warn("User ID is missing. Please log in and try again.")
         return res.status(400).json({
             status: false,
             message: "User ID is missing. Please log in and try again.",
@@ -14,14 +15,12 @@ exports.BankAddOrEdit = catchAsync(async (req, res) => {
     const { BankName, BankNumber, BranchName, IFSC, _id } = req.body;
     
     if (!BankName || !BankNumber || !BranchName || !IFSC) {
-  return validationErrorResponse(res, {
-    BankName: !BankName ? "Bank name is required" : undefined,
-    BankNumber: !BankNumber ? "Bank number is required" : undefined,
-    BranchName: !BranchName ? "Branch name is required" : undefined,
-    IFSC: !IFSC ? "IFSC code is required" : undefined,
-  });
-}
-
+        logger.warn("All fields (BankName, BankNumber, BranchName, IFSC) are required.")
+        return res.status(400).json({
+            status: false,
+            message: "All fields (BankName, BankNumber, BranchName, IFSC) are required.",
+        });
+    }
     try {
         let result;
         if (_id) {

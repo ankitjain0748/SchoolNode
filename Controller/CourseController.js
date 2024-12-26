@@ -10,7 +10,7 @@ const logger = require("../utill/Loggers");
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
-        const {title,  description,  courseVideo,category,discountPrice, duration, price, level,  InstrutorId, courseImage,   lectures,  Onlines } = req.body;
+        const { title, description, courseVideo, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines } = req.body;
         const record = new Course({
             title,
             description,
@@ -32,6 +32,7 @@ exports.CoursePost = async (req, res) => {
                 message: "Course Added Successfully!",
             });
         } else {
+            logger.error("Failed to add course.")
             res.status(400).json({
                 status: false,
                 message: "Failed to add course.",
@@ -57,7 +58,7 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
 
         const Courseget = await Course.find({})
             .sort({ createdAt: -1 })
-            .populate('InstrutorId')  
+            .populate('InstrutorId')
             .skip(skip)
             .limit(limit);
 
@@ -195,7 +196,6 @@ exports.CourseGetId = catchAsync(async (req, res, next) => {
         });
     } catch (error) {
         logger.error(error)
-
         res.status(500).json({
             msg: "Failed to fetch course profile",
             error: error.message,

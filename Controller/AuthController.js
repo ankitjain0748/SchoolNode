@@ -229,18 +229,16 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   try {
     const { email, password, role } = req.body;
-
-    // Check if email and password are provided
     if (!email || !password) {
+      logger.warn("Email and password are required!")
       return res.status(401).json({
         status: false,
         message: "Email and password are required!",
       });
     }
-
-    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
+      logger.warn("Invalid Email or password!")
       return res.status(401).json({
         status: false,
         message: "Invalid Email or password",
@@ -250,6 +248,7 @@ exports.login = catchAsync(async (req, res, next) => {
     // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      logger.warn("Incorrect password!")
       return res.status(400).json({
         status: false,
         message: "Incorrect password. Please try again.",
@@ -258,22 +257,16 @@ exports.login = catchAsync(async (req, res, next) => {
 
     // Check if the user account is inactive
     if (user.user_status === "inactive") {
+      logger.warn("Your account is inactive. Please contact support.")
       return res.status(403).json({
         status: false,
         message: "Your account is inactive. Please contact support.",
       });
     }
 
-    // Check if the user is verified
-    // if (!user.verified) {
-    //   return res.status(403).json({
-    //     status: false,
-    //     message: "Your account is not verified. Please verify it.",
-    //   });
-    // }
-
     // Validate user role
     if (user.role !== role) {
+      logger.warn("Access denied. Only user can log in.")
       return res.status(403).json({
         status: false,
         message: "Access denied. Only user can log in.",
@@ -289,7 +282,6 @@ exports.login = catchAsync(async (req, res, next) => {
     });
   } catch (error) {
     logger.error("Error fetching booking:", error);
-
     return res.status(500).json({
       error,
       message: "An unknown error occurred. Please try later.",

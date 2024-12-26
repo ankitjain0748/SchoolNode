@@ -110,13 +110,6 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
             });
         }
 
-        // const isValidObjectId = mongoose.Types.ObjectId.isValid(Id);
-        // if (!isValidObjectId) {
-        //     return res.status(400).json({
-        //         status: false,
-        //         message: "Invalid Instructor ID format.",
-        //     });
-        // }
 
         const updatedRecord = await Instructor.findByIdAndUpdate(
             _id,

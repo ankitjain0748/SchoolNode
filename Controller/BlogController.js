@@ -7,6 +7,7 @@ exports.createBlog = catchAsync(async (req, res) => {
   try {
     const { title, content, Image, short_content } = req.body;
     if (!title || !content || !short_content) {
+      logger.warn("All fields (title, content, short content) are required.")
       return res.status(400).json({
         status: false,
         message: "All fields (title, content, short content) are required.",
@@ -56,6 +57,7 @@ exports.getBlogById = catchAsync(
     try {
       const { Id } = req.params;
       if (!Id) {
+        logger.warn("Blog ID is required")
         return res.status(400).json({ msg: "Blog ID is required" });
       }
       const blog = await Blog.findById(Id);
@@ -85,7 +87,8 @@ exports.updateBlogById = catchAsync(async (req, res) => {
 
     const { title, content, Image, _id, short_content } = req.body;
     // Validate required fields
-    if (!title || !content || !_id) {
+    if (!title || !content || !_id || !short_content ) {
+      logger.warn("All fields (title, content, Image , short_content) are required.")
       return res.status(400).json({
         status: false,
         message: "All fields (title, content, Image) are required.",
@@ -124,6 +127,7 @@ exports.BlogIdDelete = catchAsync(async (req, res, next) => {
   try {
     const { Id } = req.body;
     if (!Id) {
+      logger.warn("Blog ID is required")
       return res.status(400).json({
         status: false,
         message: 'Blog ID is required.',
@@ -137,7 +141,6 @@ exports.BlogIdDelete = catchAsync(async (req, res, next) => {
     });
   } catch (error) {
     logger.error(error)
-
     res.status(500).json({
       status: false,
       message: 'Internal Server Error. Please try again later.',
