@@ -8,7 +8,7 @@ exports.ContactPost = catchAsync(async (req, res) => {
     try {
         const { email, name, message, subject, role, phone_number } = req.body;
 
-        if(!email || !name || !message || !subject ||!role ||!phone_number){
+        if (!email || !name || !message || !subject || !role || !phone_number) {
             logger.warn("All fields (email, name, message, subject, role, phone_number) are required.")
             return res.status(400).json({
                 status: false,

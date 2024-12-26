@@ -13,7 +13,7 @@ exports.BankAddOrEdit = catchAsync(async (req, res) => {
         });
     }
     const { BankName, BankNumber, BranchName, IFSC, _id } = req.body;
-    
+
     if (!BankName || !BankNumber || !BranchName || !IFSC) {
         logger.warn("All fields (BankName, BankNumber, BranchName, IFSC) are required.")
         return res.status(400).json({

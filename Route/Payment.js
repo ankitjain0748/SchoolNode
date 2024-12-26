@@ -8,7 +8,7 @@ router.post("/verify-payment", verifyToken, paymentAdd);
 
 router.get("/paymentget", PaymentGet);
 
-router.get("/payment_get", PaymentGetCourse)
+router.get("/payment_get",verifyToken ,  PaymentGetCourse)
 
 module.exports = router;
 

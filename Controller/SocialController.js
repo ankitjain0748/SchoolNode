@@ -11,7 +11,7 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
             message: "User ID is missing. Please log in and try again.",
         });
     }
-    
+
     const { website, linkedin, github, facebook, twitter, _id } = req.body;
     if (!website && !linkedin && !github && !facebook && !twitter) {
         logger.warn("Request failed: Missing social fields in the request.");

@@ -13,7 +13,7 @@ const razorpayInstance = new Razorpay({
 exports.createOrder = catchAsync(async (req, res) => {
   const { amount, currency, receipt } = req.body;
   try {
-    if(!amount || !currency || !receipt){
+    if (!amount || !currency || !receipt) {
       logger.warn('Amount, currency, and receipt are required.')
       return res.status(400).json({
         status: false,
@@ -89,18 +89,18 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
   try {
-    const payment = await Payment.find({}).sort({ payment_date: -1 });
+    const payment = await Payment.find({}).populate("UserId").populate("CourseId");
     if (!payment || payment.length === 0) {
       return res.status(204).json({
         status: false,
         message: "No Payment found for this user.",
-        Payment: [],
+        payment: [],
       });
     }
     res.status(200).json({
       status: true,
       message: "Payment retrieved successfully!",
-      Payment: payment,
+      payment: payment,
     });
   } catch (err) {
     logger.error(err);
@@ -116,7 +116,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;
   try {
-    const UserPayments = await Payment.find({ UserId, payment_status :"success" });
+    const UserPayments = await Payment.find({ UserId, payment_status: "success" });
     if (!UserPayments || UserPayments.length === 0) {
       return res.status(204).json({
         status: false,

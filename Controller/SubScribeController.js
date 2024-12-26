@@ -6,7 +6,7 @@ const logger = require("../utill/Loggers");
 exports.SubscribePost = catchAsync(async (req, res) => {
     try {
         const { email } = req.body;
-        const record = new subscribemodal({  email});
+        const record = new subscribemodal({ email });
         const result = await record.save();
         if (result) {
             res.json({
@@ -40,7 +40,7 @@ exports.Subscribeget = catchAsync(async (req, res, next) => {
             .skip(skip)
             .limit(limit);
         const totalPages = Math.ceil(totalsubscribemodal / limit);
-        
+
         res.status(200).json({
             data: {
                 subscribedata: subscribedata,

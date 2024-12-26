@@ -21,3 +21,6 @@
 2024-12-26 16:36:17 [ERROR]: This is an error message
 2024-12-26 16:36:20 [ERROR]: This is an error message
 2024-12-26 16:36:24 [ERROR]: This is an error message
+2024-12-26 22:27:34 [ERROR]: Validation failed: lectures.0.title: Path `title` is required., lectures.1.title: Path `title` is required.
+2024-12-26 22:27:44 [ERROR]: Validation failed: lectures.0.title: Path `title` is required., lectures.1.title: Path `title` is required.
+2024-12-26 22:27:57 [ERROR]: Validation failed: lectures.0.title: Path `title` is required., lectures.1.title: Path `title` is required.

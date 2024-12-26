@@ -10,7 +10,7 @@ const logger = require("../utill/Loggers");
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
-        const { title, description, courseVideo, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines } = req.body;
+        const { title, description, courseVideo, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
         const record = new Course({
             title,
             description,
@@ -22,6 +22,7 @@ exports.CoursePost = async (req, res) => {
             courseImage,
             discountPrice,
             InstrutorId,
+            lectureFiles,
             Onlines: Onlines,
             lectures: lectures, // Include lectures
         });
@@ -90,13 +91,14 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
 exports.CourseUpdate = catchAsync(async (req, res, next) => {
     try {
         const {
-            _id, // Instructor ID
+            _id, // Course ID
             title,
             description,
             category,
             courseVideo,
             duration,
             price,
+            lectureFiles,
             level,
             InstrutorId,
             courseImage,
@@ -108,13 +110,14 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
         if (!_id) {
             return res.status(400).json({
                 status: false,
-                message: "Instructor ID is required.",
+                message: "Course ID is required.",
             });
         }
         const updatedRecord = await Course.findByIdAndUpdate(
             _id,
             {
                 title,
+                lectureFiles,
                 discountPrice,
                 description,
                 category,
@@ -133,21 +136,21 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
         if (!updatedRecord) {
             return res.status(404).json({
                 status: false,
-                message: "Instructor not found!",
+                message: "Course not found!",
             });
         }
 
         res.status(200).json({
             status: true,
             data: updatedRecord,
-            message: "Instructor updated successfully.",
+            message: "Course updated successfully.",
         });
     } catch (error) {
         logger.error(error)
 
         res.status(500).json({
             status: false,
-            message: "An error occurred while updating the instructor. Please try again later.",
+            message: "An error occurred while updating the Course. Please try again later.",
             error: error.message,
         });
     }
@@ -186,13 +189,13 @@ exports.CourseGetId = catchAsync(async (req, res, next) => {
         if (!Id) {
             return res.status(400).json({ msg: "Course ID is required" });
         }
-        const CourseProfile = await Course.findById(Id).populate('InstrutorId'); // Fetch full Instructor data
+        const CourseProfile = await Course.findById(Id).populate('InstrutorId'); // Fetch full Course data
         if (!CourseProfile) {
             return res.status(404).json({ msg: "Course not found" });
         }
         res.status(200).json({
             data: CourseProfile,
-            msg: "Course and Instructor details retrieved successfully",
+            msg: "Course and Course details retrieved successfully",
         });
     } catch (error) {
         logger.error(error)

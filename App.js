@@ -26,7 +26,8 @@ const CourseRoute = require("./Route/Course")
 const PaymentRoute = require("./Route/Payment")
 const BlogRoute = require("./Route/BlogRoute")
 const ReviewRoute = require("./Route/ReviewRoute")
-const RefralRoute = require("./Route/RefralRoute")
+const RefralRoute = require("./Route/RefralRoute");
+const Loggers = require("./utill/Loggers");
 
 
 app.use("/user", userRoute)
@@ -48,4 +49,4 @@ app.get("/", (req, res) => {
     });
 });
 
-app.listen(PORT, () => console.log("Server is running at port : " + PORT));
+app.listen(PORT, () => Loggers.http("Server is running at port : " + PORT));

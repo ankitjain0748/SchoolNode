@@ -87,7 +87,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
 
     const { title, content, Image, _id, short_content } = req.body;
     // Validate required fields
-    if (!title || !content || !_id || !short_content ) {
+    if (!title || !content || !_id || !short_content) {
       logger.warn("All fields (title, content, Image , short_content) are required.")
       return res.status(400).json({
         status: false,

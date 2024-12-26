@@ -2,29 +2,17 @@
 const mongoose = require('mongoose');
 
 // Define schema for lectures (nested in the course schema)
-const SubtitleSchema = new mongoose.Schema({
+
+
+const OnlineTitleSchema = new mongoose.Schema({
   subtitle: {
     type: String,
     trim: true,
-    required: true,
   },
+  desciption: String,
   videoLink: {
     type: String,
     trim: true,
-    required: true,
-  },
-});
-
-const OnlineTitleSchema = new mongoose.Schema({
-  onlinetitle: {
-    type: String,
-    trim: true,
-    required: true,
-  },
-  videoLink: {
-    type: String,
-    trim: true,
-    required: true,
   },
 });
 
@@ -33,20 +21,32 @@ const OnlineSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
-    required: true,
   },
   subtitles: {
     type: [OnlineTitleSchema],
     default: [],
   },
 });
+
+
 const Online = mongoose.model("Online", OnlineSchema);
+
+
+const SubtitleSchema = new mongoose.Schema({
+  subtitle: {
+    type: String,
+    trim: true,
+  },
+  videoLink: {
+    type: String,
+    trim: true,
+  },
+});
 
 const LectureSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
-    required: true,
   },
   subtitles: {
     type: [SubtitleSchema],
@@ -54,6 +54,27 @@ const LectureSchema = new mongoose.Schema({
   },
 });
 const Lecture = mongoose.model("Lecture", LectureSchema);
+
+
+
+const lectureFilesSchema = new mongoose.Schema({
+  subtitle: {
+    type: String,
+    trim: true,
+  },
+});
+
+const lectureFiles = new mongoose.Schema({
+  title: {
+    type: String,
+    trim: true,
+  },
+  subtitles: {
+    type: [lectureFilesSchema],
+    default: [],
+  },
+});
+const lectureFile = mongoose.model("lectureFiles", lectureFiles);
 // Define the schema for a course
 const courseSchema = new mongoose.Schema({
   title: {
@@ -87,15 +108,10 @@ const courseSchema = new mongoose.Schema({
     enum: ['Beginner', 'Intermediate', 'Advanced'],
     default: 'Beginner',
   },
-  lectureFiles: [
-    {
-      name: String, // File name
-      filePath: String, // Path or URL for the lecture file
-    },
-  ],
+  lectureFiles: [lectureFiles],
   Onlines: [OnlineSchema],
-  lectures: [LectureSchema], 
-  
+  lectures: [LectureSchema],
+
   courseImage: {
     type: String, // File path or URL
     default: null,
