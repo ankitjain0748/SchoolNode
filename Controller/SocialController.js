@@ -4,50 +4,39 @@ const logger = require("../utill/Loggers");
 
 exports.SocialAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
-
-    // Validate if userId exists
     if (!userId) {
         return res.status(400).json({
             status: false,
             message: "User ID is missing. Please log in and try again.",
         });
     }
-
     const { website, linkedin, github, facebook, twitter, _id } = req.body;
-
-    // Validate at least one field is provided
     if (!website && !linkedin && !github && !facebook && !twitter) {
         return res.status(400).json({
             status: false,
             message: "At least one social field (website, linkedin, github, facebook, twitter) is required.",
         });
     }
-
     try {
         let result;
-
         if (_id) {
-            // Edit existing record
             result = await SocialSection.findByIdAndUpdate(
                 _id,
                 { website, linkedin, github, facebook, twitter, userId },
                 { new: true, runValidators: true }
             );
-
             if (!result) {
                 return res.status(404).json({
                     status: false,
                     message: "Social record not found.",
                 });
             }
-
             return res.status(200).json({
                 status: true,
                 message: "Social details have been successfully updated!",
                 data: result,
             });
         } else {
-            // Add new record
             const record = new SocialSection({
                 website,
                 linkedin,
@@ -56,9 +45,7 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
                 twitter,
                 userId,
             });
-
             result = await record.save();
-
             return res.status(201).json({
                 status: true,
                 message: "Social details have been successfully added!",

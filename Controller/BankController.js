@@ -1,31 +1,29 @@
 const catchAsync = require("../utill/catchAsync");
 const Bank = require("../Model/Bank");
 const logger = require("../utill/Loggers");
+const { validationErrorResponse } = require("../utill/ErrorHandling");
 
 exports.BankAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
-
-    // Validate if userId exists
     if (!userId) {
         return res.status(400).json({
             status: false,
             message: "User ID is missing. Please log in and try again.",
         });
     }
-
     const { BankName, BankNumber, BranchName, IFSC, _id } = req.body;
-
-    // Validate required fields
+    
     if (!BankName || !BankNumber || !BranchName || !IFSC) {
-        return res.status(400).json({
-            status: false,
-            message: "All fields (BankName, BankNumber, BranchName, IFSC) are required.",
-        });
-    }
+  return validationErrorResponse(res, {
+    BankName: !BankName ? "Bank name is required" : undefined,
+    BankNumber: !BankNumber ? "Bank number is required" : undefined,
+    BranchName: !BranchName ? "Branch name is required" : undefined,
+    IFSC: !IFSC ? "IFSC code is required" : undefined,
+  });
+}
 
     try {
         let result;
-
         if (_id) {
             // Edit existing record
             result = await Bank.findByIdAndUpdate(

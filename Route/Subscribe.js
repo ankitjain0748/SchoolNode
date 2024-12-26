@@ -6,6 +6,4 @@ subscribeget.post("/subscribe-add", SubscribePost)
 
 subscribeget.get("/subscribe-list", Subscribeget)
 
-
-
 module.exports = subscribeget;

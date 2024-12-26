@@ -55,7 +55,6 @@ exports.ReviewGet = catchAsync(async (req, res) => {
         })
     } catch (error) {
         logger.error(error)
-
         console.log("erorr", error);
         res.json({
             status: false,

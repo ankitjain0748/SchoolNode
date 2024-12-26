@@ -15,6 +15,33 @@ const SubtitleSchema = new mongoose.Schema({
   },
 });
 
+const OnlineTitleSchema = new mongoose.Schema({
+  onlinetitle: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  videoLink: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+});
+
+
+const OnlineSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  subtitles: {
+    type: [OnlineTitleSchema],
+    default: [],
+  },
+});
+const Online = mongoose.model("Online", OnlineSchema);
+
 const LectureSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -26,9 +53,7 @@ const LectureSchema = new mongoose.Schema({
     default: [],
   },
 });
-
 const Lecture = mongoose.model("Lecture", LectureSchema);
-
 // Define the schema for a course
 const courseSchema = new mongoose.Schema({
   title: {
@@ -68,7 +93,9 @@ const courseSchema = new mongoose.Schema({
       filePath: String, // Path or URL for the lecture file
     },
   ],
-  lectures: [LectureSchema], // Embedding lectures as a subdocument array
+  Onlines: [OnlineSchema],
+  lectures: [LectureSchema], 
+  
   courseImage: {
     type: String, // File path or URL
     default: null,
@@ -85,7 +112,7 @@ const courseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  courseVideo:String,
+  courseVideo: String,
   InstrutorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Instructor",
@@ -93,12 +120,11 @@ const courseSchema = new mongoose.Schema({
   },
 });
 
-// Middleware to update the updatedAt field on save
 courseSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-// Create and export the Course model
 const Course = mongoose.model('Course', courseSchema);
+
 module.exports = Course;

@@ -2,23 +2,16 @@ const router = require("express").Router();
 const { verifyToken } = require("../Controller/AuthController");
 const { ReviewAdd, ReviewGet, ReviewGetStatus, ReviewDelete, ReviewStatus, ReviewCourse } = require("../Controller/ReviewController");
 
+router.post("/review_add", verifyToken, ReviewAdd);
 
+router.get("/review_get", ReviewGet);
 
+router.get("/reivew_get_status", ReviewGetStatus)
 
-router.post("/review_add" , verifyToken, ReviewAdd);
+router.delete("/reivew_delete/:Id", ReviewDelete)
 
+router.post("/review_status", ReviewStatus)
 
-router.get("/review_get" , ReviewGet);
-
-router.get("/reivew_get_status"  , ReviewGetStatus)
-
-router.delete("/reivew_delete/:Id" , ReviewDelete)
-
-router.post("/review_status"  , ReviewStatus)
-
-router.post("/review_course"  , ReviewCourse)
-
-
-
+router.post("/review_course", ReviewCourse)
 
 module.exports = router;

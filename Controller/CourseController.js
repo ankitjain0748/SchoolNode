@@ -10,21 +10,7 @@ const logger = require("../utill/Loggers");
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
-        const {
-            title,
-            description,
-            courseVideo,
-            category,
-            discountPrice,
-            duration,
-            price,
-            level,
-            InstrutorId,
-            courseImage,
-            lectures,
-        } = req.body;
-
-
+        const {title,  description,  courseVideo,category,discountPrice, duration, price, level,  InstrutorId, courseImage,   lectures,  Onlines } = req.body;
         const record = new Course({
             title,
             description,
@@ -36,11 +22,10 @@ exports.CoursePost = async (req, res) => {
             courseImage,
             discountPrice,
             InstrutorId,
+            Onlines: Onlines,
             lectures: lectures, // Include lectures
         });
-
         const result = await record.save();
-
         if (result) {
             res.json({
                 status: true,
@@ -61,7 +46,6 @@ exports.CoursePost = async (req, res) => {
     }
 };
 
-// Middleware for handling file uploads
 
 
 exports.CourseGet = catchAsync(async (req, res, next) => {
@@ -73,7 +57,7 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
 
         const Courseget = await Course.find({})
             .sort({ createdAt: -1 })
-            .populate('InstrutorId')  // Fetch related fields from Instructor
+            .populate('InstrutorId')  
             .skip(skip)
             .limit(limit);
 
@@ -116,7 +100,8 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             InstrutorId,
             courseImage,
             discountPrice,
-            lectures
+            lectures,
+            Onlines
         } = req.body;
 
         if (!_id) {
@@ -125,15 +110,6 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
                 message: "Instructor ID is required.",
             });
         }
-
-        // const isValidObjectId = mongoose.Types.ObjectId.isValid(Id);
-        // if (!isValidObjectId) {
-        //     return res.status(400).json({
-        //         status: false,
-        //         message: "Invalid Instructor ID format.",
-        //     });
-        // }
-
         const updatedRecord = await Course.findByIdAndUpdate(
             _id,
             {
@@ -147,6 +123,7 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
                 lectures,
                 level,
                 InstrutorId,
+                Onlines,
                 courseImage
             },
             { new: true, runValidators: true }
@@ -204,21 +181,14 @@ exports.CourseIdDelete = catchAsync(async (req, res, next) => {
 
 exports.CourseGetId = catchAsync(async (req, res, next) => {
     try {
-        // Extract ID from request parameters
-        const { Id } = req.params; // Use params if it's part of the URL
-
+        const { Id } = req.params;
         if (!Id) {
             return res.status(400).json({ msg: "Course ID is required" });
         }
-
-        // Fetch the Course and populate Instructor data
         const CourseProfile = await Course.findById(Id).populate('InstrutorId'); // Fetch full Instructor data
-
         if (!CourseProfile) {
             return res.status(404).json({ msg: "Course not found" });
         }
-
-        // Respond with the profile data
         res.status(200).json({
             data: CourseProfile,
             msg: "Course and Instructor details retrieved successfully",

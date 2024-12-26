@@ -34,7 +34,6 @@ exports.ContactPost = catchAsync(async (req, res) => {
     }
 });
 
-
 exports.ContactGet = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;

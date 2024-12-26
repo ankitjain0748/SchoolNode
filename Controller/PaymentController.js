@@ -1,4 +1,5 @@
 const Payment = require("../Model/Payment");
+const Course = require("../Model/Course");
 require('dotenv').config();
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
@@ -15,7 +16,7 @@ exports.createOrder = catchAsync(async (req, res) => {
   const { amount, currency, receipt } = req.body;
   try {
     const options = {
-      amount: amount *100, // Convert to smallest currency unit (e.g., paise)
+      amount: amount * 100, // Convert to smallest currency unit (e.g., paise)
       currency,
       receipt,
       payment_capture: 1, // Auto-capture payments
@@ -50,7 +51,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     console.log("Received request body:", req.body); // Log the request body
     const UserId = req.User._id;
     const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
-    
+
     if (!order_id || !payment_id || !amount || !CourseId) {
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
@@ -99,6 +100,36 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
       status: true,
       message: "Payment retrieved successfully!",
       Payment: payment,
+    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({
+      status: false,
+      message: "An unknown error occurred. Please try again later.",
+      error: err.message,
+    });
+  }
+});
+
+
+exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
+  const UserId = req.User._id;
+  try {
+    const UserPayments = await Payment.find({ UserId, payment_status :"success" });
+    if (!UserPayments || UserPayments.length === 0) {
+      return res.status(204).json({
+        status: false,
+        message: "No Payment found for this user.",
+        Payments: [],
+      });
+    }
+    const CourseIds = UserPayments.map((payment) => payment.CourseId);
+    const courses = await Course.find({ _id: { $in: CourseIds } });
+    res.status(200).json({
+      status: true,
+      message: "Courses retrieved successfully!",
+      Payments: UserPayments,
+      Courses: courses,
     });
   } catch (err) {
     logger.error(err);

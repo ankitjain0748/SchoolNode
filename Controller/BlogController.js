@@ -6,12 +6,13 @@ const catchAsync = require('../utill/catchAsync');
 exports.createBlog = catchAsync(async (req, res) => {
   try {
     const { title, content, Image, short_content } = req.body;
-    if (!title || !content) {
+    if (!title || !content || !short_content) {
       return res.status(400).json({
         status: false,
-        message: "All fields (title, content, Image) are required.",
+        message: "All fields (title, content, short content) are required.",
       });
     }
+
     const newBlog = new Blog({
       title,
       content,
@@ -82,11 +83,7 @@ exports.getBlogById = catchAsync(
 exports.updateBlogById = catchAsync(async (req, res) => {
   try {
 
-
-
-
     const { title, content, Image, _id, short_content } = req.body;
-
     // Validate required fields
     if (!title || !content || !_id) {
       return res.status(400).json({
