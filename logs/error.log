@@ -24,3 +24,7 @@
 2024-12-26 22:27:34 [ERROR]: Validation failed: lectures.0.title: Path `title` is required., lectures.1.title: Path `title` is required.
 2024-12-26 22:27:44 [ERROR]: Validation failed: lectures.0.title: Path `title` is required., lectures.1.title: Path `title` is required.
 2024-12-26 22:27:57 [ERROR]: Validation failed: lectures.0.title: Path `title` is required., lectures.1.title: Path `title` is required.
+2024-12-28 16:19:28 [ERROR]: querySrv ETIMEOUT _mongodb._tcp.cluster0.g69we.mongodb.net
+2024-12-28 16:19:42 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2024-12-28 20:02:19 [ERROR]: read ECONNRESET
+2024-12-28 20:52:30 [ERROR]: Cast to ObjectId failed for value "undefined" (type string) at path "_id" for model "Course"

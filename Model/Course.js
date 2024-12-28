@@ -4,36 +4,12 @@ const mongoose = require('mongoose');
 // Define schema for lectures (nested in the course schema)
 
 
-const OnlineTitleSchema = new mongoose.Schema({
-  subtitle: {
-    type: String,
-    trim: true,
-  },
-  desciption: String,
-  videoLink: {
-    type: String,
-    trim: true,
-  },
-});
-
-
-const OnlineSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    trim: true,
-  },
-  subtitles: {
-    type: [OnlineTitleSchema],
-    default: [],
-  },
-});
-
-
-const Online = mongoose.model("Online", OnlineSchema);
-
-
 const SubtitleSchema = new mongoose.Schema({
   subtitle: {
+    type: String,
+    trim: true,
+  },
+  subcontent: {
     type: String,
     trim: true,
   },
@@ -109,7 +85,8 @@ const courseSchema = new mongoose.Schema({
     default: 'Beginner',
   },
   lectureFiles: [lectureFiles],
-  Onlines: [OnlineSchema],
+  // Onlines: [OnlineSchema],
+
   lectures: [LectureSchema],
 
   courseImage: {

@@ -128,7 +128,7 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
     }
     const CourseIds = UserPayments.map((payment) => payment.CourseId);
     console.log("CourseIds",CourseIds)
-    const courses = await Course.find({ _id: { $in: CourseIds } });
+    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId");
     console.log("courses",courses)
     res.status(200).json({
       status: true,

@@ -181,3 +181,37 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         });
     }
 });
+
+
+exports.ReviewCourseUser = catchAsync(async (req, res) => {
+    try {
+
+        const userId = req?.User?._id
+        if (!userId) {
+            return res.status(400).json({
+                status: false,
+                message: "All fields (name, email, message, subject, courseId) are required.",
+            });
+        }
+
+        const data = await Review.find({ userId }).populate("userId")
+
+        if (!data) {
+            return res.status(404).json({
+                status: false,
+                message: "No review found for the provided courseId.",
+            });
+        }
+        res.status(201).json({
+            status: true,
+            data: data,
+            message: "Review fetched successfully for the provided courseId.",
+        });
+    } catch (error) {
+        console.error("Error adding review:", error);
+        res.status(500).json({
+            status: false,
+            message: "Failed to add review. Please try again later.",
+        });
+    }
+});
