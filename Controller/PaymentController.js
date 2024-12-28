@@ -118,7 +118,7 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   console.log("UserId",UserId)
   try {
     const UserPayments = await Payment.find({ UserId, payment_status: "success" });
-    console.log("UserPayments")
+    console.log("UserPayments", UserPayments)
     if (!UserPayments || UserPayments.length === 0) {
       return res.status(204).json({
         status: false,
@@ -127,7 +127,9 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
       });
     }
     const CourseIds = UserPayments.map((payment) => payment.CourseId);
+    console.log("CourseIds",CourseIds)
     const courses = await Course.find({ _id: { $in: CourseIds } });
+    console.log("courses",courses)
     res.status(200).json({
       status: true,
       message: "Courses retrieved successfully!",
