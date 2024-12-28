@@ -115,8 +115,10 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
 
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;
+  console.log("UserId",UserId)
   try {
     const UserPayments = await Payment.find({ UserId, payment_status: "success" });
+    console.log("UserPayments")
     if (!UserPayments || UserPayments.length === 0) {
       return res.status(204).json({
         status: false,
