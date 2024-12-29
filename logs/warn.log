@@ -30,3 +30,7 @@
 2024-12-28 22:35:27 [WARN]: All fields (name, email, message, subject, courseId) are required.
 2024-12-28 22:35:27 [WARN]: All fields (name, email, message, subject, courseId) are required.
 2024-12-28 22:35:44 [WARN]: All fields (name, email, message, subject, courseId) are required.
+2024-12-29 10:09:47 [WARN]: Incorrect password!
+2024-12-29 10:24:14 [WARN]: Invalid Email or password!
+2024-12-29 10:24:28 [WARN]: Invalid Email or password!
+2024-12-29 10:24:52 [WARN]: Incorrect password!

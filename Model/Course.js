@@ -58,6 +58,10 @@ const courseSchema = new mongoose.Schema({
     required: [true, 'Course title is required'],
     trim: true,
   },
+  sub_content: {
+    type: String,
+    trim: true,
+  },
   description: {
     type: String,
     required: [true, 'Course description is required'],

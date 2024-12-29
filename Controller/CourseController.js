@@ -11,7 +11,7 @@ const logger = require("../utill/Loggers");
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
-        const { title, description, courseVideo, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
+        const { title, description, courseVideo, sub_content ,category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
         const record = new Course({
             title,
             description,
@@ -20,6 +20,7 @@ exports.CoursePost = async (req, res) => {
             price,
             courseVideo,
             level,
+            sub_content,
             courseImage,
             discountPrice,
             InstrutorId,
@@ -105,7 +106,8 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             courseImage,
             discountPrice,
             lectures,
-            Onlines
+            Onlines,
+            sub_content
         } = req.body;
 
         if (!_id) {
@@ -118,6 +120,7 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             _id,
             {
                 title,
+                sub_content,
                 lectureFiles,
                 discountPrice,
                 description,
@@ -241,7 +244,7 @@ exports.onlinePost = async (req, res) => {
 exports.OnlineGet = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
         const totalCourse = await Online.countDocuments();
 
@@ -275,7 +278,7 @@ exports.OnlineGet = catchAsync(async (req, res, next) => {
 
 
 
-exports.onlineupdate = catchAsync(async (req, res, next) => {
+exports.onlineupdate = catchAsync(async (req, res) => {
     try {
         const {
             _id, // Course ID
