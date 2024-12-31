@@ -151,36 +151,40 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
     try {
         const { courseId } = req.body;
 
+        // Validate courseId
         if (!courseId) {
             return res.status(400).json({
                 status: false,
-                message: "All fields (name, email, message, subject, courseId) are required.",
+                message: "The field 'courseId' is required.",
             });
         }
 
-        const data = await Review.findOne({ courseId })
-            .populate("courseId")
-            .populate("userId");
-
-        if (!data) {
+        // Fetch reviews with populated references
+        console.log("reviews" ,courseId )
+        const reviews = await Review.find({ courseId, status: "read" })
+console.log("reviews", reviews)
+        if (!reviews.length) {
             return res.status(404).json({
                 status: false,
-                message: "No review found for the provided courseId.",
+                message: "No reviews found for the provided courseId.",
             });
         }
-        res.status(201).json({
+
+        // Respond with fetched data
+        return res.status(200).json({
             status: true,
-            data: data,
-            message: "Review fetched successfully for the provided courseId.",
+            data: reviews,
+            message: "Reviews fetched successfully.",
         });
     } catch (error) {
-        console.error("Error adding review:", error);
-        res.status(500).json({
+        console.error("Error fetching reviews:", error);
+        return res.status(500).json({
             status: false,
-            message: "Failed to add review. Please try again later.",
+            message: "An error occurred while fetching reviews. Please try again later.",
         });
     }
 });
+
 
 
 exports.ReviewCourseUser = catchAsync(async (req, res) => {
