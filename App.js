@@ -44,7 +44,7 @@ const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
 
 app.get("/", (req, res) => {
     res.json({
-        msg: 'Okay',
+        msg: 'Hello Data ',
         status: 200,
     });
 });
