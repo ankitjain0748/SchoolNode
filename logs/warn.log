@@ -34,3 +34,14 @@
 2024-12-29 10:24:14 [WARN]: Invalid Email or password!
 2024-12-29 10:24:28 [WARN]: Invalid Email or password!
 2024-12-29 10:24:52 [WARN]: Incorrect password!
+2025-01-02 23:16:42 [WARN]: Request failed: Missing social fields in the request.
+2025-01-02 23:29:51 [WARN]: Request failed: Missing social fields in the request.
+2025-01-02 23:34:52 [WARN]: Request failed: Missing social fields in the request.
+2025-01-02 23:38:00 [WARN]: Request failed: Missing social fields in the request.
+2025-01-02 23:43:27 [WARN]: Request failed: Missing social fields in the request.
+2025-01-02 23:48:23 [WARN]: All fields are required.
+2025-01-02 23:48:27 [WARN]: All fields are required.
+2025-01-02 23:48:33 [WARN]: All fields are required.
+2025-01-02 23:49:09 [WARN]: All fields are required.
+2025-01-02 23:49:37 [WARN]: All fields are required.
+2025-01-02 23:50:10 [WARN]: All fields are required.

@@ -10,27 +10,22 @@ const socialSectionSchema = new mongoose.Schema(
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: [true, "User ID is required."],
         },
         linkedin: {
             type: String,
             trim: true,
-            required: [true, "LinkedIn profile is required."],
         },
         facebook: {
             type: String,
             trim: true,
-            required: [true, "Facebook profile is required."],
         },
         github: {
             type: String,
             trim: true,
-            required: [true, "GitHub profile is required."],
         },
         twitter: {
             type: String,
             trim: true,
-            required: [true, "Twitter profile is required."],
         },
         created_at: {
             type: Date,

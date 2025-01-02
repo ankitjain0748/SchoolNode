@@ -4,6 +4,7 @@ const logger = require("../utill/Loggers");
 
 exports.SocialAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
+    console.log("userId",userId)
     if (!userId) {
         logger.warn("Request failed: Missing user ID in the request.");
         return res.status(400).json({
@@ -11,8 +12,8 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
             message: "User ID is missing. Please log in and try again.",
         });
     }
-
-    const { website, linkedin, github, facebook, twitter, _id } = req.body;
+console.log("req.body" ,req.body)
+    const { website, linkedin, github, facebook, twitter , _id } = req.body;
     if (!website && !linkedin && !github && !facebook && !twitter) {
         logger.warn("Request failed: Missing social fields in the request.");
         return res.status(400).json({

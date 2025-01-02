@@ -28,3 +28,5 @@
 2024-12-28 16:19:42 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2024-12-28 20:02:19 [ERROR]: read ECONNRESET
 2024-12-28 20:52:30 [ERROR]: Cast to ObjectId failed for value "undefined" (type string) at path "_id" for model "Course"
+2025-01-02 23:17:34 [ERROR]: SocialSection validation failed: linkedin: LinkedIn profile is required.
+2025-01-02 23:32:42 [ERROR]: Social record not found.
