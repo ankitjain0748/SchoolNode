@@ -160,9 +160,9 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         }
 
         // Fetch reviews with populated references
-        console.log("reviews" ,courseId )
+        console.log("reviews", courseId)
         const reviews = await Review.find({ courseId, status: "read" })
-console.log("reviews", reviews)
+        console.log("reviews", reviews)
         if (!reviews.length) {
             return res.status(404).json({
                 status: false,
