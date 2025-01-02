@@ -14,6 +14,6 @@ router.post("/review_status", ReviewStatus)
 
 router.post("/review_course", ReviewCourse)
 
-router.get("/reviewdata" , verifyToken, ReviewCourseUser)
+router.get("/reviewdata", verifyToken, ReviewCourseUser)
 
 module.exports = router;
