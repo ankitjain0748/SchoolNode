@@ -39,3 +39,4 @@
 2025-01-03 20:58:03 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
 2025-01-03 20:58:09 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
 2025-01-03 21:00:13 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-03 22:21:52 [ERROR]: Refral validation failed: referral_code: Path `referral_code` is required.

@@ -14,7 +14,7 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
             });
         };
         const referral = new RefralModel({
-            referralCode, referred_by, referred_to, userId
+            referral_code :  referralCode, referred_by, referred_to, userId
         });
         const data = await referral.save();
         res.json({
@@ -35,8 +35,9 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 
 
 exports.RefralCodeGet = catchAsync(async (req, res) => {
+    const userId = req.User?._id
     try {
-        const referrals = await RefralModel.find({});
+        const referrals = await RefralModel.findOne({userId});
         if (!referrals) {
             logger.warn("Refrals not found")
             return res.status(204).json({
