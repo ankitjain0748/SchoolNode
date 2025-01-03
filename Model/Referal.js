@@ -7,15 +7,17 @@ const RefralSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    userId : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
     referred_by: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
     },
     referred_to: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
     },
     status: {
         type: String,

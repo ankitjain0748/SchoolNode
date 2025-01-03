@@ -1,4 +1,4 @@
-const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete } = require("../Controller/AuthController");
+const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin } = require("../Controller/AuthController");
 const { BankAddOrEdit } = require("../Controller/BankController");
 const { ProfileData, ProfileDataId, profileAddOrUpdate } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
@@ -7,6 +7,9 @@ const userRoute = require("express").Router();
 userRoute.post("/signup", signup)
 
 userRoute.post("/login", login)
+
+userRoute.post("/adminlogin", adminlogin)
+
 
 userRoute.get("/profile", profile)
 

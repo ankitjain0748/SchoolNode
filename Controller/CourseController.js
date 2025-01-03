@@ -374,3 +374,52 @@ exports.OnlineGetId = catchAsync(async (req, res, next) => {
         });
     }
 });
+
+
+exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
+    try {
+        const {
+            _id, // Course ID
+            firstuser ,
+            seconduser ,
+            directuser ,
+        } = req.body;
+
+        if (!_id) {
+            return res.status(400).json({
+                status: false,
+                message: "Course ID is required.",
+            });
+        }
+        const updatedRecord = await Course.findByIdAndUpdate(
+            _id,
+            {
+                firstuser ,
+            seconduser ,
+            directuser 
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedRecord) {
+            return res.status(404).json({
+                status: false,
+                message: "Course not found!",
+            });
+        }
+
+        res.status(200).json({
+            status: true,
+            data: updatedRecord,
+            message: "Course updated successfully.",
+        });
+    } catch (error) {
+        logger.error(error)
+
+        res.status(500).json({
+            status: false,
+            message: "An error occurred while updating the Course. Please try again later.",
+            error: error.message,
+        });
+    }
+});

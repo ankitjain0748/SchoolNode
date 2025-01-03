@@ -3,9 +3,10 @@ const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
 
 exports.RefralCodeAdd = catchAsync(async (req, res) => {
+    const userId = req?.User?._id;
     try {
         const { referralCode, referred_by, referred_to } = req.body;
-        if (!referralCode || !referred_by || !referred_to) {
+        if (!referralCode ) {
             logger.warn("All fields are required")
             return res.status(400).json({
                 message: "All fields are required",
@@ -13,12 +14,13 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
             });
         };
         const referral = new RefralModel({
-            referralCode, referred_by, referred_to
+            referralCode, referred_by, referred_to, userId
         });
-        await referral.save();
+        const data = await referral.save();
         res.json({
             message: "Refral  Save",
-            status: true
+            status: true,
+            data: data
         })
     } catch (error) {
         logger.error(error);

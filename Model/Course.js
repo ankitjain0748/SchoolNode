@@ -101,6 +101,20 @@ const courseSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  firstuser: {
+    type: Number,
+    default: 0
+  },
+  seconduser: {
+    type: Number,
+    default: 0
+
+  },
+  directuser: {
+    type: Number,
+    default: 0
+
+  },
   createdAt: {
     type: Date,
     default: Date.now,
