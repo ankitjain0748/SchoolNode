@@ -131,7 +131,6 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
             });
         }
 
-        console.log("data", data); // Correct console.log
         res.json({
             status: true,
             message: "Review Status Updated Successfully",
@@ -160,9 +159,7 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         }
 
         // Fetch reviews with populated references
-        console.log("reviews", courseId)
         const reviews = await Review.find({ courseId, status: "read" })
-        console.log("reviews", reviews)
         if (!reviews.length) {
             return res.status(404).json({
                 status: false,

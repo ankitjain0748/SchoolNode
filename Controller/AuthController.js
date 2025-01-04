@@ -9,6 +9,7 @@ const { validationErrorResponse, errorResponse, successResponse } = require("../
 const VerifyAccount = require("../Mail/VerifyAccount");
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
+const { default: mongoose } = require("mongoose");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -74,36 +75,20 @@ const signEmail = async (id) => {
 
 exports.signup = catchAsync(async (req, res) => {
   try {
-    const {
-      email,
-      password,
-      name,
-      phone_number,
-      refral_code,
-    } = req.body;
-
-    // Check if required fields are provided
-    // if (!password || !phone_number || !username || !email || !address || !country || !city) {
-    //   return res.status(401).json({
-    //     status: false,
-    //     message: 'All fields are required',
-    //   });
-    // }
-
-    // Check if user already exists
-    // Check if user already exists
+    const { email, password, name, phone_number, referred_by } = req.body;
+    // Check for existing user by email or phone number
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
     if (existingUser) {
       const errors = {};
       if (existingUser.email === email) {
-        errors.email = 'Email is already in use!';
+        errors.email = "Email is already in use!";
       }
       if (existingUser.phone_number === phone_number) {
-        errors.phone_number = 'Phone number is already in use!';
+        errors.phone_number = "Phone number is already in use!";
       }
       return res.status(400).json({
         status: false,
-        message: 'Email or phone number already exists',
+        message: "Email or phone number already exists",
         errors,
       });
     }
@@ -111,49 +96,88 @@ exports.signup = catchAsync(async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create new user record
-    const record = new User({
+    // Validate and handle referral
+    let referrer = null;
+    if (referred_by) {
+      referrer = await User.findOne({ referral_code: referred_by });
+      if (!referrer) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid referral code",
+        });
+      }
+    }
+    let referrers = null;
+    if (referrer?.referred_by) {
+      try {
+        // Ensure referred_by is treated as an ObjectId
+        const referrerObjectId = new mongoose.Types.ObjectId(referrer.referred_by);
+        referrers = await User.findOne({ _id: referrerObjectId });
+        if (!referrers) {
+          return res.status(400).json({
+            status: false,
+            message: "Invalid second referral code",
+          });
+        }
+      } catch (error) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid ObjectId format",
+        });
+      }
+    }
+    let referrerdata = null;
+    if (referrers?.referred_by) {
+      const referrerObjectId = new mongoose.Types.ObjectId(referrers.referred_by);
+      referrerdata = await User?.findOne({ _id: referrerObjectId });
+      if (!referrerdata) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid referral code",
+        });
+      }
+    }
+    const newUser = new User({
       email,
       password: hashedPassword,
       name,
       phone_number,
-      refral_code,
+      referred_by: referrer?._id || null,
+      referred_second: referrerdata?._id || null,
+      referred_first: referrers?._id || null
     });
 
-    const result = await record.save();
+    const result = await newUser.save();
 
-    // if (result) {
-    //   const id = record._id;
-    //   const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-    //     expiresIn: "24h",
-    //   });
-    //   const resetLink = `https://user-event.vercel.app/verify/${token}`;
-    //   const customerUser = record.username;
 
-    //   let transporter = nodemailer.createTransport({
-    //     host: "smtp.gmail.com",
-    //     port: 587,
-    //     secure: false,
-    //     auth: {
-    //       user: process.env.EMAIL_USER,
-    //       pass: process.env.EMAIL_PASS,
-    //     },
-    //   });
 
-    //   const emailHtml = VerifyAccount(resetLink, customerUser);
-    //   await transporter.sendMail({
-    //     from: process.env.EMAIL_USER,
-    //     to: result.email,
-    //     subject: "Verify your Account",
-    //     html: emailHtml,
-    //   });
+    if (referrer) {
+      await User.findByIdAndUpdate(referrer._id, {
+        $addToSet: { referrals: result._id },
+      });
+    }
 
-    return successResponse(res, "You have been registered successfully !!", 201);
+    // Optional: Update referrer data with the new referral
+    if (referrers) {
+      await User.findByIdAndUpdate(referrers._id, {
+        $addToSet: { referrals: result._id },
+      });
+    }
+
+    if (referrerdata) {
+      await User.findByIdAndUpdate(referrerdata._id, {
+        $addToSet: { referrals: result._id },
+      });
+    }
+    return successResponse(res, "You have been registered successfully!", 201, {
+      userId: result._id,
+    });
   } catch (error) {
-    logger.error("Error fetching booking:", error);
+    logger.error("Error during signup:", error);
     return errorResponse(res, error.message || "Internal Server Error", 500);
   }
 });
+
 
 
 exports.adminlogin = catchAsync(async (req, res, next) => {
@@ -370,7 +394,6 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
 exports.resetpassword = catchAsync(async (req, res) => {
   try {
     const email = req?.User?._id;
-    console.log("email", email)
     const { newPassword } = req.body;
     const user = await User.findById({ _id: email });
     if (!user) {

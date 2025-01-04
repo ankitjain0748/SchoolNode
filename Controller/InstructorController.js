@@ -185,8 +185,6 @@ exports.InstructorGetId = catchAsync(async (req, res, next) => {
     try {
         // Extract ID from request parameters
         const { Id } = req.params; // Use params if it's part of the URL
-
-        console.log("Id:", Id);
         if (!Id) {
             return res.status(400).json({ msg: "Instructor ID is required" });
         }

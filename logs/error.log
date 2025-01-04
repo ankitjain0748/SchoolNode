@@ -40,3 +40,20 @@
 2025-01-03 20:58:09 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
 2025-01-03 21:00:13 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-01-03 22:21:52 [ERROR]: Refral validation failed: referral_code: Path `referral_code` is required.
+2025-01-04 23:02:44 [ERROR]: Error during signup: referralCode is not defined
+2025-01-04 23:32:34 [ERROR]: Error during signup: Cannot access 'result' before initialization
+2025-01-04 23:32:44 [ERROR]: Error during signup: Cannot access 'result' before initialization
+2025-01-04 23:35:07 [ERROR]: Error during signup: Cannot access 'result' before initialization
+2025-01-04 23:35:55 [ERROR]: Error during signup: referred_first is not defined
+2025-01-04 23:37:49 [ERROR]: Error during signup: referrer.findOne is not a function
+2025-01-04 23:41:20 [ERROR]: Error during signup: referrer.findOne is not a function
+2025-01-04 23:42:44 [ERROR]: Error during signup: Cannot read properties of null (reading '_id')
+2025-01-04 23:45:30 [ERROR]: Error during signup: referrer.findOne is not a function
+2025-01-04 23:47:17 [ERROR]: Error during signup: referrer.findOne is not a function
+2025-01-05 00:06:37 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
+2025-01-05 00:06:46 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
+2025-01-05 00:07:00 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
+2025-01-05 00:07:16 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
+2025-01-05 00:07:40 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
+2025-01-05 00:08:18 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
+2025-01-05 00:08:24 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'

@@ -49,7 +49,6 @@ exports.createOrder = catchAsync(async (req, res) => {
 
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
-    console.log("Received request body:", req.body); // Log the request body
     const UserId = req.User._id;
     const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
 
@@ -115,10 +114,8 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
 
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;
-  console.log("UserId", UserId)
   try {
     const UserPayments = await Payment.find({ UserId, payment_status: "success" }).populate("UserId").populate("CourseId");
-    console.log("UserPayments", UserPayments)
     if (!UserPayments || UserPayments.length === 0) {
       return res.status(204).json({
         status: false,
@@ -127,9 +124,7 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
       });
     }
     const CourseIds = UserPayments.map((payment) => payment.CourseId);
-    console.log("CourseIds", CourseIds)
     const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId");
-    console.log("courses", courses)
     res.status(200).json({
       status: true,
       message: "Courses retrieved successfully!",

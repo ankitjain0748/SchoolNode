@@ -14,8 +14,17 @@ const userSchema = mongoose.Schema({
         required: [true, "Email is required."],
         unique: true,
     },
-    refral_code: {
+    referral_code: {
         type: String,
+    },
+    referred_by :{
+        type : String
+    },
+    referred_first :{
+        type: String
+    },
+    referred_second :{
+        type: String
     },
     country_code: {
         type: String,
