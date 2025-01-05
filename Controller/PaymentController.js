@@ -57,11 +57,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       logger.warn("Missing required fields");
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
-
-    // Determine the status of the payment
     const status = payment_status === "failed" ? "failed" : "success";
-
-    // Create and save the payment record
     const payment = new Payment({
       order_id,
       currency,
@@ -75,7 +71,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
     await payment.save();
     let _id = UserId;
-    // If payment is successful, update the User record with the CourseId
     if (payment_status === "success") {
 
       const userUpdate = await User.findByIdAndUpdate(
@@ -83,11 +78,10 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         {
           $set: { CourseId: CourseId },
         },
-        { new: true } // Return updated document
+        { new: true } 
       );
     }
 
-    // Return appropriate response based on payment status
     if (payment_status === "failed") {
       return res.status(200).json({ status: "failed", message: "Payment failed and saved successfully" });
     } else {
