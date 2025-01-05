@@ -60,6 +60,7 @@ const userSchema = mongoose.Schema({
         ref: "Course",
     },
     payment_data: String,
+    payment_key :String ,  
 });
 
 const User = mongoose.model("User", userSchema);
