@@ -4,6 +4,7 @@ require('dotenv').config();
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
 const logger = require("../utill/Loggers");
+const User = require("../Model/User");
 
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -53,36 +54,55 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
 
     if (!order_id || !payment_id || !amount || !CourseId) {
-      logger.warn("Missing required fields")
+      logger.warn("Missing required fields");
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
-    const status = payment_status === 'failed' ? 'failed' : 'success';
+
+    // Determine the status of the payment
+    const status = payment_status === "failed" ? "failed" : "success";
+
+    // Create and save the payment record
     const payment = new Payment({
-      order_id: order_id,
-      currency: currency,
-      payment_id: payment_id,
-      amount: amount,
-      payment_status: payment_status,
-      UserId: UserId,
-      status: status,
-      CourseId: CourseId
+      order_id,
+      currency,
+      payment_id,
+      amount,
+      payment_status,
+      UserId,
+      status,
+      CourseId,
     });
 
     await payment.save();
-    if (payment_status === 'failed') {
-      return res.status(200).json({ status: 'failed', message: 'Payment failed and saved successfully' });
+    let _id = UserId;
+    // If payment is successful, update the User record with the CourseId
+    if (payment_status === "success") {
+
+      const userUpdate = await User.findByIdAndUpdate(
+        _id,
+        {
+          $set: { CourseId: CourseId },
+        },
+        { new: true } // Return updated document
+      );
+    }
+
+    // Return appropriate response based on payment status
+    if (payment_status === "failed") {
+      return res.status(200).json({ status: "failed", message: "Payment failed and saved successfully" });
     } else {
-      return res.status(200).json({ status: 'success', message: 'Payment verified and saved successfully' });
+      return res.status(200).json({ status: "success", message: "Payment verified and saved successfully" });
     }
   } catch (error) {
     logger.error(error);
-    res.json({
+    res.status(500).json({
       status: false,
       message: "An error occurred while saving payment.",
       error: error.message,
     });
   }
 });
+
 
 
 

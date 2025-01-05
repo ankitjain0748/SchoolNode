@@ -57,3 +57,9 @@
 2025-01-05 00:07:40 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
 2025-01-05 00:08:18 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
 2025-01-05 00:08:24 [ERROR]: Error during signup: Class constructor ObjectId cannot be invoked without 'new'
+2025-01-05 22:02:42 [ERROR]: Error fetching referral and course data: Cannot access 'Course' before initialization
+2025-01-05 22:15:35 [ERROR]: User is not defined
+2025-01-05 22:23:32 [ERROR]: userId is not defined
+2025-01-05 22:26:11 [ERROR]: Error fetching referral and course data: coursedata is not defined
+2025-01-05 22:54:29 [ERROR]: Error fetching referral and course data: Payment is not defined
+2025-01-05 22:55:50 [ERROR]: Error fetching referral and course data: Payment.findone is not a function

@@ -17,13 +17,13 @@ const userSchema = mongoose.Schema({
     referral_code: {
         type: String,
     },
-    referred_by :{
-        type : String
-    },
-    referred_first :{
+    referred_by: {
         type: String
     },
-    referred_second :{
+    referred_first: {
+        type: String
+    },
+    referred_second: {
         type: String
     },
     country_code: {
@@ -54,7 +54,12 @@ const userSchema = mongoose.Schema({
     created_at: {
         type: Date,
         default: Date.now
-    }
+    },
+    CourseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+    },
+    payment_data: String,
 });
 
 const User = mongoose.model("User", userSchema);

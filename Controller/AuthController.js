@@ -563,10 +563,6 @@ exports.profilegettoken = catchAsync(async (req, res, next) => {
 
     // Fetch additional profile data by userId
     const profileData = await ProfileData.findOne({ userId });
-    if (!profileData) {
-      return res.status(404).json({ msg: "Profile data not found" });
-    }
-
     // Respond with data
     res.status(200).json({
       data: userProfile,
