@@ -65,6 +65,9 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?._id;
 
+    console.log("Received userId:", userId);
+
+    // Check if userId exists
     if (!userId) {
         return res.status(400).json({
             msg: "User ID is missing",
@@ -73,8 +76,8 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
     }
 
     try {
-        // Fetch the main user data
-        const user = await User.findById(userId).populate("CourseId"); // Populate CourseId for the main user
+        // Fetch the main user with populated CourseId
+        const user = await User.findById(userId).populate("CourseId");
         if (!user) {
             return res.status(404).json({
                 msg: "User not found",
@@ -82,40 +85,92 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             });
         }
 
-        const { referred_by, referred_first, referred_second } = user;
-
-        const referredUsers = await User.find({
-            _id: { $in: [referred_by, referred_first, referred_second] },
+        // Fetch referral data
+        const referralData = await User.find({
+            $or: [
+                { referred_by: userId },
+                { referred_first: userId },
+                { referred_second: userId }
+            ]
         });
 
-        const mergedData = await Promise.all(
-            referredUsers.map(async (user) => {
-                const courseDetails = user.CourseId ? await Course.findById(user.CourseId) : null;
-                const paymentDetails = await Payment.findOne({ UserId: user._id });
+        console.log("Referral Data:", referralData);
 
-                return {
-                    ...user.toObject(),
-                    courseName: courseDetails,
-                    payments: paymentDetails,
-                };
-            })
-        );
-
-        res.json({
-            msg: "Referral and Course Data",
+        // Send the response
+        return res.status(200).json({
+            msg: "Referral data retrieved successfully",
             status: true,
-            user,
-            referredUsers: mergedData,
+            data: referralData,
+            user : user
         });
     } catch (error) {
-        logger.error("Error fetching referral and course data:", error);
-        res.status(500).json({
-            msg: "Failed to fetch referral and course data",
+        console.error("Error fetching referral data:", error);
+        return res.status(500).json({
+            msg: "An error occurred while fetching referral data",
             status: false,
-            error: error.message,
         });
     }
 });
+
+
+
+
+// exports.RefralCodeGet = catchAsync(async (req, res) => {
+//     const userId = req.User?._id;
+
+//     if (!userId) {
+//         return res.status(400).json({
+//             msg: "User ID is missing",
+//             status: false,
+//         });
+//     }
+
+//     try {
+//         // Fetch the main user data
+//         const user = await User.findById(userId).populate("CourseId"); // Populate CourseId for the main user
+//         if (!user) {
+//             return res.status(404).json({
+//                 msg: "User not found",
+//                 status: false,
+//             });
+//         }
+
+//         const Users = await User.find(userId);
+//         console.log("userId" , Users)
+//         const { referred_by, referred_first, referred_second } = user;
+
+//         const referredUsers = await User.find({
+//             _id: { $in: [referred_by, referred_first, referred_second] },
+//         });
+
+//         const mergedData = await Promise.all(
+//             referredUsers.map(async (user) => {
+//                 const courseDetails = user.CourseId ? await Course.findById(user.CourseId) : null;
+//                 const paymentDetails = await Payment.findOne({ UserId: user._id });
+
+//                 return {
+//                     ...user.toObject(),
+//                     courseName: courseDetails,
+//                     payments: paymentDetails,
+//                 };
+//             })
+//         );
+
+//         res.json({
+//             msg: "Referral and Course Data",
+//             status: true,
+//             user,
+//             referredUsers: mergedData,
+//         });
+//     } catch (error) {
+//         logger.error("Error fetching referral and course data:", error);
+//         res.status(500).json({
+//             msg: "Failed to fetch referral and course data",
+//             status: false,
+//             error: error.message,
+//         });
+//     }
+// });
 
 
 

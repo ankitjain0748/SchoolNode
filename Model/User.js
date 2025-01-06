@@ -61,6 +61,9 @@ const userSchema = mongoose.Schema({
     },
     payment_data: String,
     payment_key :String ,  
+    referred_user_pay : Number , 
+    first_user_pay :Number , 
+    second_user_pay :Number , 
 });
 
 const User = mongoose.model("User", userSchema);

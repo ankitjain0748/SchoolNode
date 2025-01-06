@@ -48,6 +48,56 @@ exports.createOrder = catchAsync(async (req, res) => {
 });
 
 
+// exports.paymentAdd = catchAsync(async (req, res) => {
+//   try {
+//     const UserId = req.User._id;
+//     const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
+
+//     if (!order_id || !payment_id || !amount || !CourseId) {
+//       logger.warn("Missing required fields");
+//       return res.status(400).json({ status: false, message: "Missing required fields" });
+//     }
+//     const status = payment_status === "failed" ? "failed" : "success";
+//     const payment = new Payment({
+//       order_id,
+//       currency,
+//       payment_id,
+//       amount,
+//       payment_status,
+//       UserId,
+//       status,
+//       CourseId,
+//     });
+
+//     await payment.save();
+//     let _id = UserId;
+//     if (payment_status === "success") {
+
+//       const userUpdate = await User.findByIdAndUpdate(
+//         _id,
+//         {
+//           $set: { CourseId: CourseId },
+//         },
+//         { new: true } 
+//       );
+//     }
+
+//     if (payment_status === "failed") {
+//       return res.status(200).json({ status: "failed", message: "Payment failed and saved successfully" });
+//     } else {
+//       return res.status(200).json({ status: "success", message: "Payment verified and saved successfully" });
+//     }
+//   } catch (error) {
+//     logger.error(error);
+//     res.status(500).json({
+//       status: false,
+//       message: "An error occurred while saving payment.",
+//       error: error.message,
+//     });
+//   }
+// });
+
+
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
     const UserId = req.User._id;
@@ -57,6 +107,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       logger.warn("Missing required fields");
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
+
     const status = payment_status === "failed" ? "failed" : "success";
     const payment = new Payment({
       order_id,
@@ -70,22 +121,68 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     });
 
     await payment.save();
-    let _id = UserId;
-    if (payment_status === "success") {
 
-      const userUpdate = await User.findByIdAndUpdate(
-        _id,
+    const coursedata = await Course.findOne({
+      _id: CourseId
+
+    })
+
+    console.log("coursedata", coursedata)
+
+    if (payment_status === "success") {
+      const user = await User.findById(UserId);
+
+      if (!user) {
+        return res.status(404).json({ status: false, message: "User not found" });
+      }
+
+      const { referred_by, referred_first, referred_second } = user;
+
+      // Update the referred users with course-based payment adjustments
+      if (referred_by) {
+        await User.findByIdAndUpdate(
+          referred_by,
+          {
+            $inc: { directuser: 1, referred_user_pay: coursedata?.directuser },
+          },
+          { new: true }
+        );
+      }
+
+      if (referred_first) {
+        await User.findByIdAndUpdate(
+          referred_first,
+          {
+            $inc: { firstuser: 1, first_user_pay: coursedata?.firstuser },
+          },
+          { new: true }
+        );
+      }
+
+      if (referred_second) {
+        await User.findByIdAndUpdate(
+          referred_second,
+          {
+            $inc: { seconduser: 1, second_user_pay: coursedata?.seconduser },
+          },
+          { new: true }
+        );
+      }
+
+      // Update the user's course
+      const data = await User.findByIdAndUpdate(
+        UserId,
         {
           $set: { CourseId: CourseId },
         },
-        { new: true } 
+        { new: true }
       );
+      console.log("data", data)
+      return res.status(200).json({ status: "success", message: "Payment verified and saved successfully" });
     }
 
     if (payment_status === "failed") {
       return res.status(200).json({ status: "failed", message: "Payment failed and saved successfully" });
-    } else {
-      return res.status(200).json({ status: "success", message: "Payment verified and saved successfully" });
     }
   } catch (error) {
     logger.error(error);
@@ -96,8 +193,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     });
   }
 });
-
-
 
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
