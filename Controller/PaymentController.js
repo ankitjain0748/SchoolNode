@@ -47,57 +47,6 @@ exports.createOrder = catchAsync(async (req, res) => {
   }
 });
 
-
-// exports.paymentAdd = catchAsync(async (req, res) => {
-//   try {
-//     const UserId = req.User._id;
-//     const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
-
-//     if (!order_id || !payment_id || !amount || !CourseId) {
-//       logger.warn("Missing required fields");
-//       return res.status(400).json({ status: false, message: "Missing required fields" });
-//     }
-//     const status = payment_status === "failed" ? "failed" : "success";
-//     const payment = new Payment({
-//       order_id,
-//       currency,
-//       payment_id,
-//       amount,
-//       payment_status,
-//       UserId,
-//       status,
-//       CourseId,
-//     });
-
-//     await payment.save();
-//     let _id = UserId;
-//     if (payment_status === "success") {
-
-//       const userUpdate = await User.findByIdAndUpdate(
-//         _id,
-//         {
-//           $set: { CourseId: CourseId },
-//         },
-//         { new: true } 
-//       );
-//     }
-
-//     if (payment_status === "failed") {
-//       return res.status(200).json({ status: "failed", message: "Payment failed and saved successfully" });
-//     } else {
-//       return res.status(200).json({ status: "success", message: "Payment verified and saved successfully" });
-//     }
-//   } catch (error) {
-//     logger.error(error);
-//     res.status(500).json({
-//       status: false,
-//       message: "An error occurred while saving payment.",
-//       error: error.message,
-//     });
-//   }
-// });
-
-
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
     const UserId = req.User._id;
@@ -137,8 +86,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       }
 
       const { referred_by, referred_first, referred_second } = user;
-
-      // Update the referred users with course-based payment adjustments
       if (referred_by) {
         await User.findByIdAndUpdate(
           referred_by,
@@ -168,12 +115,10 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           { new: true }
         );
       }
-
-      // Update the user's course
       const data = await User.findByIdAndUpdate(
         UserId,
         {
-          $set: { CourseId: CourseId },
+          $set: { CourseId: CourseId , user_status: "Enrolled" },
         },
         { new: true }
       );
