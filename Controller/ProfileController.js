@@ -4,6 +4,7 @@ const User = require("../Model/User");
 const SocialSection = require("../Model/Social");
 const Bank = require("../Model/Bank");
 const logger = require("../utill/Loggers");
+const Payment = require("../Model/Payment");
 
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object
@@ -87,12 +88,35 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const BankData = await Bank.findOne({ userId: userId }).lean();
 
 
+        const payment = await Payment.findOne({ UserId: userId });
+
+        if (!payment) {
+            return { status: false, message: "No payment record found for the user." };
+        }
+
+
+        // Fetch referral data
+        const referralData = await User.find({
+            $or: [
+                { referred_by: userId },
+                { referred_first: userId },
+                { referred_second: userId }
+            ]
+        }).populate({
+            path: "CourseId",
+            select: "title discountPrice category courseImage"
+        })
+
+        console.log("Referral Data:", referralData);
+
         return res.status(200).json({
             status: true,
             user: UserData,
             profile: ProfileData,
             social: updatedSocials,
             BankData: BankData,
+            data: referralData,
+            payment: payment,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
