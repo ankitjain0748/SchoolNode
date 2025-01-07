@@ -82,19 +82,14 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
-        const UserData = await User.findOne({ _id: userId }).lean(); // Convert to plain object
-        const ProfileData = await Profile.findOne({ userId: userId }).lean();
-        const updatedSocials = await SocialSection.findOne({ userId: userId }).lean();
-        const BankData = await Bank.findOne({ userId: userId }).lean();
-
-
+        const UserData = await User.findOne({ _id: userId }); // Convert to plain object
+        const ProfileData = await Profile.findOne({ userId: userId });
+        const updatedSocials = await SocialSection.findOne({ userId: userId });
+        const BankData = await Bank.findOne({ userId: userId });
         const payment = await Payment.findOne({ UserId: userId });
-
         if (!payment) {
             return { status: false, message: "No payment record found for the user." };
         }
-
-
         // Fetch referral data
         const referralData = await User.find({
             $or: [
@@ -133,10 +128,10 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 exports.ProfileDataId = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.User?._id;
-        const UserData = await User.findOne({ _id: userId }).lean(); // Convert to plain object
-        const ProfileData = await Profile.findOne({ userId: userId }).lean();
-        const updatedSocials = await SocialSection.findOne({ userId: userId }).lean();
-        const BankData = await Bank.findOne({ userId: userId }).lean();
+        const UserData = await User.findOne({ _id: userId }); // Convert to plain object
+        const ProfileData = await Profile.findOne({ userId: userId });
+        const updatedSocials = await SocialSection.findOne({ userId: userId });
+        const BankData = await Bank.findOne({ userId: userId });
 
 
         return res.status(200).json({

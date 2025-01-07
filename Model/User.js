@@ -59,11 +59,17 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
     },
-    payment_data: String,
+    payment_data: Number,
     payment_key :String ,  
     referred_user_pay : Number , 
     first_user_pay :Number , 
     second_user_pay :Number , 
+    widthrawal_reason :String ,
+    success_reasons :String ,
+    transactionId :String , 
+    payment_reason :String , 
+    paymentMethod :String 
+
 
 });
 

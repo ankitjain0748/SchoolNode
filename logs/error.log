@@ -78,3 +78,19 @@
 2025-01-06 20:24:54 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-01-06 20:25:16 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-01-06 20:25:33 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-07 20:47:33 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:49:23 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:50:22 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:50:41 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:51:34 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:51:44 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:51:51 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:51:58 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:52:09 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:53:10 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:53:13 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-07 20:56:10 [ERROR]: Error fetching booking: Operation `users.find()` buffering timed out after 10000ms
+2025-01-07 20:56:26 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-07 20:56:49 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-07 20:57:01 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-07 20:57:32 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms

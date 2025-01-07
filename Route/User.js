@@ -1,4 +1,4 @@
-const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin } = require("../Controller/AuthController");
+const { signup, login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin, userupdateby, paymentdata } = require("../Controller/AuthController");
 const { BankAddOrEdit } = require("../Controller/BankController");
 const { ProfileData, ProfileDataId, profileAddOrUpdate } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
@@ -39,6 +39,10 @@ userRoute.post("/delete", UserIdDelete)
 userRoute.post("/user-profile", verifyToken, profileAddOrUpdate);
 userRoute.post("/profile-data", ProfileData)
 userRoute.post("/profile_id", verifyToken, ProfileDataId)
+
+userRoute.post("/widthrawal", userupdateby)
+
+userRoute.post("/payment", paymentdata)
 
 // social icon 
 

@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../utill/catchAsync");
 const User = require("../Model/User");
+const Adminpayment = require("../Model/Adminpay");
+
 const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -697,4 +699,107 @@ exports.getCount = catchAsync(async (req, res) => {
 //   // filter.username = { $regex: `^${username}$`, $options: 'i' };
 // }
 
+
+
+exports.userupdateby = catchAsync(async (req, res, next) => {
+  try {
+    const { Id, referred_user_pay, widthrawal_reason, success_reasons } = req.body;
+    if (!Id) {
+      return res.status(400).json({
+        status: false,
+        message: "User ID is required.",
+      });
+    }
+    const updatedRecord = await User.findByIdAndUpdate(
+      Id,
+      { referred_user_pay, widthrawal_reason, success_reasons },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedRecord) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found!",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      data: updatedRecord,
+      message: "User updated successfully.",
+    });
+  } catch (error) {
+    logger.error("Error deleting user record:", error);
+
+    res.status(500).json({
+      status: false,
+      message:
+        "An error occurred while updating the User. Please try again later.",
+      error: error.message,
+    });
+  }
+});
+
+
+
+exports.paymentdata = catchAsync(async (req, res) => {
+  try {
+    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data } = req.body;
+    if (!Id) {
+      return res.status(400).json({
+        status: false,
+        message: "User ID is required.",
+      });
+    }
+    const newPayment = new Adminpayment({
+      userId: Id, // Ensure the ID is the same
+      paymentMethod,
+      payment_reason,
+      transactionId,
+      payment_data,
+      data_payment,
+    });
+
+    // Save the payment record
+    const paymentRecord = await newPayment.save();
+
+    // If no payment record was saved (edge case)
+    if (!paymentRecord) {
+      return res.status(400).json({
+        status: false,
+        message: "Failed to save payment data.",
+      });
+    }
+
+    // Update the user with the new payment data
+    const updatedUser = await User.findByIdAndUpdate(
+      Id,
+      { payment_data },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found for update!",
+      });
+    }
+
+    // Send success response
+    res.status(200).json({
+      status: true,
+      message: "Payment data saved and user updated successfully.",
+      paymentRecord,
+      updatedUser,
+    });
+
+  } catch (error) {
+    console.error("Error saving payment data and updating user:", error);
+
+    res.status(500).json({
+      status: false,
+      message: "An error occurred while processing the payment. Please try again later.",
+      error: error.message,
+    });
+  }
+});
 
