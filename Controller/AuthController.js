@@ -703,7 +703,7 @@ exports.getCount = catchAsync(async (req, res) => {
 
 exports.userupdateby = catchAsync(async (req, res, next) => {
   try {
-    const { Id, referred_user_pay, widthrawal_reason, success_reasons } = req.body;
+    const { Id, referred_user_pay, widthrawal_reason, success_reasons,  payment_data } = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -712,7 +712,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
     }
     const updatedRecord = await User.findByIdAndUpdate(
       Id,
-      { referred_user_pay, widthrawal_reason, success_reasons },
+      { referred_user_pay, widthrawal_reason, success_reasons , payment_data },
       { new: true, runValidators: true }
     );
 
@@ -724,7 +724,6 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
     }
     res.status(200).json({
       status: true,
-      data: updatedRecord,
       message: "User updated successfully.",
     });
   } catch (error) {

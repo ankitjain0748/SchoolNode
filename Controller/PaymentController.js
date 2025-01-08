@@ -1,4 +1,5 @@
 const Payment = require("../Model/Payment");
+const AdminPays = require("../Model/Adminpay");
 const Course = require("../Model/Course");
 require('dotenv').config();
 const catchAsync = require("../utill/catchAsync");
@@ -76,7 +77,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
     })
 
-    console.log("coursedata", coursedata)
 
     if (payment_status === "success") {
       const user = await User.findById(UserId);
@@ -118,11 +118,10 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       const data = await User.findByIdAndUpdate(
         UserId,
         {
-          $set: { CourseId: CourseId , user_status: "Enrolled" },
+          $set: { CourseId: CourseId, user_status: "Enrolled" },
         },
         { new: true }
       );
-      console.log("data", data)
       return res.status(200).json({ status: "success", message: "Payment verified and saved successfully" });
     }
 
@@ -184,6 +183,35 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
       message: "Courses retrieved successfully!",
       Payments: UserPayments,
       Courses: courses,
+    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({
+      status: false,
+      message: "An unknown error occurred. Please try again later.",
+      error: err.message,
+    });
+  }
+});
+
+
+exports.PaymentGetdata = catchAsync(async (req, res) => {
+  try {
+    
+    const payment = await AdminPays.find({}).populate({
+       path: "userId",
+      select: "name phone_number phone_code email"} );
+    if (!payment || payment.length === 0) {
+      return res.status(204).json({
+        status: false,
+        message: "No Payment found for this user.",
+        payment: [],
+      });
+    }
+    res.status(200).json({
+      status: true,
+      message: "Payment retrieved successfully!",
+      payment: payment,
     });
   } catch (err) {
     logger.error(err);

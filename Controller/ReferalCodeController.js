@@ -65,7 +65,6 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?._id;
 
-    console.log("Received userId:", userId);
 
     // Check if userId exists
     if (!userId) {
@@ -104,7 +103,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             select: "title discountPrice category courseImage"
         })
 
-        console.log("Referral Data:", referralData);
 
         // Send the response
         return res.status(200).json({

@@ -94,3 +94,14 @@
 2025-01-07 20:56:49 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-01-07 20:57:01 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-01-07 20:57:32 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-08 19:56:23 [ERROR]: querySrv ECONNREFUSED _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-01-08 19:59:33 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-01-08 20:00:02 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-08 20:00:17 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-08 20:00:24 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-01-08 20:00:44 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-01-08 20:00:48 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-08 20:01:06 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-01-08 20:17:58 [ERROR]: Cannot populate path `UserId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-01-08 20:18:53 [ERROR]: Cannot populate path `UserId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-01-08 20:19:58 [ERROR]: Cannot populate path `UserId` because it is not in your schema. Set the `strictPopulate` option to false to override.

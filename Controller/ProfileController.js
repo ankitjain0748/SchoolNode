@@ -82,7 +82,8 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
-        const UserData = await User.findOne({ _id: userId }); // Convert to plain object
+        const UserData = await User.findOne({ _id: userId }).select("-password");
+        // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
         const BankData = await Bank.findOne({ userId: userId });
@@ -102,7 +103,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             select: "title discountPrice category courseImage"
         })
 
-        console.log("Referral Data:", referralData);
 
         return res.status(200).json({
             status: true,
