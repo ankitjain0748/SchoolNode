@@ -11,6 +11,7 @@ const paymentSchema = new mongoose.Schema({
     },
     payment_data: Number,
     payment_key: String,
+    payment_income: String, 
     data_payment: Number,
     payment_date: {
         type: Date,

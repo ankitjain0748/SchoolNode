@@ -323,7 +323,10 @@ exports.profile = catchAsync(async (req, res, next) => {
     const updatedUsers = await User.find({ role: "user", isDeleted: false })
       .select("-password")
       .sort({ created_at: -1 })
-      .skip(skip)
+      .skip(skip).populate({
+        path: "CourseId",
+        select: "title discountPrice category courseImage"
+    })
       .limit(limit);
 
     // Total users and pagination details
@@ -703,7 +706,7 @@ exports.getCount = catchAsync(async (req, res) => {
 
 exports.userupdateby = catchAsync(async (req, res, next) => {
   try {
-    const { Id, referred_user_pay, widthrawal_reason, success_reasons,  payment_data } = req.body;
+    const { Id, referred_user_pay, widthrawal_reason, success_reasons,  payment_data  , payment_income} = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -712,7 +715,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
     }
     const updatedRecord = await User.findByIdAndUpdate(
       Id,
-      { referred_user_pay, widthrawal_reason, success_reasons , payment_data },
+      { referred_user_pay, widthrawal_reason, success_reasons , payment_data ,  },
       { new: true, runValidators: true }
     );
 
@@ -742,7 +745,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data } = req.body;
+    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data  , payment_income , referred_user_pay} = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -756,6 +759,8 @@ exports.paymentdata = catchAsync(async (req, res) => {
       transactionId,
       payment_data,
       data_payment,
+      payment_income ,
+      referred_user_pay, 
     });
 
     // Save the payment record
@@ -772,7 +777,10 @@ exports.paymentdata = catchAsync(async (req, res) => {
     // Update the user with the new payment data
     const updatedUser = await User.findByIdAndUpdate(
       Id,
-      { payment_data },
+      { payment_data ,
+        referred_user_pay
+
+       },
       { new: true, runValidators: true }
     );
 
