@@ -222,3 +222,29 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
     });
   }
 });
+
+exports.paymentdata= catchAsync(async (req,res)=>{
+  try {
+    const userId = req.User?._id 
+    const payment = await AdminPays.find({userId});
+    if (!payment || payment.length === 0) {
+      return res.status(204).json({
+        status: false,
+        message: "No Payment found for this user.",
+        payment: [],
+      });
+    }
+    res.status(200).json({
+      status: true,
+      message: "Payment retrieved successfully!",
+      payment: payment,
+    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({
+      status: false,
+      message: "An unknown error occurred. Please try again later.",
+      error: err.message,
+    });
+  }
+})
