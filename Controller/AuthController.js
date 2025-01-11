@@ -745,7 +745,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data  , payment_income , referred_user_pay} = req.body;
+    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data  , payment_income , referred_user_pay ,payment_key} = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -756,6 +756,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
       userId: Id, // Ensure the ID is the same
       paymentMethod,
       payment_reason,
+      payment_key ,
       transactionId,
       payment_data,
       data_payment,

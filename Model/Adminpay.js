@@ -9,8 +9,8 @@ const paymentSchema = new mongoose.Schema({
         ref: "User",
         required: [true, "User ID is required."],
     },
+    payment_key :Number,
     payment_data: Number,
-    payment_key: String,
     payment_income: String, 
     data_payment: Number,
     payment_date: {

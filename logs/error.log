@@ -106,3 +106,4 @@
 2025-01-08 20:18:53 [ERROR]: Cannot populate path `UserId` because it is not in your schema. Set the `strictPopulate` option to false to override.
 2025-01-08 20:19:58 [ERROR]: Cannot populate path `UserId` because it is not in your schema. Set the `strictPopulate` option to false to override.
 2025-01-09 21:04:07 [ERROR]: Error fetching booking: read ECONNRESET
+2025-01-11 18:17:32 [ERROR]: read ECONNRESET
