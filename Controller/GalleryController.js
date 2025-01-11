@@ -130,7 +130,7 @@ exports.BlogIdDelete = catchAsync(async (req, res, next) => {
 
         res.status(200).json({
             status: true,
-            message: 'Blog and associated images deleted successfully.',
+            message: 'gallery and associated images deleted successfully.',
         });
     } catch (error) {
         Loggers.error(error)
