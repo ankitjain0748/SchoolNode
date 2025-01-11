@@ -110,6 +110,10 @@ const courseSchema = new mongoose.Schema({
     default: 0
 
   },
+  percentage_passive: {
+    type: Number,
+    default: 0
+  },
   directuser: {
     type: Number,
     default: 0

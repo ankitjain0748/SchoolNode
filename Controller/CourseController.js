@@ -383,6 +383,7 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
             firstuser ,
             seconduser ,
             directuser ,
+            percentage_passive
         } = req.body;
 
         if (!_id) {
@@ -396,7 +397,8 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
             {
                 firstuser ,
             seconduser ,
-            directuser 
+            directuser ,
+            percentage_passive
             },
             { new: true, runValidators: true }
         );
