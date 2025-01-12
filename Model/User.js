@@ -68,7 +68,10 @@ const userSchema = mongoose.Schema({
     success_reasons :String ,
     transactionId :String , 
     payment_reason :String , 
-    paymentMethod :String 
+    paymentMethod :String ,
+    OTP : Number,
+    ActiveUserPrice : Number , 
+    InActiveUserPercanetage : Number , 
 
 
 });

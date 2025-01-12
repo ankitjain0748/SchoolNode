@@ -2,15 +2,16 @@ const jwt = require("jsonwebtoken");
 const catchAsync = require("../utill/catchAsync");
 const User = require("../Model/User");
 const Adminpayment = require("../Model/Adminpay");
-
 const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const VerifyAccount = require("../Mail/VerifyAccount")
 const ForgetPassword = require("../Mail/ForgetPassword");
 const { validationErrorResponse, errorResponse, successResponse } = require("../utill/ErrorHandling");
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
+const Transaction = require("../Model/Transcation");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -326,7 +327,7 @@ exports.profile = catchAsync(async (req, res, next) => {
       .skip(skip).populate({
         path: "CourseId",
         select: "title discountPrice category courseImage"
-    })
+      })
       .limit(limit);
 
     // Total users and pagination details
@@ -492,16 +493,21 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
 exports.forgotlinkrecord = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log("email", email)
     if (!email) {
       return validationErrorResponse(res, { email: 'Email is required' });
     }
     const record = await User.findOne({ email: email });
+    console.log("record", record)
     if (!record) {
       return errorResponse(res, "No user found with this email", 404);
     }
     const token = await signEmail(record._id);
-    const resetLink = `https://user-event.vercel.app/forgotpassword/${token}`;
-    const customerUser = record.username;
+    console.log("token", token)
+    const resetLink = `http://localhost:3000/new-password/${token}`;
+    console.log(resetLink)
+    const customerUser = record.name;
+    console.log(customerUser)
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: process.env.MAIL_PORT,
@@ -703,19 +709,29 @@ exports.getCount = catchAsync(async (req, res) => {
 // }
 
 
-
+// working Api  
 exports.userupdateby = catchAsync(async (req, res, next) => {
   try {
-    const { Id, referred_user_pay, widthrawal_reason, success_reasons,  payment_data  , payment_income} = req.body;
+    const {
+      Id,
+      referred_user_pay,
+      widthrawal_reason,
+      success_reasons,
+      payment_data,
+      payment_income,
+    } = req.body;
+
     if (!Id) {
       return res.status(400).json({
         status: false,
         message: "User ID is required.",
       });
     }
+
+    // Update user data
     const updatedRecord = await User.findByIdAndUpdate(
       Id,
-      { referred_user_pay, widthrawal_reason, success_reasons , payment_data ,  },
+      { referred_user_pay, payment_data },
       { new: true, runValidators: true }
     );
 
@@ -725,17 +741,31 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
         message: "User not found!",
       });
     }
+
+    const transactionData = new Transaction({
+      user: Id,
+      referred_user_pay,
+      widthrawal_reason,
+      success_reasons,
+      payment_data,
+      payment_income,
+    });
+
+    const result = await transactionData.save();
+
+
     res.status(200).json({
       status: true,
-      message: "User updated successfully.",
+      result: result,
+      message: "User updated and transaction recorded successfully.",
     });
   } catch (error) {
-    logger.error("Error deleting user record:", error);
+    logger.error("Error updating user and transaction record:", error);
 
     res.status(500).json({
       status: false,
       message:
-        "An error occurred while updating the User. Please try again later.",
+        "An error occurred while updating the User and transaction. Please try again later.",
       error: error.message,
     });
   }
@@ -743,9 +773,10 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
 
 
 
+
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data  , payment_income , referred_user_pay ,payment_key} = req.body;
+    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key } = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -756,12 +787,12 @@ exports.paymentdata = catchAsync(async (req, res) => {
       userId: Id, // Ensure the ID is the same
       paymentMethod,
       payment_reason,
-      payment_key ,
+      payment_key,
       transactionId,
       payment_data,
       data_payment,
-      payment_income ,
-      referred_user_pay, 
+      payment_income,
+      referred_user_pay,
     });
 
     // Save the payment record
@@ -778,10 +809,11 @@ exports.paymentdata = catchAsync(async (req, res) => {
     // Update the user with the new payment data
     const updatedUser = await User.findByIdAndUpdate(
       Id,
-      { payment_data ,
+      {
+        payment_data,
         referred_user_pay
 
-       },
+      },
       { new: true, runValidators: true }
     );
 
@@ -811,3 +843,234 @@ exports.paymentdata = catchAsync(async (req, res) => {
   }
 });
 
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+}
+exports.OTP = catchAsync(async (req, res) => {
+  try {
+    const {
+      email, password, name, phone_number, referred_by
+    } = req.body;
+
+    // // Check if required fields are "provided"
+    // if (!password || !phone_number || !username || !email || !address || !country) {
+    //   return res.status(401).json({
+    //     status: false,
+    //     message: 'All fields are required',
+    //   });
+    // }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
+    if (existingUser) {
+      const errors = {};
+      if (existingUser.email === email) {
+        errors.email = "Email is already in use!";
+      }
+      if (existingUser.phone_number === phone_number) {
+        errors.phone_number = "Phone number is already in use!";
+      }
+      return res.status(400).json({
+        status: false,
+        message: "Email or phone number already exists",
+        errors,
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+
+
+    const otp = generateOTP();
+
+    let referrer = null;
+    if (referred_by) {
+      referrer = await User.findOne({ referral_code: referred_by });
+      if (!referrer) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid referral code",
+        });
+      }
+    }
+    let referrers = null;
+    if (referrer?.referred_by) {
+      try {
+        // Ensure referred_by is treated as an ObjectId
+        const referrerObjectId = new mongoose.Types.ObjectId(referrer.referred_by);
+        referrers = await User.findOne({ _id: referrerObjectId });
+        if (!referrers) {
+          return res.status(400).json({
+            status: false,
+            message: "Invalid second referral code",
+          });
+        }
+      } catch (error) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid ObjectId format",
+        });
+      }
+    }
+    let referrerdata = null;
+    if (referrers?.referred_by) {
+      const referrerObjectId = new mongoose.Types.ObjectId(referrers.referred_by);
+      referrerdata = await User?.findOne({ _id: referrerObjectId });
+      if (!referrerdata) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid referral code",
+        });
+      }
+    }
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      name,
+      phone_number,
+      referred_by: referrer?._id || null,
+      referred_second: referrerdata?._id || null,
+      referred_first: referrers?._id || null,
+      OTP: otp,
+    });
+
+    const result = await newUser.save();
+
+    console.log("result", result)
+    if (referrer) {
+      await User.findByIdAndUpdate(referrer._id, {
+        $addToSet: { referrals: result._id },
+      });
+    }
+
+    // Optional: Update referrer data with the new referral
+    if (referrers) {
+      await User.findByIdAndUpdate(referrers._id, {
+        $addToSet: { referrals: result._id },
+      });
+    }
+
+    if (referrerdata) {
+      await User.findByIdAndUpdate(referrerdata._id, {
+        $addToSet: { referrals: result._id },
+      });
+    }
+
+
+    if (result) {
+      const customerUser = result.name;
+      let transporter = nodemailer.createTransport({
+        host: process.env.MAIL_HOST,
+        port: parseInt(process.env.MAIL_PORT, 10),
+        secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
+        auth: {
+          user: process.env.user,
+          pass: process.env.password,
+        },
+        tls: {
+          rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
+        },
+      });
+
+      const emailHtml = VerifyAccount(otp, customerUser);
+      const recorddd = await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: result.email,
+        subject: "Verify your Account",
+        html: emailHtml,
+      });
+      console.log("recorddd", recorddd)
+
+      return successResponse(res, "OTP has been sent to your email!", 201);
+    } else {
+      return errorResponse(res, "Failed to create user.", 500);
+    }
+  } catch (error) {
+    return errorResponse(res, error.message || "Internal Server Error", 500);
+  }
+});
+
+
+exports.VerifyOtp = catchAsync(async (req, res, next) => {
+  try {
+    const { email, OTP } = req.body;
+    if (!email || !OTP) {
+      return res.status(401).json({
+        status: false,
+        message: "Email and OTP are required!",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "Invalid Email or OTP",
+      });
+    }
+
+    if (user.OTP != OTP) {
+      return res.status(401).json({
+        status: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    user.verified = true;
+    await user.save();
+
+    const token = await signToken(user._id);
+    res.json({
+      status: true,
+      message: "Your account has been verified.",
+      token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error,
+      message: "An unknown error occurred. Please try later.",
+    });
+  }
+});
+
+
+
+exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
+  try {
+    const UserId = req?.User?._id
+    console.log(UserId)
+    const { price, percentage } = req.body;
+    if (!UserId) {
+      return res.status(400).json({
+        status: false,
+        message: "User ID is required.",
+      });
+    }
+    const updatedRecord = await User.findByIdAndUpdate(
+      UserId,
+      { ActiveUserPrice: price, InActiveUserPercanetage: percentage, },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedRecord) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found!",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      data: updatedRecord,
+      message: "User updated successfully.",
+    });
+  } catch (error) {
+    logger.error("Error deleting user record:", error);
+
+    res.status(500).json({
+      status: false,
+      message:
+        "An error occurred while updating the User. Please try again later.",
+      error: error.message,
+    });
+  }
+});
