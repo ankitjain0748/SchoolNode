@@ -5,7 +5,8 @@ const SocialSection = require("../Model/Social");
 const Bank = require("../Model/Bank");
 const logger = require("../utill/Loggers");
 const Payment = require("../Model/Payment");
-const AdminPay = require("../Model/Adminpay")
+const AdminPay = require("../Model/Adminpay");
+const Transaction = require("../Model/Transcation");
 
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object
@@ -86,6 +87,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
+        const user = req?.body?.id;
         const UserData = await User.findOne({ _id: userId }).select("-password");
         // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId });
@@ -93,6 +95,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const BankData = await Bank.findOne({ userId: userId });
         const payment = await Payment.findOne({ UserId: userId });
         const AdminPayments = await AdminPay.find({ userId: userId });
+        const Transactions = await Transaction.find({ user: user });
+
 
         if (!payment) {
             return { status: false, message: "No payment record found for the user." };
@@ -118,6 +122,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             BankData: BankData,
             data: referralData,
             payment: payment,
+            Transactions: Transactions,
             AdminPayments: AdminPayments,
             message: "Users retrieved successfully with enquiry counts updated",
         });

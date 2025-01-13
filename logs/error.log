@@ -112,3 +112,6 @@
 2025-01-12 22:00:08 [ERROR]: Error deleting user record: connect ECONNREFUSED 127.0.0.1:587
 2025-01-12 22:02:09 [ERROR]: Error deleting user record: connect ECONNREFUSED 127.0.0.1:587
 2025-01-12 22:03:46 [ERROR]: Error deleting user record: connect ECONNREFUSED 127.0.0.1:587
+2025-01-13 12:18:02 [ERROR]: Error updating user and transaction record: Transaction validation failed: success_reasons: Path `success_reasons` is required.
+2025-01-13 12:23:28 [ERROR]: Cannot access 'Transaction' before initialization
+2025-01-13 12:25:38 [ERROR]: Cannot access 'Transaction' before initialization

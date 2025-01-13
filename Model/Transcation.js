@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const transactionSchema = new mongoose.Schema(
+const transactionSchema =  mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -9,23 +9,19 @@ const transactionSchema = new mongoose.Schema(
     },
     referred_user_pay: {
       type: Number,
-      required: true,
     },
+    payment_type :String,
     widthrawal_reason: {
       type: String,
-      required: true,
     },
     success_reasons: {
       type: String,
-      required: true,
     },
     payment_data: {
-      type: Object, // You can customize this based on your data structure
-      required: true,
+      type: String, // You can customize this based on your data structure
     },
     payment_income: {
       type: Number,
-      required: true,
     },
   },
   { timestamps: true }

@@ -714,6 +714,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
   try {
     const {
       Id,
+      payment_type ,
       referred_user_pay,
       widthrawal_reason,
       success_reasons,
@@ -748,6 +749,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
       widthrawal_reason,
       success_reasons,
       payment_data,
+      payment_type,
       payment_income,
     });
 
