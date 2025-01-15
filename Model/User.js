@@ -55,6 +55,10 @@ const userSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    ref_date :{
+        type: Date,
+        default: Date.now
+    },
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
@@ -72,8 +76,6 @@ const userSchema = mongoose.Schema({
     OTP : Number,
     ActiveUserPrice : Number , 
     InActiveUserPercanetage : Number , 
-
-
 });
 
 const User = mongoose.model("User", userSchema);

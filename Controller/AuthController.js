@@ -78,6 +78,7 @@ const signEmail = async (id) => {
 exports.signup = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by } = req.body;
+
     // Check for existing user by email or phone number
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
     if (existingUser) {
@@ -99,7 +100,7 @@ exports.signup = catchAsync(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Validate and handle referral
-    let referrer = null;
+    let referrer = null, referrers = null, referrerdata = null;
     if (referred_by) {
       referrer = await User.findOne({ referral_code: referred_by });
       if (!referrer) {
@@ -108,11 +109,8 @@ exports.signup = catchAsync(async (req, res) => {
           message: "Invalid referral code",
         });
       }
-    }
-    let referrers = null;
-    if (referrer?.referred_by) {
-      try {
-        // Ensure referred_by is treated as an ObjectId
+
+      if (referrer.referred_by) {
         const referrerObjectId = new mongoose.Types.ObjectId(referrer.referred_by);
         referrers = await User.findOne({ _id: referrerObjectId });
         if (!referrers) {
@@ -121,56 +119,47 @@ exports.signup = catchAsync(async (req, res) => {
             message: "Invalid second referral code",
           });
         }
-      } catch (error) {
-        return res.status(400).json({
-          status: false,
-          message: "Invalid ObjectId format",
-        });
+
+        if (referrers.referred_by) {
+          const referrerObjectId = new mongoose.Types.ObjectId(referrers.referred_by);
+          referrerdata = await User.findOne({ _id: referrerObjectId });
+          if (!referrerdata) {
+            return res.status(400).json({
+              status: false,
+              message: "Invalid referral code",
+            });
+          }
+        }
       }
     }
-    let referrerdata = null;
-    if (referrers?.referred_by) {
-      const referrerObjectId = new mongoose.Types.ObjectId(referrers.referred_by);
-      referrerdata = await User?.findOne({ _id: referrerObjectId });
-      if (!referrerdata) {
-        return res.status(400).json({
-          status: false,
-          message: "Invalid referral code",
-        });
-      }
-    }
+
+    // Create new user with referral data
     const newUser = new User({
       email,
       password: hashedPassword,
       name,
       phone_number,
       referred_by: referrer?._id || null,
-      referred_second: referrerdata?._id || null,
-      referred_first: referrers?._id || null
+      referred_second: referrers?._id || null,
+      referred_first: referrerdata?._id || null,
     });
 
     const result = await newUser.save();
 
+    const updateReferralData = async (userId) => {
+      if (userId) {
+        await User.findByIdAndUpdate(userId, {
+          $addToSet: { referrals: result._id }, // Add the new user ID to the referrals array
+          $addToSet: { ref_date: new Date() }, // Update the referral date
+        });
+      }
+    };
+    
+    await updateReferralData(referrer?._id);      // Update for the first-level referrer
+    await updateReferralData(referrers?._id);    // Update for the second-level referrer
+    await updateReferralData(referrerdata?._id); // Update for the third-level referrer
+    
 
-
-    if (referrer) {
-      await User.findByIdAndUpdate(referrer._id, {
-        $addToSet: { referrals: result._id },
-      });
-    }
-
-    // Optional: Update referrer data with the new referral
-    if (referrers) {
-      await User.findByIdAndUpdate(referrers._id, {
-        $addToSet: { referrals: result._id },
-      });
-    }
-
-    if (referrerdata) {
-      await User.findByIdAndUpdate(referrerdata._id, {
-        $addToSet: { referrals: result._id },
-      });
-    }
     return successResponse(res, "You have been registered successfully!", 201, {
       userId: result._id,
     });
@@ -179,8 +168,6 @@ exports.signup = catchAsync(async (req, res) => {
     return errorResponse(res, error.message || "Internal Server Error", 500);
   }
 });
-
-
 
 exports.adminlogin = catchAsync(async (req, res, next) => {
   try {
@@ -681,7 +668,6 @@ exports.getCount = catchAsync(async (req, res) => {
     const userCount = await User.countDocuments();
     const bookingCount = await Booking.countDocuments();
     const RecentCount = await Enquiry.countDocuments();
-    const packages = await Package.find({}).limit(3).select("package_name package_image package_categories");
     const EnquiryData = await Enquiry.find({}).limit(3);
     return res.status(200).json({
       status: true,
@@ -714,7 +700,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
   try {
     const {
       Id,
-      payment_type ,
+      payment_type,
       referred_user_pay,
       widthrawal_reason,
       success_reasons,
@@ -1076,3 +1062,62 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
     });
   }
 });
+
+
+
+exports.getUsersWithTodayRefDate = async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    // Find users with today's ref_date
+    const users = await User.find({
+      ref_date: {
+        $gte: today,
+        $lt: tomorrow,
+      },
+    });
+
+    // Fetch details of referred users for each user
+    const userDetails = await Promise.all(
+      users.map(async (user) => {
+        const referredBy = user.referred_by
+          ? await User.findById(user.referred_by).select("-password")
+          : null;
+
+        const referredFirst = user.referred_first
+          ? await User.findById(user.referred_first).select("-password")
+          : null;
+
+        const referredSecond = user.referred_second
+          ? await User.findById(user.referred_second).select("-password"
+          )
+          : null;
+
+        return {
+          ...user.toObject(),
+          referred_by_details: referredBy,
+          referred_first_details: referredFirst,
+          referred_second_details: referredSecond,
+        };
+      })
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "Users fetched successfully",
+      data: userDetails,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "An error occurred while fetching users",
+      error: err.message,
+    });
+  }
+};
+
+

@@ -2,8 +2,7 @@ const Course = require("../Model/Course");
 const Online = require("../Model/Online");
 const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
-
-
+const Webniar = require("../Model/Webniar")
 
 // Configure Multer for file uploads
 
@@ -11,7 +10,7 @@ const logger = require("../utill/Loggers");
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
-        const { title, description, courseVideo, sub_content ,category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
+        const { title, description, courseVideo, sub_content, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
         const record = new Course({
             title,
             description,
@@ -239,8 +238,6 @@ exports.onlinePost = async (req, res) => {
     }
 };
 
-
-
 exports.OnlineGet = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -275,8 +272,6 @@ exports.OnlineGet = catchAsync(async (req, res, next) => {
         });
     }
 });
-
-
 
 exports.onlineupdate = catchAsync(async (req, res) => {
     try {
@@ -324,7 +319,6 @@ exports.onlineupdate = catchAsync(async (req, res) => {
     }
 });
 
-
 exports.OnlineIdDelete = catchAsync(async (req, res, next) => {
     try {
         const { Id } = req.body;
@@ -349,8 +343,6 @@ exports.OnlineIdDelete = catchAsync(async (req, res, next) => {
         });
     }
 });
-
-
 
 exports.OnlineGetId = catchAsync(async (req, res, next) => {
     try {
@@ -380,9 +372,9 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
     try {
         const {
             _id, // Course ID
-            firstuser ,
-            seconduser ,
-            directuser ,
+            firstuser,
+            seconduser,
+            directuser,
             percentage_passive
         } = req.body;
 
@@ -395,10 +387,10 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
         const updatedRecord = await Course.findByIdAndUpdate(
             _id,
             {
-                firstuser ,
-            seconduser ,
-            directuser ,
-            percentage_passive
+                firstuser,
+                seconduser,
+                directuser,
+                percentage_passive
             },
             { new: true, runValidators: true }
         );
@@ -421,6 +413,168 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
         res.status(500).json({
             status: false,
             message: "An error occurred while updating the Course. Please try again later.",
+            error: error.message,
+        });
+    }
+});
+
+// webniar  Post
+
+
+
+exports.Webniarpost = async (req, res) => {
+    try {
+        const { title, content, video } = req.body;
+        const record = new Webniar({
+            title,
+            content, video
+        });
+        const result = await record.save();
+        if (result) {
+            res.json({
+                status: true,
+                message: "Online Added Successfully!",
+            });
+        } else {
+            logger.error("Failed to add Online.")
+            res.status(400).json({
+                status: false,
+                message: "Failed to add Online.",
+            });
+        }
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            status: false,
+            message: "Internal Server Error.",
+        });
+    }
+};
+
+exports.WebniarGet = catchAsync(async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 25;
+        const skip = (page - 1) * limit;
+        const totalCourse = await Webniar.countDocuments();
+
+        const Courseget = await Webniar.find({})
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalPages = Math.ceil(totalCourse / limit);
+
+        res.status(200).json({
+            data: {
+                Courseget,
+                totalCourse,
+                totalPages,
+                currentPage: page,
+                perPage: limit,
+                nextPage: page < totalPages ? page + 1 : null,
+                previousPage: page > 1 ? page - 1 : null,
+            },
+            msg: "Course Get",
+        });
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            msg: "Failed to fetch Course get",
+            error: error.message,
+        });
+    }
+});
+
+exports.Webniarupdate = catchAsync(async (req, res) => {
+    try {
+        const {
+            _id, // Course ID
+            title,
+            video, content
+        } = req.body;
+
+        if (!_id) {
+            return res.status(400).json({
+                status: false,
+                message: "Course ID is required.",
+            });
+        }
+        const updatedRecord = await Webniar.findByIdAndUpdate(
+            _id,
+            {
+                title,
+                video, content
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedRecord) {
+            return res.status(404).json({
+                status: false,
+                message: "Course not found!",
+            });
+        }
+
+        res.status(200).json({
+            status: true,
+            data: updatedRecord,
+            message: "Course updated successfully.",
+        });
+    } catch (error) {
+        logger.error(error)
+
+        res.status(500).json({
+            status: false,
+            message: "An error occurred while updating the Course. Please try again later.",
+            error: error.message,
+        });
+    }
+});
+
+exports.WebniarIdDelete = catchAsync(async (req, res, next) => {
+    try {
+        const { Id } = req.body;
+        if (!Id) {
+            return res.status(400).json({
+                status: false,
+                message: 'CourseUpdate ID is required.',
+            });
+        }
+        await Webniar.findByIdAndDelete(Id);
+
+        res.status(200).json({
+            status: true,
+            message: 'CourseUpdate and associated images deleted successfully.',
+        });
+    } catch (error) {
+        logger.error(error)
+
+        res.status(500).json({
+            status: false,
+            message: 'Internal Server Error. Please try again later.',
+        });
+    }
+});
+
+exports.WebniarGetId = catchAsync(async (req, res, next) => {
+    try {
+        const { Id } = req.params;
+        if (!Id) {
+            return res.status(400).json({ msg: "Course ID is required" });
+        }
+        const CourseProfile = await Webniar.findById(Id); // Fetch full Course data
+        if (!CourseProfile) {
+            return res.status(404).json({ msg: "Course not found" });
+        }
+        res.status(200).json({
+            data: CourseProfile,
+            msg: "Course and Course details retrieved successfully",
+        });
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            msg: "Failed to fetch course profile",
             error: error.message,
         });
     }
