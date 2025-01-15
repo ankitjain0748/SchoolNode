@@ -115,3 +115,8 @@
 2025-01-13 12:18:02 [ERROR]: Error updating user and transaction record: Transaction validation failed: success_reasons: Path `success_reasons` is required.
 2025-01-13 12:23:28 [ERROR]: Cannot access 'Transaction' before initialization
 2025-01-13 12:25:38 [ERROR]: Cannot access 'Transaction' before initialization
+2025-01-15 22:50:27 [ERROR]: updateReferredUser is not defined
+2025-01-15 22:51:22 [ERROR]: updateReferredUser is not defined
+2025-01-15 23:50:04 [ERROR]: Cast to number failed for value "undefined" (type undefined) at path "first_user_pay"
+2025-01-15 23:52:13 [ERROR]: Cast to number failed for value "undefined" (type undefined) at path "first_user_pay"
+2025-01-15 23:53:35 [ERROR]: Cast to number failed for value "undefined" (type undefined) at path "first_user_pay"
