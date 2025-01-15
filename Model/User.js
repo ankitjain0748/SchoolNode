@@ -26,6 +26,7 @@ const userSchema = mongoose.Schema({
     referred_second: {
         type: String
     },
+    passive_income :Number ,
     country_code: {
         type: String,
         default: "IN"

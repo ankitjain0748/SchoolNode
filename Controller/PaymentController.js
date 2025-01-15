@@ -88,10 +88,8 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
       // Helper function to update referred users
       const updateReferredUser = async (referredUserId, userKey, amountKey, discountPrice, newUserDiscountPrice) => {
-       console.log("? newUserDiscountPrice :null" , discountPrice , newUserDiscountPrice ,userKey)
         if (referredUserId) {
           const referredUser = await User.findById(referredUserId).populate("CourseId");
-          console.log("referredUser",referredUser)
           if (referredUser?.CourseId?.discountPrice < discountPrice) {
             let applicableDiscountPrice;
             if (userKey === "directuser") {

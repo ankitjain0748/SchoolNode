@@ -1,4 +1,4 @@
-const {  login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin, userupdateby, paymentdata, OTP, VerifyOtp, UserPriceUpdate, getUsersWithTodayRefDate } = require("../Controller/AuthController");
+const {  login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin, userupdateby, paymentdata, OTP, VerifyOtp, UserPriceUpdate, getUsersWithTodayRefDate, profileadmin } = require("../Controller/AuthController");
 const { BankAddOrEdit } = require("../Controller/BankController");
 const { ProfileData, ProfileDataId, profileAddOrUpdate } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
@@ -50,6 +50,9 @@ userRoute.get('/referrals', getUsersWithTodayRefDate);
 // social icon 
 
 userRoute.post("/user-social", verifyToken, SocialAddOrEdit)
+
+userRoute.get("/adminprofile",  profileadmin)
+
 
 // Bank 
 

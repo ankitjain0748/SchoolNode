@@ -120,3 +120,18 @@
 2025-01-15 23:50:04 [ERROR]: Cast to number failed for value "undefined" (type undefined) at path "first_user_pay"
 2025-01-15 23:52:13 [ERROR]: Cast to number failed for value "undefined" (type undefined) at path "first_user_pay"
 2025-01-15 23:53:35 [ERROR]: Cast to number failed for value "undefined" (type undefined) at path "first_user_pay"
+2025-01-16 00:17:37 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
+2025-01-16 00:17:37 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
+2025-01-16 00:18:46 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
+2025-01-16 00:18:48 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
+2025-01-16 00:19:38 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:19:40 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:20:27 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:20:29 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:22:38 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:22:39 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:22:59 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:23:01 [ERROR]: Error fetching users: consolelog is not defined
+2025-01-16 00:23:56 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
+2025-01-16 00:23:58 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
+2025-01-16 00:26:23 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "0"}

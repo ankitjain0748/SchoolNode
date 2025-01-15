@@ -154,11 +154,11 @@ exports.signup = catchAsync(async (req, res) => {
         });
       }
     };
-    
+
     await updateReferralData(referrer?._id);      // Update for the first-level referrer
     await updateReferralData(referrers?._id);    // Update for the second-level referrer
     await updateReferralData(referrerdata?._id); // Update for the third-level referrer
-    
+
 
     return successResponse(res, "You have been registered successfully!", 201, {
       userId: result._id,
@@ -480,21 +480,16 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
 exports.forgotlinkrecord = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log("email", email)
     if (!email) {
       return validationErrorResponse(res, { email: 'Email is required' });
     }
     const record = await User.findOne({ email: email });
-    console.log("record", record)
     if (!record) {
       return errorResponse(res, "No user found with this email", 404);
     }
     const token = await signEmail(record._id);
-    console.log("token", token)
     const resetLink = `http://localhost:3000/new-password/${token}`;
-    console.log(resetLink)
     const customerUser = record.name;
-    console.log(customerUser)
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: process.env.MAIL_PORT,
@@ -924,7 +919,6 @@ exports.OTP = catchAsync(async (req, res) => {
 
     const result = await newUser.save();
 
-    console.log("result", result)
     if (referrer) {
       await User.findByIdAndUpdate(referrer._id, {
         $addToSet: { referrals: result._id },
@@ -967,7 +961,6 @@ exports.OTP = catchAsync(async (req, res) => {
         subject: "Verify your Account",
         html: emailHtml,
       });
-      console.log("recorddd", recorddd)
 
       return successResponse(res, "OTP has been sent to your email!", 201);
     } else {
@@ -1026,7 +1019,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
 exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   try {
     const UserId = req?.User?._id
-    console.log(UserId)
     const { price, percentage } = req.body;
     if (!UserId) {
       return res.status(400).json({
@@ -1121,3 +1113,46 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
 };
 
 
+
+
+exports.profileadmin = catchAsync(async (req, res, next) => {
+  try {
+    const adminUser = await User.findOne({ role: "admin", isDeleted: false })
+      .select("-password")
+      .sort({ created_at: -1 });
+
+    const users = await User.find({ role: { $ne: "admin" }, isDeleted: false });
+
+    for (const user of users) {
+      const { referred_user_pay, second_user_pay, first_user_pay, } = user;
+
+      const totalPayment = referred_user_pay || 0;
+      const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
+      const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
+      const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
+      await User.findByIdAndUpdate(
+        user._id,
+        {
+          $set: { user_status: userStatus },
+          $inc: { passive_income: validPercentageValue }
+        },
+        { new: true }
+      );
+    }
+
+    // Return response
+    return res.status(200).json({
+      status: true,
+      message: "Users retrieved and updated successfully with enquiry counts updated",
+      data: adminUser
+    });
+  } catch (error) {
+    logger.error("Error fetching users:", error);
+
+    return res.status(500).json({
+      status: false,
+      message: "An error occurred while fetching and updating users.",
+      error: error.message || "Internal Server Error", // Provide a fallback error message
+    });
+  }
+});
