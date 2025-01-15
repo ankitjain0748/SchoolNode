@@ -1120,16 +1120,23 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
     const adminUser = await User.findOne({ role: "admin", isDeleted: false })
       .select("-password")
       .sort({ created_at: -1 });
+    console.log("adminUser", adminUser);
 
-    const users = await User.find({ role: { $ne: "admin" }, isDeleted: false });
+    const users = await User.find({ role: "user", user_status : "Enrolled" , isDeleted: false });
+    console.log("users", users);
 
     for (const user of users) {
-      const { referred_user_pay, second_user_pay, first_user_pay, } = user;
+      console.log("user", user);
+      const { referred_user_pay, second_user_pay, first_user_pay } = user;
+      console.log(referred_user_pay, second_user_pay, first_user_pay, "referred_user_pay, second_user_pay, first_user_pay");
 
       const totalPayment = referred_user_pay || 0;
       const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
       const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
+
+      // Ensure percentageValue is always a number
       const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
+
       await User.findByIdAndUpdate(
         user._id,
         {
@@ -1156,3 +1163,4 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
     });
   }
 });
+
