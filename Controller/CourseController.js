@@ -2,7 +2,7 @@ const Course = require("../Model/Course");
 const Online = require("../Model/Online");
 const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
-const Webniar = require("../Model/Webniar")
+const Webinar = require('../Model/Webniar'); // Import the model
 
 // Configure Multer for file uploads
 
@@ -425,7 +425,7 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
 exports.Webniarpost = async (req, res) => {
     try {
         const { title, content, video } = req.body;
-        const record = new Webniar({
+        const record = new Webinar({
             title,
             content, video
         });
@@ -456,12 +456,13 @@ exports.WebniarGet = catchAsync(async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
-        const totalCourse = await Webniar.countDocuments();
+        const totalCourse = await Webinar.countDocuments();
 
-        const Courseget = await Webniar.find({})
-            .sort({ createdAt: -1 })
+        const Courseget = await Webinar.find({})
             .skip(skip)
             .limit(limit);
+
+            console.log("Courseget",Courseget)
 
         const totalPages = Math.ceil(totalCourse / limit);
 
@@ -486,51 +487,58 @@ exports.WebniarGet = catchAsync(async (req, res) => {
     }
 });
 
-exports.Webniarupdate = catchAsync(async (req, res) => {
+
+exports.WebinarUpdate = catchAsync(async (req, res) => {
     try {
         const {
-            _id, // Course ID
+            _id,
             title,
-            video, content
+            video,
+            content
         } = req.body;
 
         if (!_id) {
             return res.status(400).json({
                 status: false,
-                message: "Course ID is required.",
+                message: "Webinar ID is required.",
             });
         }
-        const updatedRecord = await Webniar.findByIdAndUpdate(
+
+        const updatedRecord = await Webinar.findByIdAndUpdate(
             _id,
             {
                 title,
-                video, content
+                video,
+                content
             },
             { new: true, runValidators: true }
         );
 
+        console.log("updatedRecord", updatedRecord);
+
         if (!updatedRecord) {
             return res.status(404).json({
                 status: false,
-                message: "Course not found!",
+                message: "Webinar not found!",
             });
         }
 
         res.status(200).json({
             status: true,
             data: updatedRecord,
-            message: "Course updated successfully.",
+            message: "Webinar updated successfully.",
         });
     } catch (error) {
-        logger.error(error)
+        console.error(error);
 
         res.status(500).json({
             status: false,
-            message: "An error occurred while updating the Course. Please try again later.",
+            message: "An error occurred while updating the Webinar. Please try again later.",
             error: error.message,
         });
     }
 });
+
 
 exports.WebniarIdDelete = catchAsync(async (req, res, next) => {
     try {
@@ -541,7 +549,7 @@ exports.WebniarIdDelete = catchAsync(async (req, res, next) => {
                 message: 'CourseUpdate ID is required.',
             });
         }
-        await Webniar.findByIdAndDelete(Id);
+        await Webinar.findByIdAndDelete(Id);
 
         res.status(200).json({
             status: true,
@@ -563,7 +571,7 @@ exports.WebniarGetId = catchAsync(async (req, res, next) => {
         if (!Id) {
             return res.status(400).json({ msg: "Course ID is required" });
         }
-        const CourseProfile = await Webniar.findById(Id); // Fetch full Course data
+        const CourseProfile = await Webinar.findById(Id); // Fetch full Course data
         if (!CourseProfile) {
             return res.status(404).json({ msg: "Course not found" });
         }

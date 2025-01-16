@@ -3,19 +3,12 @@ const mongoose = require('mongoose');
 
 // Define schema for lectures (nested in the Online schema)
 const OnlineSchema = new mongoose.Schema({
-  title :String ,
-  video :String , 
-  content :String
-});
+  title: String,
+  video: String, 
+  content: String,
+}, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
 
-OnlineSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
-
-
-
-
-const Online = mongoose.model('webniar', OnlineSchema);
+// Create a model for webinars
+const Online = mongoose.model('webinar', OnlineSchema);
 
 module.exports = Online;

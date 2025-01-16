@@ -1,5 +1,5 @@
 const Router = require("express").Router();
-const { CoursePost, CourseGet, CourseGetId, CourseUpdate, CourseIdDelete, onlinePost, OnlineGet, onlineupdate, OnlineIdDelete, OnlineGetId, CoursepriceUpdate, Webniarpost, WebniarGet, WebniarGetId, Webniarupdate, WebniarIdDelete } = require("../Controller/CourseController");
+const { CoursePost, CourseGet, CourseGetId, CourseUpdate, CourseIdDelete, onlinePost, OnlineGet, onlineupdate, OnlineIdDelete, OnlineGetId, CoursepriceUpdate, Webniarpost, WebniarGet, WebniarGetId, WebinarUpdate, WebniarIdDelete } = require("../Controller/CourseController");
 
 Router.post("/course_post", CoursePost)
 
@@ -26,7 +26,7 @@ Router.get("/online_get/:Id", OnlineGetId)
 
 Router.post("/webniar_post", Webniarpost)
 Router.get("/webniar_get_data", WebniarGet)
-Router.post("/webniar_update", Webniarupdate)
+Router.post("/webniar_update", WebinarUpdate)
 Router.post("/webniar_delete", WebniarIdDelete)
 Router.get("/webniar_get/:Id", WebniarGetId)
 

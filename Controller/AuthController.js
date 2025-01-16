@@ -200,12 +200,12 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
     }
 
     // Check if the user account is inactive
-    if (user.user_status === "inactive") {
-      return res.status(403).json({
-        status: false,
-        message: "Your account is inactive. Please contact support.",
-      });
-    }
+    // if (user.user_status === "inactive") {
+    //   return res.status(403).json({
+    //     status: false,
+    //     message: "Your account is inactive. Please contact support.",
+    //   });
+    // }
 
     // Check if the user is verified
     // if (!user.verified) {
@@ -269,13 +269,13 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     // Check if the user account is inactive
-    if (user.user_status === "inactive") {
-      logger.warn("Your account is inactive. Please contact support.")
-      return res.status(403).json({
-        status: false,
-        message: "Your account is inactive. Please contact support.",
-      });
-    }
+    // if (user.user_status === "inactive") {
+    //   logger.warn("Your account is inactive. Please contact support.")
+    //   return res.status(403).json({
+    //     status: false,
+    //     message: "Your account is inactive. Please contact support.",
+    //   });
+    // }
 
     // Validate user role
     if (user.role !== role) {

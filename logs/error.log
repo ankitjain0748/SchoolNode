@@ -135,3 +135,6 @@
 2025-01-16 00:23:56 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
 2025-01-16 00:23:58 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "NaN"}
 2025-01-16 00:26:23 [ERROR]: Error fetching users: Cannot increment with non-numeric argument: {passive_income: "0"}
+2025-01-16 23:05:28 [ERROR]: Webniar is not defined
+2025-01-16 23:20:16 [ERROR]: Profile validation failed: lastname: Last name is required., address: Address is required.
+2025-01-16 23:20:26 [ERROR]: Profile validation failed: lastname: Last name is required., address: Address is required.

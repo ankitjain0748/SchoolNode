@@ -349,3 +349,53 @@ exports.paymentdata= catchAsync(async (req,res)=>{
     });
   }
 })
+
+exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
+  const UserId = req.User._id;
+  try {
+    // Fetch user payments with status "success"
+    const UserPayments = await Payment.find({ UserId, payment_status: "success" })
+      .populate("UserId")
+      .populate("CourseId");
+
+    if (!UserPayments || UserPayments.length === 0) {
+      return res.status(204).json({
+        status: false,
+        message: "No Payment found for this user.",
+        Payments: [],
+      });
+    }
+
+    const CourseIds = UserPayments.map((payment) => payment.CourseId);
+    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId");
+
+    // Fetch all payments to determine best-selling courses
+    const allPayments = await Payment.find({ payment_status: "success" });
+    
+    const courseSalesCount = allPayments.reduce((acc, payment) => {
+      const courseId = payment.CourseId.toString();
+      acc[courseId] = (acc[courseId] || 0) + 1;
+      return acc;
+    }, {});
+
+    const sortedCourseIds = Object.keys(courseSalesCount).sort((a, b) => courseSalesCount[b] - courseSalesCount[a]);
+    const bestSellingCourseIds = sortedCourseIds.slice(0, 5); // Adjust the number as needed
+
+    const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId");
+
+    res.status(200).json({
+      status: true,
+      message: "Courses retrieved successfully!",
+      Payments: UserPayments,
+      Courses: courses,
+      BestSellingCourses: bestSellingCourses,
+    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({
+      status: false,
+      message: "An unknown error occurred. Please try again later.",
+      error: err.message,
+    });
+  }
+});
