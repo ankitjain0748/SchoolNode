@@ -424,10 +424,11 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
 
 exports.Webniarpost = async (req, res) => {
     try {
-        const { title, content, video } = req.body;
+        const { title, content, video ,webnair_date ,  place} = req.body;
         const record = new Webinar({
             title,
-            content, video
+            content, video, 
+            webnair_date ,  place
         });
         const result = await record.save();
         if (result) {
@@ -462,8 +463,6 @@ exports.WebniarGet = catchAsync(async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-            console.log("Courseget",Courseget)
-
         const totalPages = Math.ceil(totalCourse / limit);
 
         res.status(200).json({
@@ -494,7 +493,8 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
             _id,
             title,
             video,
-            content
+            content,
+            webnair_date ,  place
         } = req.body;
 
         if (!_id) {
@@ -509,12 +509,12 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
             {
                 title,
                 video,
+                webnair_date ,  place,
                 content
             },
             { new: true, runValidators: true }
         );
 
-        console.log("updatedRecord", updatedRecord);
 
         if (!updatedRecord) {
             return res.status(404).json({

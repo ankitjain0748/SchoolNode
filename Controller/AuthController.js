@@ -12,6 +12,7 @@ const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
 const Transaction = require("../Model/Transcation");
+const TempUser = require("../Model/TempUser");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -826,46 +827,218 @@ exports.paymentdata = catchAsync(async (req, res) => {
   }
 });
 
+// function generateOTP() {
+//   return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+// }
+// exports.OTP = catchAsync(async (req, res) => {
+//   try {
+//     const {
+//       email, password, name, phone_number, referred_by
+//     } = req.body;
+
+//     // // Check if required fields are "provided"
+//     // if (!password || !phone_number || !username || !email || !address || !country) {
+//     //   return res.status(401).json({
+//     //     status: false,
+//     //     message: 'All fields are required',
+//     //   });
+//     // }
+
+//     // Check if user already exists
+//     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
+//     if (existingUser) {
+//       const errors = {};
+//       if (existingUser.email === email) {
+//         errors.email = "Email is already in use!";
+//       }
+//       if (existingUser.phone_number === phone_number) {
+//         errors.phone_number = "Phone number is already in use!";
+//       }
+//       return res.status(400).json({
+//         status: false,
+//         message: "Email or phone number already exists",
+//         errors,
+//       });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 12);
+
+
+
+//     const otp = generateOTP();
+
+//     let referrer = null;
+//     if (referred_by) {
+//       referrer = await User.findOne({ referral_code: referred_by });
+//       if (!referrer) {
+//         return res.status(400).json({
+//           status: false,
+//           message: "Invalid referral code",
+//         });
+//       }
+//     }
+//     let referrers = null;
+//     if (referrer?.referred_by) {
+//       try {
+//         // Ensure referred_by is treated as an ObjectId
+//         const referrerObjectId = new mongoose.Types.ObjectId(referrer.referred_by);
+//         referrers = await User.findOne({ _id: referrerObjectId });
+//         if (!referrers) {
+//           return res.status(400).json({
+//             status: false,
+//             message: "Invalid second referral code",
+//           });
+//         }
+//       } catch (error) {
+//         return res.status(400).json({
+//           status: false,
+//           message: "Invalid ObjectId format",
+//         });
+//       }
+//     }
+//     let referrerdata = null;
+//     if (referrers?.referred_by) {
+//       const referrerObjectId = new mongoose.Types.ObjectId(referrers.referred_by);
+//       referrerdata = await User?.findOne({ _id: referrerObjectId });
+//       if (!referrerdata) {
+//         return res.status(400).json({
+//           status: false,
+//           message: "Invalid referral code",
+//         });
+//       }
+//     }
+//     const newUser = new User({
+//       email,
+//       password: hashedPassword,
+//       name,
+//       phone_number,
+//       referred_by: referrer?._id || null,
+//       referred_second: referrerdata?._id || null,
+//       referred_first: referrers?._id || null,
+//       OTP: otp,
+//     });
+
+//     const result = await newUser.save();
+
+//     if (referrer) {
+//       await User.findByIdAndUpdate(referrer._id, {
+//         $addToSet: { referrals: result._id },
+//       });
+//     }
+
+//     // Optional: Update referrer data with the new referral
+//     if (referrers) {
+//       await User.findByIdAndUpdate(referrers._id, {
+//         $addToSet: { referrals: result._id },
+//       });
+//     }
+
+//     if (referrerdata) {
+//       await User.findByIdAndUpdate(referrerdata._id, {
+//         $addToSet: { referrals: result._id },
+//       });
+//     }
+
+
+//     if (result) {
+//       const customerUser = result.name;
+//       let transporter = nodemailer.createTransport({
+//         host: process.env.MAIL_HOST,
+//         port: parseInt(process.env.MAIL_PORT, 10),
+//         secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
+//         auth: {
+//           user: process.env.user,
+//           pass: process.env.password,
+//         },
+//         tls: {
+//           rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
+//         },
+//       });
+
+//       const emailHtml = VerifyAccount(otp, customerUser);
+//       const recorddd = await transporter.sendMail({
+//         from: process.env.EMAIL_USER,
+//         to: result.email,
+//         subject: "Verify your Account",
+//         html: emailHtml,
+//       });
+
+//       return successResponse(res, "OTP has been sent to your email!", 201);
+//     } else {
+//       return errorResponse(res, "Failed to create user.", 500);
+//     }
+//   } catch (error) {
+//     return errorResponse(res, error.message || "Internal Server Error", 500);
+//   }
+// });
+
+
+// exports.VerifyOtp = catchAsync(async (req, res, next) => {
+//   try {
+//     const { email, OTP } = req.body;
+//     if (!email || !OTP) {
+//       return res.status(401).json({
+//         status: false,
+//         message: "Email and OTP are required!",
+//       });
+//     }
+
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(401).json({
+//         status: false,
+//         message: "Invalid Email or OTP",
+//       });
+//     }
+
+//     if (user.OTP != OTP) {
+//       return res.status(401).json({
+//         status: false,
+//         message: "Invalid OTP",
+//       });
+//     }
+
+//     user.verified = true;
+//     await user.save();
+
+//     const token = await signToken(user._id);
+//     res.json({
+//       status: true,
+//       message: "Your account has been verified.",
+//       token,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       error,
+//       message: "An unknown error occurred. Please try later.",
+//     });
+//   }
+// });
+
+
+// Function to generate OTP
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
 }
+
+// Exported function to send OTP
 exports.OTP = catchAsync(async (req, res) => {
   try {
-    const {
-      email, password, name, phone_number, referred_by
-    } = req.body;
-
-    // // Check if required fields are "provided"
-    // if (!password || !phone_number || !username || !email || !address || !country) {
-    //   return res.status(401).json({
-    //     status: false,
-    //     message: 'All fields are required',
-    //   });
-    // }
+    const { email, password, name, phone_number, referred_by } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
     if (existingUser) {
-      const errors = {};
-      if (existingUser.email === email) {
-        errors.email = "Email is already in use!";
-      }
-      if (existingUser.phone_number === phone_number) {
-        errors.phone_number = "Phone number is already in use!";
-      }
       return res.status(400).json({
         status: false,
         message: "Email or phone number already exists",
-        errors,
       });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-
-
-
     const otp = generateOTP();
 
+    // Check referral code and get referrer details
     let referrer = null;
     if (referred_by) {
       referrer = await User.findOne({ referral_code: referred_by });
@@ -906,72 +1079,57 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
-    const newUser = new User({
+
+    // Save the user data and OTP in a temporary object
+    const tempUser = {
       email,
       password: hashedPassword,
       name,
       phone_number,
-      referred_by: referrer?._id || null,
-      referred_second: referrerdata?._id || null,
-      referred_first: referrers?._id || null,
+      referred_by: referrer ? referrer._id : null,
+      referred_first: referrers ? referrers._id : null,
+      referred_second: referrerdata ? referrerdata._id : null,
       OTP: otp,
+    };
+
+    // Send OTP email
+    let transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: parseInt(process.env.MAIL_PORT, 10),
+      secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
+      auth: {
+        user: process.env.user,
+        pass: process.env.password,
+      },
+      tls: {
+        rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
+      },
     });
 
-    const result = await newUser.save();
+    const emailHtml = VerifyAccount(otp, tempUser.name);
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: tempUser.email,
+      subject: "Verify your Account",
+      html: emailHtml,
+    });
 
-    if (referrer) {
-      await User.findByIdAndUpdate(referrer._id, {
-        $addToSet: { referrals: result._id },
-      });
-    }
+    // Store tempUser in a temporary collection or in-memory store
+    await TempUser.create(tempUser);
 
-    // Optional: Update referrer data with the new referral
-    if (referrers) {
-      await User.findByIdAndUpdate(referrers._id, {
-        $addToSet: { referrals: result._id },
-      });
-    }
-
-    if (referrerdata) {
-      await User.findByIdAndUpdate(referrerdata._id, {
-        $addToSet: { referrals: result._id },
-      });
-    }
-
-
-    if (result) {
-      const customerUser = result.name;
-      let transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,
-        port: parseInt(process.env.MAIL_PORT, 10),
-        secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
-        auth: {
-          user: process.env.user,
-          pass: process.env.password,
-        },
-        tls: {
-          rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
-        },
-      });
-
-      const emailHtml = VerifyAccount(otp, customerUser);
-      const recorddd = await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: result.email,
-        subject: "Verify your Account",
-        html: emailHtml,
-      });
-
-      return successResponse(res, "OTP has been sent to your email!", 201);
-    } else {
-      return errorResponse(res, "Failed to create user.", 500);
-    }
+    return res.status(201).json({
+      status: true,
+      message: "OTP has been sent to your email!",
+    });
   } catch (error) {
-    return errorResponse(res, error.message || "Internal Server Error", 500);
+    return res.status(500).json({
+      error,
+      message: "Internal Server Error",
+    });
   }
 });
 
-
+// Exported function to verify OTP
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
     const { email, OTP } = req.body;
@@ -982,25 +1140,55 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
+    // Find the temporary user by email
+    const tempUser = await TempUser.findOne({ email });
+    if (!tempUser) {
       return res.status(401).json({
         status: false,
         message: "Invalid Email or OTP",
       });
     }
 
-    if (user.OTP != OTP) {
+    if (tempUser.OTP != OTP) {
       return res.status(401).json({
         status: false,
         message: "Invalid OTP",
       });
     }
 
-    user.verified = true;
-    await user.save();
+    // Move user from temporary collection to main User collection
+    const newUser = new User({
+      email: tempUser.email,
+      password: tempUser.password,
+      name: tempUser.name,
+      phone_number: tempUser.phone_number,
+      referred_by: tempUser.referred_by,
+      referred_first: tempUser.referred_first,
+      referred_second: tempUser.referred_second,
+    });
+    await newUser.save();
 
-    const token = await signToken(user._id);
+    // Remove the temporary user record
+    await TempUser.deleteOne({ email });
+
+    // Update referrer with the new referral
+    if (tempUser.referred_by) {
+      await User.findByIdAndUpdate(tempUser.referred_by, {
+        $addToSet: { referrals: newUser._id },
+      });
+    }
+    if (tempUser.referred_first) {
+      await User.findByIdAndUpdate(tempUser.referred_first, {
+        $addToSet: { referrals: newUser._id },
+      });
+    }
+    if (tempUser.referred_second) {
+      await User.findByIdAndUpdate(tempUser.referred_second, {
+        $addToSet: { referrals: newUser._id },
+      });
+    }
+
+    const token = await signToken(newUser._id);
     res.json({
       status: true,
       message: "Your account has been verified.",
@@ -1013,8 +1201,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
 
 exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   try {
@@ -1054,8 +1240,6 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
 
 exports.getUsersWithTodayRefDate = async (req, res) => {
   try {
@@ -1112,24 +1296,14 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
   }
 };
 
-
-
-
 exports.profileadmin = catchAsync(async (req, res, next) => {
   try {
     const adminUser = await User.findOne({ role: "admin", isDeleted: false })
       .select("-password")
-      .sort({ created_at: -1 });
-    console.log("adminUser", adminUser);
-
-    const users = await User.find({ role: "user", user_status : "Enrolled" , isDeleted: false });
-    console.log("users", users);
+    const users = await User.find({ role: "user", isDeleted: false });
 
     for (const user of users) {
-      console.log("user", user);
       const { referred_user_pay, second_user_pay, first_user_pay } = user;
-      console.log(referred_user_pay, second_user_pay, first_user_pay, "referred_user_pay, second_user_pay, first_user_pay");
-
       const totalPayment = referred_user_pay || 0;
       const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
       const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;

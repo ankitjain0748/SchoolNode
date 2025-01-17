@@ -144,7 +144,6 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
         const BankData = await Bank.findOne({ userId: userId });
-console.log("ProfileData",ProfileData)
 
         return res.status(200).json({
             status: true,
