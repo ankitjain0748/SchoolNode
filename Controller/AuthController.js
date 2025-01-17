@@ -12,6 +12,7 @@ const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
 const Transaction = require("../Model/Transcation");
+const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
 
 exports.verifyToken = async (req, res, next) => {
@@ -304,19 +305,31 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 
+
 exports.profile = catchAsync(async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
-    const updatedUsers = await User.find({ role: "user", isDeleted: false })
+    const users = await User.find({ role: "user", isDeleted: false })
       .select("-password")
       .sort({ created_at: -1 })
-      .skip(skip).populate({
-        path: "CourseId",
-        select: "title discountPrice category courseImage"
-      })
+      .skip(skip)
       .limit(limit);
+
+    // Fetch bank details for each user
+    const usersWithBankDetails = await Promise.all(
+      users.map(async (user) => {
+        const bankDetails = await Bank.findOne({ userId: user._id }).select("-_id -userId");
+        const ProfileDetails = await ProfileData.findOne({ userId: user._id }).select("-_id -userId");
+
+        return {
+          ...user.toObject(),
+          bank_details: bankDetails,
+          ProfileDetails: ProfileDetails
+        };
+      })
+    );
 
     // Total users and pagination details
     const totalUsers = await User.countDocuments({ role: "user", isDeleted: false });
@@ -325,9 +338,9 @@ exports.profile = catchAsync(async (req, res, next) => {
     // Return response
     return res.status(200).json({
       status: true,
-      message: "Users retrieved successfully with enquiry counts updated",
+      message: "Users retrieved successfully with bank details",
       data: {
-        users: updatedUsers,
+        users: usersWithBankDetails,
         totalUsers,
         totalPages,
         currentPage: page,
@@ -337,15 +350,16 @@ exports.profile = catchAsync(async (req, res, next) => {
       },
     });
   } catch (error) {
-    logger.error("Error fetching booking:", error);
+    logger.error("Error fetching users:", error);
 
     return res.status(500).json({
       status: false,
-      message: "An error occurred while fetching users and updating enquiry counts.",
+      message: "An error occurred while fetching users and updating bank details.",
       error: error.message || "Internal Server Error", // Provide a fallback error message
     });
   }
 });
+
 
 
 
@@ -1021,10 +1035,19 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
 }
 
-// Exported function to send OTP
+exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return emailRegex.test(email); };
+
 exports.OTP = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by } = req.body;
+    console.log("req.body", req.body)
+    // Validate email format
+    // if (!isValidEmail(email)) {
+    //   return res.status(400).json({
+    //     status: false,
+    //     message: "Invalid email format",
+    //   });
+    // }
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
@@ -1034,7 +1057,7 @@ exports.OTP = catchAsync(async (req, res) => {
         message: "Email or phone number already exists",
       });
     }
-
+    console.log("existingUser", existingUser)
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
 
@@ -1128,6 +1151,114 @@ exports.OTP = catchAsync(async (req, res) => {
     });
   }
 });
+
+// Exported function to send OTP
+// exports.OTP = catchAsync(async (req, res) => {
+//   try {
+//     const { email, password, name, phone_number, referred_by } = req.body;
+
+//     // Check if user already exists
+//     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
+//     if (existingUser) {
+//       return res.status(400).json({
+//         status: false,
+//         message: "Email or phone number already exists",
+//       });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 12);
+//     const otp = generateOTP();
+
+//     // Check referral code and get referrer details
+//     let referrer = null;
+//     if (referred_by) {
+//       referrer = await User.findOne({ referral_code: referred_by });
+//       if (!referrer) {
+//         return res.status(400).json({
+//           status: false,
+//           message: "Invalid referral code",
+//         });
+//       }
+//     }
+//     let referrers = null;
+//     if (referrer?.referred_by) {
+//       try {
+//         // Ensure referred_by is treated as an ObjectId
+//         const referrerObjectId = new mongoose.Types.ObjectId(referrer.referred_by);
+//         referrers = await User.findOne({ _id: referrerObjectId });
+//         if (!referrers) {
+//           return res.status(400).json({
+//             status: false,
+//             message: "Invalid second referral code",
+//           });
+//         }
+//       } catch (error) {
+//         return res.status(400).json({
+//           status: false,
+//           message: "Invalid ObjectId format",
+//         });
+//       }
+//     }
+//     let referrerdata = null;
+//     if (referrers?.referred_by) {
+//       const referrerObjectId = new mongoose.Types.ObjectId(referrers.referred_by);
+//       referrerdata = await User?.findOne({ _id: referrerObjectId });
+//       if (!referrerdata) {
+//         return res.status(400).json({
+//           status: false,
+//           message: "Invalid referral code",
+//         });
+//       }
+//     }
+
+//     // Save the user data and OTP in a temporary object
+//     const tempUser = {
+//       email,
+//       password: hashedPassword,
+//       name,
+//       phone_number,
+//       referred_by: referrer ? referrer._id : null,
+//       referred_first: referrers ? referrers._id : null,
+//       referred_second: referrerdata ? referrerdata._id : null,
+//       OTP: otp,
+//     };
+
+//     // Send OTP email
+//     let transporter = nodemailer.createTransport({
+//       host: process.env.MAIL_HOST,
+//       port: parseInt(process.env.MAIL_PORT, 10),
+//       secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
+//       auth: {
+//         user: process.env.user,
+//         pass: process.env.password,
+//       },
+//       tls: {
+//         rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
+//       },
+//     });
+
+//     const emailHtml = VerifyAccount(otp, tempUser.name);
+//     await transporter.sendMail({
+//       from: process.env.EMAIL_USER,
+//       to: tempUser.email,
+//       subject: "Verify your Account",
+//       html: emailHtml,
+//     });
+
+//     // Store tempUser in a temporary collection or in-memory store
+//     await Tem.create(tempUser);
+
+//     return res.status(201).json({
+//       status: true,
+//       message: "OTP has been sent to your email!",
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       error,
+//       message: "Internal Server Error",
+//     });
+//   }
+// });
 
 // Exported function to verify OTP
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
@@ -1241,6 +1372,7 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   }
 });
 
+
 exports.getUsersWithTodayRefDate = async (req, res) => {
   try {
     const today = new Date();
@@ -1257,7 +1389,7 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
       },
     });
 
-    // Fetch details of referred users for each user
+    // Fetch details of referred users and bank details for each user
     const userDetails = await Promise.all(
       users.map(async (user) => {
         const referredBy = user.referred_by
@@ -1269,8 +1401,25 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
           : null;
 
         const referredSecond = user.referred_second
-          ? await User.findById(user.referred_second).select("-password"
-          )
+          ? await User.findById(user.referred_second).select("-password")
+          : null;
+
+        const userBankDetails = await Bank.findOne({ userId: user._id });
+
+        const referredByBankDetails = referredBy
+          ? await Bank.findOne({ userId: referredBy._id })
+          : null;
+
+        const referredByProfileDetails = referredBy
+          ? await ProfileData.findOne({ userId: referredBy._id })
+          : null;
+
+        const referredFirstBankDetails = referredFirst
+          ? await Bank.findOne({ userId: referredFirst._id })
+          : null;
+
+        const referredSecondBankDetails = referredSecond
+          ? await Bank.findOne({ userId: referredSecond._id })
           : null;
 
         return {
@@ -1278,6 +1427,11 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
           referred_by_details: referredBy,
           referred_first_details: referredFirst,
           referred_second_details: referredSecond,
+          bank_details: userBankDetails,
+          referred_by_bank_details: referredByBankDetails,
+          referred_first_bank_details: referredFirstBankDetails,
+          referred_second_bank_details: referredSecondBankDetails,
+          referredByProfileDetails: referredByProfileDetails
         };
       })
     );
@@ -1296,45 +1450,11 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
   }
 };
 
+
+
 exports.profileadmin = catchAsync(async (req, res, next) => {
   try {
-    const adminUser = await User.findOne({ role: "admin", isDeleted: false })
-      .select("-password")
-    const users = await User.find({ role: "user", isDeleted: false });
-
-    for (const user of users) {
-      const { referred_user_pay, second_user_pay, first_user_pay } = user;
-      const totalPayment = referred_user_pay || 0;
-      const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
-      const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
-
-      // Ensure percentageValue is always a number
-      const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
-
-      await User.findByIdAndUpdate(
-        user._id,
-        {
-          $set: { user_status: userStatus },
-          $inc: { passive_income: validPercentageValue }
-        },
-        { new: true }
-      );
-    }
-
-    // Return response
-    return res.status(200).json({
-      status: true,
-      message: "Users retrieved and updated successfully with enquiry counts updated",
-      data: adminUser
-    });
-  } catch (error) {
-    logger.error("Error fetching users:", error);
-
-    return res.status(500).json({
-      status: false,
-      message: "An error occurred while fetching and updating users.",
-      error: error.message || "Internal Server Error", // Provide a fallback error message
-    });
-  }
+    const adminUser = await User.findOne({ role: "admin", isDeleted: false }).select("-password")
+    const users = await User.find({ role: "user", isDeleted: false }); for (const user of users) { const { referred_user_pay, second_user_pay, first_user_pay } = user; const totalPayment = referred_user_pay || 0; const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active'; const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100; const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue; await User.findByIdAndUpdate(user._id, { $set: { user_status: userStatus }, $inc: { passive_income: validPercentageValue } }, { new: true }); } res.status(200).json({ status: true, message: "Users retrieved and updated successfully with enquiry counts updated", data: adminUser });
+  } catch (error) { logger.error("Error fetching users:", error); return res.status(500).json({ status: false, message: "An error occurred while fetching and updating users.", error: error.message || "Internal Server Error", }); }
 });
-
