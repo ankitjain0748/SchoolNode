@@ -1,4 +1,4 @@
-const {  login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin, userupdateby, paymentdata, OTP, VerifyOtp, UserPriceUpdate, getUsersWithTodayRefDate, profileadmin, UserListIds } = require("../Controller/AuthController");
+const { login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin, userupdateby, paymentdata, OTP, VerifyOtp, UserPriceUpdate, getUsersWithTodayRefDate, profileadmin, UserListIds } = require("../Controller/AuthController");
 const { BankAddOrEdit } = require("../Controller/BankController");
 const { ProfileData, ProfileDataId, profileAddOrUpdate } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
@@ -51,14 +51,13 @@ userRoute.get('/referrals', getUsersWithTodayRefDate);
 
 userRoute.post("/user-social", verifyToken, SocialAddOrEdit)
 
-userRoute.get("/adminprofile",  profileadmin)
-
+userRoute.get("/adminprofile", profileadmin)
 
 // Bank 
 
 userRoute.post("/bank-data", verifyToken, BankAddOrEdit)
 
-userRoute.get("/userlist",verifyToken ,  UserListIds)
+userRoute.get("/userlist", verifyToken, UserListIds)
 
 
 module.exports = userRoute;
