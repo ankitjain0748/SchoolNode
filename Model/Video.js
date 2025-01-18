@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 // Define schema for lectures (nested in the Online schema)
-const TranningSchema = new mongoose.Schema({
+const TranningSchema =  mongoose.Schema({
   title: String,
   video: String,
   content: String,
@@ -11,6 +11,6 @@ const TranningSchema = new mongoose.Schema({
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
 
 // Create a model for webinars
-const VideoTraning = mongoose.model('Tranning', TranningSchema);
+const VideoTraning = mongoose.model('tranning', TranningSchema);
 
 module.exports = VideoTraning;

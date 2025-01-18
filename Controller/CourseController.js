@@ -3,7 +3,7 @@ const Online = require("../Model/Online");
 const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
 const Webinar = require('../Model/Webniar'); // Import the model
-
+const  Tranning = require("../Model/Video")
 // Configure Multer for file uploads
 
 
@@ -572,6 +572,177 @@ exports.WebniarGetId = catchAsync(async (req, res, next) => {
             return res.status(400).json({ msg: "Course ID is required" });
         }
         const CourseProfile = await Webinar.findById(Id); // Fetch full Course data
+        if (!CourseProfile) {
+            return res.status(404).json({ msg: "Course not found" });
+        }
+        res.status(200).json({
+            data: CourseProfile,
+            msg: "Course and Course details retrieved successfully",
+        });
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            msg: "Failed to fetch course profile",
+            error: error.message,
+        });
+    }
+});
+
+
+//Tranning Video 
+
+
+
+exports.Tranningpost = async (req, res) => {
+    try {
+        const { title, content, video ,webnair_date ,  place} = req.body;
+        const record = new Tranning({
+            title,
+            content, video, 
+            webnair_date ,  place
+        });
+        const result = await record.save();
+        if (result) {
+            res.json({
+                status: true,
+                message: "Online Added Successfully!",
+            });
+        } else {
+            logger.error("Failed to add Online.")
+            res.status(400).json({
+                status: false,
+                message: "Failed to add Online.",
+            });
+        }
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            status: false,
+            message: "Internal Server Error.",
+        });
+    }
+};
+
+exports.TranningGet = catchAsync(async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 25;
+        const skip = (page - 1) * limit;
+        const totalCourse = await Tranning.countDocuments();
+
+        const Courseget = await Tranning.find({})
+            .skip(skip)
+            .limit(limit);
+
+        const totalPages = Math.ceil(totalCourse / limit);
+
+        res.status(200).json({
+            data: {
+                Courseget,
+                totalCourse,
+                totalPages,
+                currentPage: page,
+                perPage: limit,
+                nextPage: page < totalPages ? page + 1 : null,
+                previousPage: page > 1 ? page - 1 : null,
+            },
+            msg: "Course Get",
+        });
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            msg: "Failed to fetch Course get",
+            error: error.message,
+        });
+    }
+});
+
+
+exports.tranningUpdate = catchAsync(async (req, res) => {
+    try {
+        const {
+            _id,
+            title,
+            video,
+            content,
+            webnair_date ,  place
+        } = req.body;
+
+        if (!_id) {
+            return res.status(400).json({
+                status: false,
+                message: "Webinar ID is required.",
+            });
+        }
+
+        const updatedRecord = await Tranning.findByIdAndUpdate(
+            _id,
+            {
+                title,
+                video,
+                webnair_date ,  place,
+                content
+            },
+            { new: true, runValidators: true }
+        );
+
+
+        if (!updatedRecord) {
+            return res.status(404).json({
+                status: false,
+                message: "Webinar not found!",
+            });
+        }
+
+        res.status(200).json({
+            status: true,
+            data: updatedRecord,
+            message: "Webinar updated successfully.",
+        });
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            status: false,
+            message: "An error occurred while updating the Webinar. Please try again later.",
+            error: error.message,
+        });
+    }
+});
+
+
+exports.trannigIdDelete = catchAsync(async (req, res, next) => {
+    try {
+        const { Id } = req.body;
+        if (!Id) {
+            return res.status(400).json({
+                status: false,
+                message: 'CourseUpdate ID is required.',
+            });
+        }
+        await Tranning.findByIdAndDelete(Id);
+
+        res.status(200).json({
+            status: true,
+            message: 'CourseUpdate and associated images deleted successfully.',
+        });
+    } catch (error) {
+        logger.error(error)
+
+        res.status(500).json({
+            status: false,
+            message: 'Internal Server Error. Please try again later.',
+        });
+    }
+});
+
+exports.TranningGetId = catchAsync(async (req, res, next) => {
+    try {
+        const { Id } = req.params;
+        if (!Id) {
+            return res.status(400).json({ msg: "Course ID is required" });
+        }
+        const CourseProfile = await Tranning.findById(Id); // Fetch full Course data
         if (!CourseProfile) {
             return res.status(404).json({ msg: "Course not found" });
         }

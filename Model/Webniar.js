@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 // Define schema for lectures (nested in the Online schema)
-const OnlineSchema = new mongoose.Schema({
+const OnlineSchema =  mongoose.Schema({
   title: String,
   video: String,
   content: String,

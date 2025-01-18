@@ -28,10 +28,7 @@ const BlogRoute = require("./Route/BlogRoute")
 const ReviewRoute = require("./Route/ReviewRoute")
 const RefralRoute = require("./Route/RefralRoute");
 const GalleryRoute = require("./Route/Gallery");
-
 const Loggers = require("./utill/Loggers");
-
-
 app.use("/user", userRoute)
 app.use("/contact", contactRoute)
 app.use("/subscribe", SubscribeRoute)
@@ -42,10 +39,7 @@ app.use("/blog", BlogRoute)
 app.use("/review", ReviewRoute)
 app.use("/refral", RefralRoute)
 app.use("/gallery", GalleryRoute)
-
-
 const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
-
 app.get("/", (req, res) => {
     res.json({
         msg: 'Hello Data maanage ',

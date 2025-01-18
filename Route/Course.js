@@ -1,5 +1,5 @@
 const Router = require("express").Router();
-const { CoursePost, CourseGet, CourseGetId, CourseUpdate, CourseIdDelete, onlinePost, OnlineGet, onlineupdate, OnlineIdDelete, OnlineGetId, CoursepriceUpdate, Webniarpost, WebniarGet, WebniarGetId, WebinarUpdate, WebniarIdDelete } = require("../Controller/CourseController");
+const { CoursePost, CourseGet, CourseGetId, CourseUpdate, CourseIdDelete, onlinePost, OnlineGet, onlineupdate, OnlineIdDelete, OnlineGetId, CoursepriceUpdate, Webniarpost, WebniarGet, WebniarGetId, WebinarUpdate, WebniarIdDelete, Tranningpost, TranningGet, TranningGetId, tranningUpdate, trannigIdDelete } = require("../Controller/CourseController");
 
 Router.post("/course_post", CoursePost)
 
@@ -29,6 +29,20 @@ Router.get("/webniar_get_data", WebniarGet)
 Router.post("/webniar_update", WebinarUpdate)
 Router.post("/webniar_delete", WebniarIdDelete)
 Router.get("/webniar_get/:Id", WebniarGetId)
+
+
+// Video Tranning
+
+
+Router.post("/video_traning_add",Tranningpost);
+
+Router.get("/video_traning_get", TranningGet);
+
+Router.get("/video_traning_get_by_id/:id", TranningGetId);
+
+Router.put("/video_traning_update/:id", tranningUpdate);
+
+Router.delete("/video_traning_delete/:id", trannigIdDelete);
 
 
 module.exports = Router;
