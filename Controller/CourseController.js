@@ -424,10 +424,11 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
 
 exports.Webniarpost = async (req, res) => {
     try {
-        const { title, content, video ,webnair_date ,  place} = req.body;
+        const { title, content, video ,webnair_date ,  place ,webnair_time} = req.body;
         const record = new Webinar({
             title,
             content, video, 
+            webnair_time,
             webnair_date ,  place
         });
         const result = await record.save();
@@ -492,6 +493,7 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
         const {
             _id,
             title,
+            webnair_time,
             video,
             content,
             webnair_date ,  place
@@ -509,6 +511,7 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
             {
                 title,
                 video,
+                webnair_time,
                 webnair_date ,  place,
                 content
             },

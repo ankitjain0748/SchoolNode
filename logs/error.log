@@ -140,3 +140,8 @@
 2025-01-16 23:20:26 [ERROR]: Profile validation failed: lastname: Last name is required., address: Address is required.
 2025-01-17 23:19:28 [ERROR]: Error fetching users: Profile is not defined
 2025-01-17 23:19:35 [ERROR]: Error fetching users: Profile is not defined
+2025-01-18 22:17:15 [ERROR]: Error fetching users: usercounts is not defined
+2025-01-18 22:17:16 [ERROR]: Error fetching users: usercounts is not defined
+2025-01-18 22:17:26 [ERROR]: Error fetching users: usercounts is not defined
+2025-01-18 22:19:03 [ERROR]: Error fetching users: usercounts is not defined
+2025-01-18 22:19:04 [ERROR]: Error fetching users: usercounts is not defined

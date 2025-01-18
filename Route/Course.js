@@ -38,11 +38,11 @@ Router.post("/video_traning_add",Tranningpost);
 
 Router.get("/video_traning_get", TranningGet);
 
-Router.get("/video_traning_get_by_id/:id", TranningGetId);
+Router.get("/video_traning_get_by_id/:Id", TranningGetId);
 
-Router.put("/video_traning_update/:id", tranningUpdate);
+Router.put("/video_traning_update", tranningUpdate);
 
-Router.delete("/video_traning_delete/:id", trannigIdDelete);
+Router.delete("/video_traning_delete", trannigIdDelete);
 
 
 module.exports = Router;

@@ -305,13 +305,12 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 
-
 exports.profile = catchAsync(async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
-    const users = await User.find({ role: "user", isDeleted: false })
+    const users = await User.find({ role: "user", isDeleted: false }).populate("CourseId")
       .select("-password")
       .sort({ created_at: -1 })
       .skip(skip)
@@ -322,7 +321,6 @@ exports.profile = catchAsync(async (req, res, next) => {
       users.map(async (user) => {
         const bankDetails = await Bank.findOne({ userId: user._id }).select("-_id -userId");
         const ProfileDetails = await ProfileData.findOne({ userId: user._id }).select("-_id -userId");
-
         return {
           ...user.toObject(),
           bank_details: bankDetails,
@@ -1463,6 +1461,8 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
     }
 
     const users = await User.find({ role: "user", isDeleted: false });
+    const userCount = await User.countDocuments();
+
 
     let activeCount = 0;
     let inactiveCount = 0;
@@ -1470,7 +1470,6 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
     for (const user of users) {
       const { referred_user_pay, second_user_pay, first_user_pay } = user;
       const totalPayment = referred_user_pay || 0;
-
       const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
       const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
       const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
@@ -1497,6 +1496,7 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
       message: "Users retrieved and updated successfully with enquiry counts updated",
       data: {
         adminUser,
+        userCount,
         activeCount,
         inactiveCount,
       },

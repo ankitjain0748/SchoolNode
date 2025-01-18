@@ -7,6 +7,8 @@ const OnlineSchema =  mongoose.Schema({
   video: String,
   content: String,
   webnair_date: String,
+  webnair_time: String,
+
   place: String
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
 
