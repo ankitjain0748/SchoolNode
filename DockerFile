@@ -1,0 +1,11 @@
+FROM node:16
+
+WORKDIR /App
+
+Copy ./package*.json./
+
+RUN NPM INSTALL
+
+copy ..
+
+EXPOSE 
