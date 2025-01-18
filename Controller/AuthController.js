@@ -1511,3 +1511,27 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
   }
 });
 
+exports.UserListIds = catchAsync(async (req, res, next) => {
+  try {
+    
+
+    const userId = req.User._id;
+    console.log("userId",userId)
+    const ProfileDetails = await ProfileData.findOne({ userId }).populate("userId");
+
+    // Return response
+    return res.status(200).json({
+      status: true,
+      message: "Users retrieved successfully with bank details",
+      data: ProfileDetails,
+    });
+  } catch (error) {
+    logger.error("Error fetching users:", error);
+
+    return res.status(500).json({
+      status: false,
+      message: "An error occurred while fetching users and updating bank details.",
+      error: error.message || "Internal Server Error",
+    });
+  }
+});
