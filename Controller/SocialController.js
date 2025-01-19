@@ -11,7 +11,7 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
             message: "User ID is missing. Please log in and try again.",
         });
     }
-    const { website, linkedin, github, facebook, twitter, _id } = req.body;
+    const { website, linkedin, github, facebook, twitter, _id ,youtube } = req.body;
     if (!website && !linkedin && !github && !facebook && !twitter) {
         logger.warn("Request failed: Missing social fields in the request.");
         return res.status(400).json({
@@ -24,7 +24,7 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
         if (_id) {
             result = await SocialSection.findByIdAndUpdate(
                 _id,
-                { website, linkedin, github, facebook, twitter, userId },
+                { website, linkedin, github, facebook, twitter, userId ,youtube },
                 { new: true, runValidators: true }
             );
             if (!result) {
@@ -45,6 +45,7 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
                 linkedin,
                 github,
                 facebook,
+                youtube,
                 twitter,
                 userId,
             });

@@ -14,6 +14,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
         firstname,
         address,
         policy,
+        bsemail,
         term,
         lastname,
         username,
@@ -42,6 +43,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             existingProfile.policy = policy || existingProfile.policy;
             existingProfile.term = address || existingProfile.term;
             existingProfile.profileImage = profileImage || existingProfile.profileImage;
+            existingProfile.bsemail = bsemail || existingProfile.bsemail ;
             const updatedProfile = await existingProfile.save();
 
             res.json({
@@ -61,6 +63,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
                 profileImage,
                 userId,
                 address,
+                bsemail,
                 policy, term
             });
 
