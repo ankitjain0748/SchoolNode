@@ -151,3 +151,4 @@
 2025-01-19 20:54:14 [ERROR]: Error fetching users: Cannot read properties of undefined (reading '_id')
 2025-01-19 20:54:28 [ERROR]: Error fetching users: Cannot read properties of undefined (reading '_id')
 2025-01-19 20:57:47 [ERROR]: Error fetching users: Cannot read properties of undefined (reading '_id')
+2025-01-20 20:50:27 [ERROR]: Cast to ObjectId failed for value "undefined" (type string) at path "_id" for model "Course"
