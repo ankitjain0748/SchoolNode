@@ -57,7 +57,7 @@ userRoute.get("/adminprofile", profileadmin)
 
 userRoute.post("/bank-data", verifyToken, BankAddOrEdit)
 
-userRoute.get("/userlist", UserListIds)
+userRoute.get("/userlist",verifyToken , UserListIds)
 
 
 module.exports = userRoute;
