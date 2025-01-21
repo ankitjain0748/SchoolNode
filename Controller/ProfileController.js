@@ -43,7 +43,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             existingProfile.policy = policy || existingProfile.policy;
             existingProfile.term = address || existingProfile.term;
             existingProfile.profileImage = profileImage || existingProfile.profileImage;
-            existingProfile.bsemail = bsemail || existingProfile.bsemail ;
+            existingProfile.bsemail = bsemail || existingProfile.bsemail;
             const updatedProfile = await existingProfile.save();
 
             res.json({
@@ -91,7 +91,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
         const user = req?.body?.id;
-        const UserData = await User.findOne({ _id: userId }).select("-password");
+        const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
         // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
