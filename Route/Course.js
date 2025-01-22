@@ -42,7 +42,7 @@ Router.get("/video_traning_get_by_id/:Id", TranningGetId);
 
 Router.put("/video_traning_update", tranningUpdate);
 
-Router.delete("/video_traning_delete", trannigIdDelete);
+Router.post("/video_traning_delete", trannigIdDelete);
 
 
 module.exports = Router;

@@ -14,6 +14,7 @@ const { default: mongoose } = require("mongoose");
 const Transaction = require("../Model/Transcation");
 const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
+const SocialSection = require("../Model/Social");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -1452,6 +1453,9 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
 exports.profileadmin = catchAsync(async (req, res, next) => {
   try {
     const adminUser = await User.findOne({ role: "admin", isDeleted: false }).select("-password");
+    const SocialAdmin = await SocialSection.findOne({ userId : adminUser?._id });
+    const ProfileAdmin = await ProfileData.findOne({ userId : adminUser?._id });
+
 
     if (!adminUser) {
       return res.status(404).json({
@@ -1500,6 +1504,8 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
         activeCount,
         inactiveCount,
       },
+      ProfileAdmin:ProfileAdmin,
+      SocialAdmin :SocialAdmin
     });
   } catch (error) {
     logger.error("Error fetching users:", error);

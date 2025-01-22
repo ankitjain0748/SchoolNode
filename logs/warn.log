@@ -80,3 +80,6 @@
 2025-01-17 22:52:08 [WARN]: Incorrect password!
 2025-01-19 00:07:52 [WARN]: Incorrect password!
 2025-01-21 20:05:23 [WARN]: Incorrect password!
+2025-01-22 21:45:22 [WARN]: All fields (title, content, Image , short_content) are required.
+2025-01-22 21:45:26 [WARN]: All fields (title, content, Image , short_content) are required.
+2025-01-22 21:46:32 [WARN]: All fields (title, content, Image , short_content) are required.
