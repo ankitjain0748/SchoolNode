@@ -1262,7 +1262,7 @@ exports.OTP = catchAsync(async (req, res) => {
 // Exported function to verify OTP
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
-    const { email, OTP } = req.body;
+    const { email, OTP , Email_verify} = req.body;
     if (!email || !OTP) {
       return res.status(401).json({
         status: false,
@@ -1271,7 +1271,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
     }
 
     // Find the temporary user by email
-    const tempUser = await TempUser.findOne({ email });
+    const tempUser = await TempUser.findOne({ email ,Email_verify });
     if (!tempUser) {
       return res.status(401).json({
         status: false,

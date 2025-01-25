@@ -14,6 +14,10 @@ const subscribeSchema = mongoose.Schema({
     created_at: {
         type: Date,
         default: Date.now
+    },
+    Email_verify: {
+        type: String,
+        // deafult: false
     }
 })
 

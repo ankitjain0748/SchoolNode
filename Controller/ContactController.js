@@ -6,7 +6,7 @@ const logger = require("../utill/Loggers");
 
 exports.ContactPost = catchAsync(async (req, res) => {
     try {
-        const { email, name, message, subject, role, phone_number } = req.body;
+        const { email, name, message, subject, role, phone_number  ,Email_verify} = req.body;
 
         if (!email || !name || !message || !subject || !role || !phone_number) {
             logger.warn("All fields (email, name, message, subject, role, phone_number) are required.")
@@ -16,7 +16,7 @@ exports.ContactPost = catchAsync(async (req, res) => {
             });
         }
         const record = new contactmodal({
-            email, name, message, subject, role, phone_number
+            email, name, message, subject, role, phone_number,Email_verify
         });
 
         const result = await record.save();

@@ -156,3 +156,4 @@
 2025-01-21 20:05:32 [ERROR]: Error fetching users: Cannot read properties of undefined (reading '_id')
 2025-01-22 00:17:11 [ERROR]: Course is not defined
 2025-01-22 00:18:04 [ERROR]: Course is not defined
+2025-01-23 21:27:36 [ERROR]: Cast to ObjectId failed for value "www.linkdin.com" (type string) at path "_id" for model "User"

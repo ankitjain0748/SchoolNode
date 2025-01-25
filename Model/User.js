@@ -60,6 +60,10 @@ const userSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    Email_verify: {
+        type: String,
+        // deafult: false
+    },
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",

@@ -14,6 +14,10 @@ const tempUserSchema =  mongoose.Schema({
     type: String,
     required: true,
   },
+  Email_verify: {
+    type: String,
+    // deafult: false
+},
   phone_number: {
     type: String,
     required: true,
