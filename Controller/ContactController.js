@@ -22,7 +22,6 @@ exports.ContactPost = catchAsync(async (req, res) => {
 
         const result = await record.save();
         if(result.role = "support"){
-            console.log("support",result)
             const subject1 = `Your Support Ticket ${result?._id} has been Created 🎉`;
             await sendEmail({
                 email: email,

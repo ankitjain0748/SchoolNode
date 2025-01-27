@@ -34,17 +34,12 @@ const record =     await newBlog.save();
     const contactEmails = await Contact.find({ Email_verify: "valid" }).select("email");
     const subscribeEmails = await Subscribe.find({ Email_verify: "valid" }).select("email");
     const userEmails = await User.find({ role: "user", isDeleted: false, Email_verify: "valid" }).select("email");
-    console.log("userEmails", userEmails)
     // Extract email lists
     const contactEmailList = contactEmails.map(contact => contact.email);
-    console.log("contactEmailList", contactEmailList)
     const subscribeEmailList = subscribeEmails.map(subscribe => subscribe.email);
-    console.log("subscribeEmailList", subscribeEmailList)
     const userEmailList = userEmails.map(user => user.email);
     const allEmails = [...contactEmailList, ...subscribeEmailList, ...userEmailList];
     const uniqueEmails = [...new Set(allEmails)];  // Remove duplicate emails
-    console.log("uniqueEmails", uniqueEmails)
-
 
     const subject1 = ` 🚀 New Blog Post: ${title} - Don't Miss Out!`;
     for (const email of uniqueEmails) {
@@ -56,7 +51,6 @@ const record =     await newBlog.save();
               subject: subject1,
               emailTemplate: BlogEmail,
           });
-          console.log(`Email successfully sent to: ${email}`);
       } catch (error) {
           console.error(`Failed to send email to: ${email}`, error);
       }

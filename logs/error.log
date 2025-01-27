@@ -188,3 +188,13 @@
 2025-01-27 00:16:45 [ERROR]: Error fetching users: contactmodal is not defined
 2025-01-27 00:17:49 [ERROR]: Error fetching users: contactmodal is not defined
 2025-01-27 00:26:07 [ERROR]: Cannot read properties of undefined (reading 'message')
+2025-01-27 22:04:43 [ERROR]: selectUser is not iterable
+2025-01-27 22:06:49 [ERROR]: selectUser is not iterable
+2025-01-27 22:08:47 [ERROR]: selectUser is not iterable
+2025-01-27 22:11:52 [ERROR]: selectUser is not iterable
+2025-01-27 22:12:53 [ERROR]: selectUser is not iterable
+2025-01-27 22:14:50 [ERROR]: selectUser is not iterable
+2025-01-27 22:15:13 [ERROR]: selectUser is not iterable
+2025-01-27 22:18:08 [ERROR]: selectedUsers is not iterable
+2025-01-27 22:20:31 [ERROR]: selectedUsers is not iterable
+2025-01-27 22:24:44 [ERROR]: result is not defined

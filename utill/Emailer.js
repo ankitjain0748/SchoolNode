@@ -1,8 +1,7 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (data) => {
-    console.log("data",data)
-    const { email, name, datauser, message, cousreData, payment, subject,support,BlogRecord, emailTemplate } = data;
+    const { email, name, datauser, message, cousreData, payment, subject,support,BlogRecord,Webniarrecord , emailTemplate } = data;
 
     // Set up the transport for the email
     const transporter = nodemailer.createTransport({
@@ -18,7 +17,7 @@ const sendEmail = async (data) => {
     });
 
     // Generate the email HTML content using the email template function
-    const emailHtml = emailTemplate({ name, message, cousreData, payment, datauser ,support,BlogRecord });
+    const emailHtml = emailTemplate({ name, message, cousreData, payment, datauser ,support,BlogRecord  ,Webniarrecord});
 
     // Define the email options
     const mailOptions = {

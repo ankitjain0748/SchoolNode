@@ -4,7 +4,9 @@ const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
 const sendEmail = require("../utill/Emailer");
 const Subscriber = require("../Mail/Subscriber");
-const contactmodal = require("../Model/Contact")
+const contactmodal = require("../Model/Contact");
+const WebinarModal = require("../Model/Webniar");
+const WebniarEmail = require("../Mail/Webniar")
 
 exports.SubscribePost = catchAsync(async (req, res) => {
     try {
@@ -157,16 +159,11 @@ exports.EmailDataContactGet = catchAsync(async (req, res, next) => {
         const contactEmails = await contactmodal.find({ Email_verify: "valid" }).select("email");
         const subscribeEmails = await subscribemodal.find({ Email_verify: "valid" }).select("email");
         const userEmails = await User.find({ role: "user", isDeleted: false, Email_verify: "valid" }).select("email");
-        console.log("userEmails", userEmails)
-        // Extract email lists
         const contactEmailList = contactEmails.map(contact => contact.email);
-        console.log("contactEmailList", contactEmailList)
         const subscribeEmailList = subscribeEmails.map(subscribe => subscribe.email);
-        console.log("subscribeEmailList", subscribeEmailList)
         const userEmailList = userEmails.map(user => user.email);
         const allEmails = [...contactEmailList, ...subscribeEmailList, ...userEmailList];
         const uniqueEmails = [...new Set(allEmails)];  // Remove duplicate emails
-        console.log("uniqueEmails", uniqueEmails)
         const commonEmails = allEmails.filter((email, index) => allEmails.indexOf(email) !== index);
         const uniqueCommonEmails = [...new Set(commonEmails)]; // Remove duplicate common emails
 
@@ -223,6 +220,43 @@ exports.EmailDataContactGet = catchAsync(async (req, res, next) => {
             status: false,
             message: "An error occurred while fetching users and updating bank details.",
             error: error.message || "Internal Server Error", // Provide a fallback error message
+        });
+    }
+});
+
+
+
+exports.WebniarEmail = catchAsync(async (req, res) => {
+    try {
+        const { title ,selectedUsers,content } = req.body;
+        console.log("req.body",req.body)
+        const record = await WebinarModal.findOne({ title });
+        console.log("record", record);
+        const subject1 = `New Event/Webinar: ${title} - Register Now!🎉`;
+        for (const email of selectedUsers) {
+            try {
+                await sendEmail({
+                    email: email, 
+                    message : content , 
+                    Webniarrecord :record,
+                    subject: subject1,
+                    emailTemplate: WebniarEmail,
+                });
+                console.log(`Email successfully sent to: ${email}`);
+            } catch (error) {
+                console.error(`Failed to send email to: ${email}`, error);
+            }
+        }
+
+            res.json({
+                status: true,
+                message: "Request Sent Successfully!!.",
+            });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({
+            message: "Failed to Subscribe",
+            error: error.message,
         });
     }
 });
