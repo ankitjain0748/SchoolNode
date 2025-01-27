@@ -6,7 +6,10 @@ const sendEmail = require("../utill/Emailer");
 const Subscriber = require("../Mail/Subscriber");
 const contactmodal = require("../Model/Contact");
 const WebinarModal = require("../Model/Webniar");
-const WebniarEmail = require("../Mail/Webniar")
+const WebniarEmail = require("../Mail/Webniar");
+const Course = require("../Model/Course");
+const PromtionEmail = require("../Mail/Promotion")
+const OfferCourseEmail = require("../Mail/OfferCourse")
 
 exports.SubscribePost = catchAsync(async (req, res) => {
     try {
@@ -241,6 +244,81 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
                     Webniarrecord :record,
                     subject: subject1,
                     emailTemplate: WebniarEmail,
+                });
+                console.log(`Email successfully sent to: ${email}`);
+            } catch (error) {
+                console.error(`Failed to send email to: ${email}`, error);
+            }
+        }
+
+            res.json({
+                status: true,
+                message: "Request Sent Successfully!!.",
+            });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({
+            message: "Failed to Subscribe",
+            error: error.message,
+        });
+    }
+});
+
+
+exports.promtionalEmail = catchAsync(async (req, res) => {
+    try {
+        const { title ,selectedUsers,content ,dicount } = req.body;
+        console.log("req.body",req.body)
+        const record = await Course.findOne({ title });
+        console.log("record", record);
+        const subject1 = `${title} - Master New Skills Today! Limited Offer: ${dicount} % OFF!🎉`;
+        for (const email of selectedUsers) {
+            try {
+                await sendEmail({
+                    email: email, 
+                    message : content , 
+                    Webniarrecord :record,
+                    dicount :dicount,
+                    subject: subject1,
+                    emailTemplate: PromtionEmail,
+                });
+                console.log(`Email successfully sent to: ${email}`);
+            } catch (error) {
+                console.error(`Failed to send email to: ${email}`, error);
+            }
+        }
+
+            res.json({
+                status: true,
+                message: "Request Sent Successfully!!.",
+            });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({
+            message: "Failed to Subscribe",
+            error: error.message,
+        });
+    }
+});
+
+
+exports.OfferCourseEmail = catchAsync(async (req, res) => {
+    try {
+        const { title ,selectedUsers,content ,dicount,courseImage } = req.body;
+        console.log("req.body",req.body)
+        const record = await Course.findOne({ title });
+        console.log("record", record);
+        const subject1 = `🎉 Special Offer:${title} at ${dicount}% Off! Enroll Now!`;
+        for (const email of selectedUsers) {
+            try {
+                await sendEmail({
+                    email: email, 
+                    message : content , 
+                    Webniarrecord :record,
+                    dicount :dicount,
+                    ImageUrl :courseImage,
+                    subject: subject1,
+                    emailTemplate: OfferCourseEmail,
                 });
                 console.log(`Email successfully sent to: ${email}`);
             } catch (error) {

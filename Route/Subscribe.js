@@ -1,6 +1,6 @@
 const subscribeget = require("express").Router();
 
-const { SubscribePost, Subscribeget, EmailDataSubScribe, EmailDataContactGet, EmailDataprofile, WebniarEmail } = require("../Controller/SubScribeController");
+const { SubscribePost, Subscribeget, EmailDataSubScribe, EmailDataContactGet, EmailDataprofile, WebniarEmail, promtionalEmail, OfferCourseEmail } = require("../Controller/SubScribeController");
 
 subscribeget.post("/subscribe-add", SubscribePost)
 
@@ -10,7 +10,15 @@ subscribeget.get("/subscribe-email", EmailDataSubScribe)
 subscribeget.get("/contact-email", EmailDataContactGet)
 subscribeget.get("/user-email", EmailDataprofile)
 
-subscribeget.post("/webniar_email" , WebniarEmail)
+subscribeget.post("/webniar_email" , WebniarEmail);
+
+subscribeget.post("/promotion_email" , promtionalEmail);
+
+subscribeget.post("/offer_email" , OfferCourseEmail);
+
+
+
+
 
 
 module.exports = subscribeget;
