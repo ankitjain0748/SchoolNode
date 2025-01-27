@@ -15,6 +15,9 @@ const Transaction = require("../Model/Transcation");
 const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
 const SocialSection = require("../Model/Social");
+const RegisterEmail = require("../Mail/RegisterEmail");
+const AdminEmail = require("../Mail/AdminRegister");
+const sendEmail = require("../utill/Emailer");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -360,8 +363,6 @@ exports.profile = catchAsync(async (req, res, next) => {
 });
 
 
-
-
 exports.updateUserStatus = catchAsync(async (req, res) => {
   try {
     const { _id, user_status } = req.body;
@@ -585,9 +586,6 @@ exports.profilegettoken = catchAsync(async (req, res, next) => {
   }
 });
 
-
-
-
 exports.userfilter = catchAsync(async (req, res, next) => {
   try {
     const { username, user_status } = req.body;  // Changed to req.query for query params
@@ -667,8 +665,6 @@ exports.UserIdDelete = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
 
 // dashboardApi
 
@@ -1038,8 +1034,7 @@ exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]
 
 exports.OTP = catchAsync(async (req, res) => {
   try {
-    const { email, password, name, phone_number, referred_by } = req.body;
-    console.log("req.body", req.body)
+    const { email, password, name, phone_number, referred_by ,Email_verify } = req.body;
     // Validate email format
     // if (!isValidEmail(email)) {
     //   return res.status(400).json({
@@ -1056,7 +1051,6 @@ exports.OTP = catchAsync(async (req, res) => {
         message: "Email or phone number already exists",
       });
     }
-    console.log("existingUser", existingUser)
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
 
@@ -1112,6 +1106,7 @@ exports.OTP = catchAsync(async (req, res) => {
       referred_first: referrers ? referrers._id : null,
       referred_second: referrerdata ? referrerdata._id : null,
       OTP: otp,
+      Email_verify :Email_verify
     };
 
     // Send OTP email
@@ -1132,7 +1127,7 @@ exports.OTP = catchAsync(async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: tempUser.email,
-      subject: "Verify your Account",
+      subject: "StackEarn - Verify your Account",
       html: emailHtml,
     });
 
@@ -1262,7 +1257,7 @@ exports.OTP = catchAsync(async (req, res) => {
 // Exported function to verify OTP
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
-    const { email, OTP , Email_verify} = req.body;
+    const { email, OTP, Email_verify } = req.body;
     if (!email || !OTP) {
       return res.status(401).json({
         status: false,
@@ -1271,7 +1266,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
     }
 
     // Find the temporary user by email
-    const tempUser = await TempUser.findOne({ email ,Email_verify });
+    const tempUser = await TempUser.findOne({ email });
     if (!tempUser) {
       return res.status(401).json({
         status: false,
@@ -1295,13 +1290,8 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       referred_by: tempUser.referred_by,
       referred_first: tempUser.referred_first,
       referred_second: tempUser.referred_second,
+      Email_verify:tempUser?.Email_verify
     });
-    await newUser.save();
-
-    // Remove the temporary user record
-    await TempUser.deleteOne({ email });
-
-    // Update referrer with the new referral
     if (tempUser.referred_by) {
       await User.findByIdAndUpdate(tempUser.referred_by, {
         $addToSet: { referrals: newUser._id },
@@ -1317,7 +1307,27 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         $addToSet: { referrals: newUser._id },
       });
     }
-
+    const subject = "Welcome to Stackearn - Registration Successful! 🎉";
+    const subject1 = ` New User Registration ${newUser.name} 🎉`;
+    if (newUser?._id) {
+      await sendEmail({
+        email: newUser.email,
+        name: newUser.name,
+        message: "Your booking request was successful!",
+        subject: subject,
+        emailTemplate: RegisterEmail,
+      });
+    }
+    await sendEmail({
+      email: "ankitjain0748@gmail.com",
+      name: "Admin",
+      datauser: newUser,
+      message: "Your booking request was successful!",
+      subject: subject1,
+      emailTemplate: AdminEmail,
+    });
+    await TempUser.deleteOne({ email });
+    await newUser.save();
     const token = await signToken(newUser._id);
     res.json({
       status: true,
@@ -1453,8 +1463,8 @@ exports.getUsersWithTodayRefDate = async (req, res) => {
 exports.profileadmin = catchAsync(async (req, res, next) => {
   try {
     const adminUser = await User.findOne({ role: "admin", isDeleted: false }).select("-password");
-    const SocialAdmin = await SocialSection.findOne({ userId : adminUser?._id });
-    const ProfileAdmin = await ProfileData.findOne({ userId : adminUser?._id });
+    const SocialAdmin = await SocialSection.findOne({ userId: adminUser?._id });
+    const ProfileAdmin = await ProfileData.findOne({ userId: adminUser?._id });
 
 
     if (!adminUser) {
@@ -1504,8 +1514,8 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
         activeCount,
         inactiveCount,
       },
-      ProfileAdmin:ProfileAdmin,
-      SocialAdmin :SocialAdmin
+      ProfileAdmin: ProfileAdmin,
+      SocialAdmin: SocialAdmin
     });
   } catch (error) {
     logger.error("Error fetching users:", error);
@@ -1519,10 +1529,9 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
 
 exports.UserListIds = catchAsync(async (req, res, next) => {
   try {
-    
+
 
     const userId = req.User._id;
-    console.log("userId",userId)
     const ProfileDetails = await ProfileData.findOne({ userId }).populate("userId");
 
     // Return response

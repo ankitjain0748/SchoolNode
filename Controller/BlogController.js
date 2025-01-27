@@ -1,6 +1,10 @@
 const Blog = require('../Model/Blog');
+const Contact = require('../Model/Contact');
+const Subscribe = require('../Model/Subscribe');
+const User = require('../Model/User');
 const catchAsync = require('../utill/catchAsync');
-
+const BlogEmail = require("../Mail/Blog");
+const sendEmail = require('../utill/Emailer');
 
 // Create a new blog post
 exports.createBlog = catchAsync(async (req, res) => {
@@ -20,7 +24,43 @@ exports.createBlog = catchAsync(async (req, res) => {
       short_content,
       Image
     });
-    await newBlog.save();
+const record =     await newBlog.save();
+
+    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+    const skip = (page - 1) * limit;
+
+    // Get emails from all three collections
+    const contactEmails = await Contact.find({ Email_verify: "valid" }).select("email");
+    const subscribeEmails = await Subscribe.find({ Email_verify: "valid" }).select("email");
+    const userEmails = await User.find({ role: "user", isDeleted: false, Email_verify: "valid" }).select("email");
+    console.log("userEmails", userEmails)
+    // Extract email lists
+    const contactEmailList = contactEmails.map(contact => contact.email);
+    console.log("contactEmailList", contactEmailList)
+    const subscribeEmailList = subscribeEmails.map(subscribe => subscribe.email);
+    console.log("subscribeEmailList", subscribeEmailList)
+    const userEmailList = userEmails.map(user => user.email);
+    const allEmails = [...contactEmailList, ...subscribeEmailList, ...userEmailList];
+    const uniqueEmails = [...new Set(allEmails)];  // Remove duplicate emails
+    console.log("uniqueEmails", uniqueEmails)
+
+
+    const subject1 = ` 🚀 New Blog Post: ${title} - Don't Miss Out!`;
+    for (const email of uniqueEmails) {
+      try {
+          await sendEmail({
+              email: email, // Email from the uniqueEmails array
+              BlogRecord: record, // The associated record (if applicable)
+              message: "Your booking request was successful!",
+              subject: subject1,
+              emailTemplate: BlogEmail,
+          });
+          console.log(`Email successfully sent to: ${email}`);
+      } catch (error) {
+          console.error(`Failed to send email to: ${email}`, error);
+      }
+  }
     res.status(201).json({
       status: true,
       message: "Blog Success"

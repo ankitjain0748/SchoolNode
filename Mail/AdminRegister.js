@@ -1,0 +1,67 @@
+module.exports = (userData) => {
+  const userEmail = userData?.datauser?.email || 'N/A';
+  const userMobile = `${userData?.datauser?.phone_code || '+91'} ${userData?.datauser?.phone_number || 'N/A'}`;
+  const registrationDate = userData?.datauser?.created_at || 'N/A';
+
+  return `
+    <table align="center" style="max-width: 600px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000" color="#ffffff">
+      <tr bgcolor="#141414">
+        <td style="padding: 20px 2px 0 2px; text-align: center;">
+          <p style="margin: 1px;">
+            <a href="https://www.its-invite.com/">
+              <img style="max-width:150px;" src="https://f003.backblazeb2.com/file/Event-management/logo.png" alt="StackEarn">
+            </a>
+          </p>
+        </td>
+      </tr>
+      <tr bgcolor="#141414">
+        <td style="padding: 40px 2px 10px 2px; text-align: center;">
+          <p style="margin: 1px;">
+            <img src="https://f003.backblazeb2.com/file/Event-management/forgetpass.png" alt="User Registration">
+          </p>
+        </td>
+      </tr>
+     
+      <tr>
+        <td style="padding: 20px; color: #ffffff;">
+          <p style="margin: 0 0 20px;">Hello Admin,</p>
+          <p style="margin: 0 0 20px;">
+            A new user has successfully registered on <strong>StackEarn</strong>. Below are their details:
+          </p>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd; color: #ffffff;">Name:</td>
+              <td style="padding: 8px; border: 1px solid #ddd; color: #ffffff;">${userData?.datauser?.name || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd; color: #ffffff;">Email:</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">
+                <a href="mailto:${userEmail}" style="color: #ffffff; text-decoration: none;">${userEmail}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd; color: #ffffff;">Mobile:</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">
+                <a href="tel:${userMobile}" style="color: #ffffff; text-decoration: none;">${userMobile}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd; color: #ffffff;">Date of Registration:</td>
+              <td style="padding: 8px; border: 1px solid #ddd; color: #ffffff;">${registrationDate}</td>
+            </tr>
+          </table>
+          <p style="margin: 0 0 20px; color: #ffffff;">
+            You can view more details in the admin panel.
+          </p>
+          <p style="margin: 0; color: #ffffff;">Best regards,</p>
+          <p style="margin: 0; color: #ffffff;"><strong>StackEarn Notification System</strong></p>
+        </td>
+      </tr>
+      <tr style="background-color: #f4f4f4; text-align: center;">
+        <td style="padding: 10px; font-size: 12px; color: #777777;">
+          &copy; 2025 StackEarn. All rights reserved.
+        </td>
+      </tr>
+    </table>
+  `;
+};

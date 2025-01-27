@@ -38,6 +38,9 @@ const paymentSchema = new mongoose.Schema({
   product_name: {
     type: String,
   },
+  payment_method: {
+    type: String,
+  },
   type: {
     type: String,
   },
@@ -45,7 +48,11 @@ const paymentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  receipt :String
+  receipt :String,
+  created_at: {
+    type: Date,
+    default: Date.now
+},
 });
 
 const Payment = mongoose.model('Payment', paymentSchema);

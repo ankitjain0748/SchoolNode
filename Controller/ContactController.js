@@ -1,6 +1,7 @@
-// const EmailContact = require("../emailTemplates/ContactReply");
+const EmailContact = require("../Mail/Ticket");
 const contactmodal = require("../Model/Contact");
 const catchAsync = require('../utill/catchAsync');
+const sendEmail = require("../utill/Emailer");
 const logger = require("../utill/Loggers");
 // const sendEmail = require("../utill/EmailMailler");
 
@@ -20,6 +21,18 @@ exports.ContactPost = catchAsync(async (req, res) => {
         });
 
         const result = await record.save();
+        if(result.role = "support"){
+            console.log("support",result)
+            const subject1 = `Your Support Ticket ${result?._id} has been Created 🎉`;
+            await sendEmail({
+                email: email,
+                support : result,
+                message: "Your booking request was successful!",
+                subject: subject1,
+                emailTemplate: EmailContact,
+            });
+    
+        }
         if (result) {
             res.json({
                 status: true,

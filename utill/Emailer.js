@@ -1,33 +1,40 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (data) => {
-    const { email, name, message, package, payment_id, subject, emailTemplate } = data;
+    console.log("data",data)
+    const { email, name, datauser, message, cousreData, payment, subject,support,BlogRecord, emailTemplate } = data;
 
+    // Set up the transport for the email
     const transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,
-        port: process.env.MAIL_PORT,
-        secure: true,
+        host: 'smtp.gmail.com',
+        port: 465,
+        service: "Gmail",
+        secure: false,
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS, // Replace with the app-specific password
+            user: process.env.user, // Email address for sending
+            pass: process.env.password, // App-specific password
         },
-        debug: true, // Debug mode
+        debug: true, // Debug mode for SMTP communication (optional for troubleshooting)
     });
 
-    const emailHtml = emailTemplate({ name, message, package, payment_id });
+    // Generate the email HTML content using the email template function
+    const emailHtml = emailTemplate({ name, message, cousreData, payment, datauser ,support,BlogRecord });
 
+    // Define the email options
     const mailOptions = {
-        from: 'contact@its-invite.com', // Ensure this matches your Zoho email
-        to: email,
-        subject: subject,
-        html: emailHtml,
+        from: 'ankitkumarjain0748@gmail.com', // Sender email (match with Gmail account)
+        to: email, // Recipient's email
+        subject: subject, // Subject of the email
+        html: emailHtml, // HTML body of the email
     };
 
     try {
+        // Send the email using nodemailer
         let info = await transporter.sendMail(mailOptions);
     } catch (error) {
+        // Log the error if sending the email fails
         console.error('Error sending email:', error);
-        throw error; // Rethrow the error to be caught in the controller
+        throw error; // Optionally rethrow the error if you want to handle it elsewhere
     }
 };
 

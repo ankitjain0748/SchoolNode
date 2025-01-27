@@ -7,6 +7,9 @@ const Razorpay = require('razorpay');
 const logger = require("../utill/Loggers");
 const User = require("../Model/User");
 const Transaction = require("../Model/Transcation");
+const sendEmail = require("../utill/Emailer");
+const Purchase = require("../Mail/Purchase")
+const AdminPurchase = require("../Mail/AdminPurchase")
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -51,7 +54,7 @@ exports.createOrder = catchAsync(async (req, res) => {
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
     const UserId = req.User._id;
-    const { order_id, payment_id, amount, currency, payment_status, CourseId } = req.body;
+    const { order_id, payment_id, amount, currency, payment_status, CourseId, payment_method } = req.body;
 
     if (!order_id || !payment_id || !amount || !CourseId) {
       logger.warn("Missing required fields");
@@ -68,21 +71,48 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       UserId,
       status,
       CourseId,
+      payment_method
     });
 
-    await payment.save();
 
+
+    const record = await payment.save();
     const coursedata = await Course.findOne({ _id: CourseId });
     if (!coursedata) {
       return res.status(404).json({ status: false, message: "Course not found" });
     }
+    const user = await User.findById(UserId);
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
+    const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
+    if (user?._id) {
+      await sendEmail({
+        email: user.email,
+        name: user.name,
+        payment: record,
+        cousreData: coursedata.title,
+        message: "Your booking request was successful!",
+        subject: subject,
+        emailTemplate: Purchase,
+      });
+    }
+    await sendEmail({
+      email: "ankitjain0748@gmail.com",
+      name: "Admin",
+      datauser: user,
+      payment: record,
+      cousreData: coursedata.title,
+      message: "Your booking request was successful!",
+      subject: subject1,
+      emailTemplate: AdminPurchase,
+    });
 
     if (payment_status === "success") {
-      const user = await User.findById(UserId);
 
-      if (!user) {
-        return res.status(404).json({ status: false, message: "User not found" });
-      }
 
       const { referred_by, referred_first, referred_second } = user;
 

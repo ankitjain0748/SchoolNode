@@ -1,6 +1,6 @@
 
 module.exports = (otp, userName) => {
-    return `
+  return `
   <table align="center" style="max-width: 600px; font-family: arial;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000">
   <tr bgcolor="#141414">
     <td style="padding: 20px 2px 0 2px; text-align: center;">
@@ -25,7 +25,9 @@ module.exports = (otp, userName) => {
   </tr>
   <tr>
     <td style="padding: 0 0 20px 20px;">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;"> Thank you for signing up with us. Please use the OTP below to verify your account. </p>
+      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+Thank you for registering with StackEarn! To complete your registration, please verify your email address by using the OTP (One-Time Password) below:
+ </p>
     </td>
   </tr>
   <tr>
@@ -35,18 +37,18 @@ module.exports = (otp, userName) => {
   </tr>
   <tr>
     <td style="padding: 0 20px 20px 20px; text-align: left">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> For security purposes, this OTP will expire in 24 hours. If you need further assistance or didn’t sign up with us, please reach out to our support team immediately. </p>
+      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> This OTP is valid for 10 minutes. Please do not share this code with anyone. </p>
     </td>
   </tr>
   <tr>
     <td style="padding: 0 0 20px 20px; text-align: left">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> Thank you for using Itsinvite ! </p>
+      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> If you didn’t request this, please ignore this email.</p>
     </td>
   </tr>
   <tr>
     <td style="padding: 0 0 45px 20px; text-align: left">
         <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> Warm regards,
-  , <br> The Invite Team 🌟</p>
+  , <br> The StackEarn Team 🌟</p>
     </td>
   </tr>
   <tr bgcolor="#141414">
@@ -74,7 +76,7 @@ module.exports = (otp, userName) => {
   </tr>
   <tr bgcolor="#141414">
     <td style="padding: 15px 0 5px 0;border-top:1px solid #444444">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> Copyright (C) 2024 invite. All rights reserved. </p>
+      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> Copyright (C) 2025 StackEarn. All rights reserved. </p>
     </td>
   </tr>
   <tr bgcolor="#141414">
@@ -84,5 +86,4 @@ module.exports = (otp, userName) => {
   </tr>
   </table>
     `;
-  };
-  
+};
