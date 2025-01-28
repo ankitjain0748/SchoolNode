@@ -6,7 +6,7 @@ module.exports = (userData) => {
   return `
     <table align="center" style="max-width: 600px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000" color="#ffffff">
       <tr bgcolor="#141414">
-        <td style="padding: 20px 2px 0 2px; text-align: center;">
+        <td style="padding: 20px 2px 20px 2px; text-align: center;">
           <p style="margin: 1px;">
             <a href="https://www.its-invite.com/">
               <img style="max-width:150px;" src="https://f003.backblazeb2.com/file/Event-management/logo.png" alt="StackEarn">
@@ -14,13 +14,7 @@ module.exports = (userData) => {
           </p>
         </td>
       </tr>
-      <tr bgcolor="#141414">
-        <td style="padding: 40px 2px 10px 2px; text-align: center;">
-          <p style="margin: 1px;">
-            <img src="https://f003.backblazeb2.com/file/Event-management/forgetpass.png" alt="User Registration">
-          </p>
-        </td>
-      </tr>
+     
      
       <tr>
         <td style="padding: 20px; color: #ffffff;">

@@ -231,7 +231,7 @@ exports.EmailDataContactGet = catchAsync(async (req, res, next) => {
 
 exports.WebniarEmail = catchAsync(async (req, res) => {
     try {
-        const { title ,selectedUsers,content } = req.body;
+        const { title ,selectedUsers,content ,BgImage } = req.body;
         console.log("req.body",req.body)
         const record = await WebinarModal.findOne({ title });
         console.log("record", record);
@@ -241,6 +241,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
                 await sendEmail({
                     email: email, 
                     message : content , 
+                    BgImage :BgImage ,
                     Webniarrecord :record,
                     subject: subject1,
                     emailTemplate: WebniarEmail,
@@ -267,7 +268,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
 
 exports.promtionalEmail = catchAsync(async (req, res) => {
     try {
-        const { title ,selectedUsers,content ,dicount } = req.body;
+        const { title ,selectedUsers,content ,dicount ,BgImage } = req.body;
         console.log("req.body",req.body)
         const record = await Course.findOne({ title });
         console.log("record", record);
@@ -279,6 +280,7 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
                     message : content , 
                     Webniarrecord :record,
                     dicount :dicount,
+                    BgImage :BgImage ,
                     subject: subject1,
                     emailTemplate: PromtionEmail,
                 });
@@ -304,7 +306,7 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
 
 exports.OfferCourseEmail = catchAsync(async (req, res) => {
     try {
-        const { title ,selectedUsers,content ,dicount,courseImage } = req.body;
+        const { title ,selectedUsers,content ,dicount,courseImage ,BgImage  ,SubContent} = req.body;
         console.log("req.body",req.body)
         const record = await Course.findOne({ title });
         console.log("record", record);
@@ -317,6 +319,8 @@ exports.OfferCourseEmail = catchAsync(async (req, res) => {
                     Webniarrecord :record,
                     dicount :dicount,
                     ImageUrl :courseImage,
+                    BgImage :BgImage ,
+                    SubContent :SubContent ,
                     subject: subject1,
                     emailTemplate: OfferCourseEmail,
                 });
