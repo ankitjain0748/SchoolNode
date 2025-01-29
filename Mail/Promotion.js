@@ -3,18 +3,15 @@ module.exports = (userName) => {
   <head>
    <style>
 
-  ul, ol {
-    padding: 0;
+ ul, ol {
+    padding:  10px ;
     margin: 0;
   }
 
   li {
     color: #ffffff;
-    font-weight: bold;
-    margin: 5px 0;
-    padding: 10px;
-    font-size: 16px;
-    
+  margin: 5px;
+    font-size: 12px;
   }
 </style>
   </head>
@@ -24,7 +21,7 @@ module.exports = (userName) => {
     <td >
    
         <a href="https://www.its-invite.com/">
-          <img style="width: 100%; max-width: 600px; height: auto; object-fit: cover;" src="${userName.BgImage}" alt="New Blog Post">
+          <img style="width: 100%; max-width: 600px; height: auto; object-fit: cover;" src="${userName.BgImage}" alt="">
         </a>
      
     </td>
@@ -32,71 +29,62 @@ module.exports = (userName) => {
    
       <tr>
         <td style="padding: 20px 20px 10px 20px; text-align: left;">
-          <p style="margin: 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello Users,</p>
+          <p style="margin: 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello User,</p>
         </td>
       </tr>
       <tr>
         <td style="padding: 0 20px 20px 20px;">
           <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            We’re thrilled to announce a special limited-time offer for our new course: ${userName.Webniarrecord.title}. Whether you're looking to advance your career or pick up a new skill, this course has everything you need to succeed!
+ We’re excited to offer <span style=" color:#fd7e14;" > ${userName.dicount}% OFF</span>  on our <strong style="color : #28a745">${userName.Webniarrecord.title}?</strong> course! Gain in-depth knowledge, expert guidance, and flexible learning—all at a discounted price!
           </p>
-          <p style="margin: 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-         🌟 Why Enroll in    <strong style="color : #000fff">${userName.Webniarrecord.title}?</strong>
-          </p>
-          <ul style="font-size: 14px; font-weight: normal; color:#CCCCCC; padding-left: 20px;">
-            <li style="margin-bottom: 10px; ">In-depth Learning: Dive deep into [key topic] and master the skills that matter most in today’s world.</li>
-            <li style="margin-bottom: 10px;">Expert-Led: Learn from industry professionals who bring real-world experience.</li>
-            <li style="margin-bottom: 10px;">Flexible & Self-Paced: Access the content anytime, anywhere — study at your own pace.</li>
-          </ul>
-
-          <p style="margin: 10px 10px 10px 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            Get a sneak peek at what you'll learn!
          
-            <strong style="margin: 5px 5px;">💥 Special Offer Just for You!</strong>
-          </p>
+          
+             <p style="margin: 5px; padding: 10px 0px 10px 10px; font-size: 14px; font-weight: bold; color:#CCCCCC; text-align: left;">
+             💡 What’s in it for you?
+<ul>
+  <li> <strong>✅ Master key skills for the </strong> <span>${userName.Webniarrecord.title} </span> </ li>
+  <li>
+  <strong>
+    ✔ Flexible & Self-Paced–
+  </strong> Learn anytime, anywhere.</li>
+  <li>
+    <strong>
+      ✔ Exclusive Resources –
+    </strong> Gain access to bonus materials.</li>
+</ul>
+
+            </p>
+
+
+  
+          
           <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            Save   <span style=" color:#4F46E5;" > ${userName.dicount}% </span> on Enrollment!
+            <strong>🎉 Special Price:</strong>  <span style=" color:#28a745; font-weight:bold ;" > ₹  ${userName.Webniarrecord.discountPrice} </span>(Original ₹${userName.Webniarrecord.price} )
           </p>
+          
           <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>₹ Original Price:</strong>  <span style=" color:#28a745;" > ₹ ${userName.Webniarrecord.price} </span>
+          📅 Offer Ends Soon!
           </p>
-          <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>₹ Discounted Price:</strong>   <span style=" color:#28a745;" >₹ ${userName.Webniarrecord.discountPrice} </span>
-          </p>
-          <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>Offer ends soon</strong> – Don’t miss out!
-          </p>
-          <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>📚 What You’ll Learn in This Course:</strong>  <span style=" color:#4F46E5;" > ${userName.Webniarrecord.sub_content} </span>
-          </p>
+          
         </td>
       </tr>
 
+     
       <tr>
-        <td style="padding: 0 20px 20px 20px; text-align: left;">
-          <p style="margin: 1px 10px 2px 5px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
-            Plus, gain access to exclusive resources and bonus materials to supercharge your learning!
-            <strong style="margin: 1px 10px 2px 5px;">🎯 Ready to Take the Next Step?</strong>
-          </p>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 0 20px 45px 20px; text-align: left;">
-          <p style="margin: 1px 10px 2px 5px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
-            Click below to secure your spot and unlock a world of learning:
-            <strong style="margin: 1px 10px 2px 5px;">🔗  👉 Enroll in ${userName.Webniarrecord.title} Now!</strong><br>
-          <a href="https://www.its-invite.com/${userName.Webniarrecord._id}"   style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: #4F46E5; color: white; font-size: 16px; text-decoration: none; border-radius: 5px; text-align: center;">
-  Enroll Now
-</a>
+ <td style="padding: 0 20px 45px 20px; text-align: center;">
+  <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" 
+     style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
+    👉 Enroll Now
+  </a>
+</td>
 
-          </p>
-        </td>
+
       </tr>
       <tr>
         <td style="padding: 0 20px 45px 20px; text-align: left;">
           <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
-            If you have any questions or need assistance, feel free to reach out to us at  
-           <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;">support@stackearn.com</a>. We're here to help!
+     For any queries, reach out to 
+           <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;">support@stackearn.com</a>
           </p>
         </td>
       </tr>

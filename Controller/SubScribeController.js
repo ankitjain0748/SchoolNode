@@ -235,7 +235,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
         console.log("req.body",req.body)
         const record = await WebinarModal.findOne({ title });
         console.log("record", record);
-        const subject1 = `New Event/Webinar: ${title} - Register Now!🎉`;
+        const subject1 = `Join Our Exclusive Webinar: ${title} - Register Now!🎉`;
         for (const email of selectedUsers) {
             try {
                 await sendEmail({

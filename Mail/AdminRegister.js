@@ -20,7 +20,7 @@ module.exports = (userData) => {
         <td style="padding: 20px; color: #ffffff;">
           <p style="margin: 0 0 20px;">Hello Admin,</p>
           <p style="margin: 0 0 20px;">
-            A new user has successfully registered on <strong>StackEarn</strong>. Below are their details:
+            A new user has successfully registered on <span style="color : #000fff">StackEarn</span>. Below are their details:
           </p>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <tr>
@@ -48,7 +48,7 @@ module.exports = (userData) => {
             You can view more details in the admin panel.
           </p>
           <p style="margin: 0; color: #ffffff;">Best regards,</p>
-          <p style="margin: 0; color: #ffffff;"><strong>StackEarn Notification System</strong></p>
+          <p style="margin: 0; color: #ffffff;">StackEarn Notification System</p>
         </td>
       </tr>
       <tr style="background-color: #000000; text-align: center;">

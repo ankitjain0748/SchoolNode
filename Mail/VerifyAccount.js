@@ -19,7 +19,9 @@ module.exports = (otp, userName) => {
   <tr>
     <td style="padding: 0 0 20px 20px;">
       <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-Thank you for registering with StackEarn! To complete your registration, please verify your email address by using the OTP (One-Time Password) below:
+Thank you for registering with 
+<span style="color: #000fff ;">StackEarn !</span>
+ To complete your registration, please verify your email address by using the OTP (One-Time Password) below:
  </p>
     </td>
   </tr>
@@ -33,11 +35,7 @@ Thank you for registering with StackEarn! To complete your registration, please 
       <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> This OTP is valid for 10 minutes. Please do not share this code with anyone. </p>
     </td>
   </tr>
-  <tr>
-    <td style="padding: 0 0 20px 20px; text-align: left">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> If you didn’t request this, please ignore this email.</p>
-    </td>
-  </tr>
+  
   <tr>
     <td style="padding: 0 0 45px 20px; text-align: left">
         <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> Warm regards,
