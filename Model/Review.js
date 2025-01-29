@@ -22,7 +22,7 @@ const ReviewSection = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User", // Ensure this matches the User collection
     },
-    courseId: {
+    CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course", // Ensure this matches the Course collection
     },

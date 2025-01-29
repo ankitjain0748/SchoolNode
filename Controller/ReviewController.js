@@ -1,7 +1,8 @@
 const Review = require("../Model/Review");
 const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
-const User = require("../Model/User")
+const User = require("../Model/User");
+const ProfileData = require("../Model/Profile");
 
 
 exports.ReviewAdd = catchAsync(async (req, res) => {
@@ -17,6 +18,7 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 
         // Fetch user details including courseId
         const userData = await User.findById(userId);
+        console.log("userData",userData)
         if (!userData) {
             return res.status(404).json({
                 status: false,
@@ -25,8 +27,8 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
         }
 
         // Extract courseId from user data
-        const { courseId } = userData;
-        if (!courseId) {
+        const { CourseId } = userData;
+        if (!CourseId) {
             return res.status(400).json({
                 status: false,
                 message: "User is not enrolled in any course.",
@@ -40,7 +42,8 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
         const reviewAdd = new Review({
             message,
             userId,
-            courseId,
+            CourseId,
+            rating
         });
 
         await reviewAdd.save();
@@ -64,7 +67,8 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 
 exports.ReviewGet = catchAsync(async (req, res) => {
     try {
-        const review = await Review.find({}).populate('userId').populate('courseId');
+        const review = await Review.find({}).populate('userId').populate('CourseId');
+        console.log("review",review)
         res.json({
             status: true,
             message: "Review fetched Successfully",
@@ -163,10 +167,11 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
 
 exports.ReviewCourse = catchAsync(async (req, res) => {
     try {
-        const { courseId } = req.body;
+        const userId = req.User._id
+        const { CourseId } = req.body;
 
         // Validate courseId
-        if (!courseId) {
+        if (!CourseId) {
             return res.status(400).json({
                 status: false,
                 message: "The field 'courseId' is required.",
@@ -174,7 +179,10 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         }
 
         // Fetch reviews with populated references
-        const reviews = await Review.find({ courseId, status: "read" })
+        const reviews = await Review.find({ 
+            CourseId, status: "read" })
+        console.log("reviews",reviews)
+        const profile = await ProfileData.findOne().populate("userId");
         if (!reviews.length) {
             return res.status(404).json({
                 status: false,
@@ -185,7 +193,10 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         // Respond with fetched data
         return res.status(200).json({
             status: true,
-            data: reviews,
+            data: {
+                reviews,
+                profile
+            },
             message: "Reviews fetched successfully.",
         });
     } catch (error) {
@@ -210,9 +221,11 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
             });
         }
 
-        const data = await Review.find({ userId }).populate("userId")
+        const reviews = await Review.find({ userId }).populate("userId");
 
-        if (!data) {
+        const profile = await ProfileData.findOne().populate("userId");
+
+        if (!reviews) {
             return res.status(404).json({
                 status: false,
                 message: "No review found for the provided courseId.",
@@ -220,7 +233,10 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
         }
         res.status(201).json({
             status: true,
-            data: data,
+            data: {
+                reviews,
+                profile
+            },
             message: "Review fetched successfully for the provided courseId.",
         });
     } catch (error) {
