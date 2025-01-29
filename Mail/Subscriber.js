@@ -13,12 +13,12 @@ module.exports = (userName) => {
     
       <tr>
         <td style="padding: 40px 0 20px 20px; text-align: left;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello Subscribe,</p>
+          <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello Subscribe,</p>
         </td>
       </tr>
       <tr>
         <td style="padding: 0 0 20px 20px;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+          <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
             Thanks for subscribing to our newsletter! 🎉 
           </p>
         </td>
@@ -26,14 +26,14 @@ module.exports = (userName) => {
       
       <tr>
         <td style="padding: 0 0 20px 20px;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+          <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
         You’ll now receive the latest updates, offers, and more directly in your inbox. Stay tuned for exciting content!
           </p>
         </td>
       </tr>
       <tr>
         <td style="padding: 0 0 45px 20px; text-align: left;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;">Best regards,<br> The StackEarn Team</p>
+          <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;">Best regards,<br> The StackEarn Team</p>
         </td>
       </tr>
       <tr bgcolor="#141414">
