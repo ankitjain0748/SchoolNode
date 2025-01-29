@@ -21,7 +21,7 @@ const sendEmail = async (data) => {
 
     // Define the email options
     const mailOptions = {
-        from: 'ankitkumarjain0748@gmail.com', // Sender email (match with Gmail account)
+        from: 'sainibhim133@gmail.com', // Sender email (match with Gmail account)
         to: email, // Recipient's email
         subject: subject, // Subject of the email
         html: emailHtml, // HTML body of the email

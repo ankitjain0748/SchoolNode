@@ -1,41 +1,55 @@
 const Review = require("../Model/Review");
 const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
+const User = require("../Model/User")
+
 
 exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
         const userId = req.User?._id;
         if (!userId) {
-            logger.warn("User ID not found. Please log in again.")
+            logger.warn("User ID not found. Please log in again.");
             return res.status(400).json({
                 status: false,
                 message: "User ID not found. Please log in again.",
             });
         }
 
-        const { name, email, message, subject, courseId } = req.body;
-        if (!name || !email || !message || !subject || !courseId) {
-            logger.warn("All fields (name, email, message, subject, courseId) are required.")
-            return res.status(400).json({
+        // Fetch user details including courseId
+        const userData = await User.findById(userId);
+        if (!userData) {
+            return res.status(404).json({
                 status: false,
-                message: "All fields (name, email, message, subject, courseId) are required.",
+                message: "User not found.",
             });
         }
 
+        // Extract courseId from user data
+        const { courseId } = userData;
+        if (!courseId) {
+            return res.status(400).json({
+                status: false,
+                message: "User is not enrolled in any course.",
+            });
+        }
+
+        // Extract review details from request body
+        const { message ,rating } = req.body;
+
+        // Create new review
         const reviewAdd = new Review({
-            name,
-            email,
             message,
-            subject,
             userId,
             courseId,
         });
 
         await reviewAdd.save();
+
         res.status(201).json({
             status: true,
             message: "Review added successfully.",
         });
+
     } catch (error) {
         console.error("Error adding review:", error);
         res.status(500).json({
@@ -44,6 +58,7 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 
 

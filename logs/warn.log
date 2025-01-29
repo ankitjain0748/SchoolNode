@@ -83,3 +83,4 @@
 2025-01-22 21:45:22 [WARN]: All fields (title, content, Image , short_content) are required.
 2025-01-22 21:45:26 [WARN]: All fields (title, content, Image , short_content) are required.
 2025-01-22 21:46:32 [WARN]: All fields (title, content, Image , short_content) are required.
+2025-01-29 21:27:50 [WARN]: All fields (name, email, message, subject, courseId) are required.
