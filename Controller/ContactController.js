@@ -56,7 +56,7 @@ exports.ContactPost = catchAsync(async (req, res) => {
 exports.ContactGet = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || 30;
         const skip = (page - 1) * limit;
         const totalcontactmodal = await contactmodal.countDocuments();
         const contactget = await contactmodal.find({}).sort({ created_at: -1 })
