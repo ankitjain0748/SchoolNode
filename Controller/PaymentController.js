@@ -101,7 +101,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       });
     }
     await sendEmail({
-      email: "ankitjain0748@gmail.com",
+      email: "sainibhim133@gmail.com",
       name: "Admin",
       datauser: user,
       payment: record,
