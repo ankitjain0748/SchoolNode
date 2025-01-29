@@ -9,7 +9,7 @@ module.exports = (userData) => {
         <td style="padding: 20px 2px 20px 2px; text-align: center;">
           <p style="margin: 1px;">
             <a href="https://www.its-invite.com/">
-              <img style="max-width:150px;" src="https://f003.backblazeb2.com/file/Event-management/logo.png" alt="StackEarn">
+              <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="StackEarn">
             </a>
           </p>
         </td>
@@ -30,7 +30,7 @@ module.exports = (userData) => {
             <tr>
               <td style="padding: 8px; border: 1px solid #ddd; color: #ffffff;">Email:</td>
               <td style="padding: 8px; border: 1px solid #ddd;">
-                <a href="mailto:${userEmail}" style="color: #ffffff; text-decoration: none;">${userEmail}</a>
+                <a href="mailto:${userEmail}" style="color: #000fff; text-decoration: none;">${userEmail}</a>
               </td>
             </tr>
             <tr>
@@ -51,11 +51,11 @@ module.exports = (userData) => {
           <p style="margin: 0; color: #ffffff;"><strong>StackEarn Notification System</strong></p>
         </td>
       </tr>
-      <tr style="background-color: #f4f4f4; text-align: center;">
-        <td style="padding: 10px; font-size: 12px; color: #777777;">
-          &copy; 2025 StackEarn. All rights reserved.
-        </td>
-      </tr>
+      <tr style="background-color: #000000; text-align: center;">
+          <td style="padding: 10px; font-size: 12px; color: #777777;">
+            &copy; 2025 StackEarn. All rights reserved.
+          </td>
+        </tr>
     </table>
   `;
 };

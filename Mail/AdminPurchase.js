@@ -7,7 +7,7 @@ module.exports = (userData) => {
           <td style="padding: 20px 2px 20px 2px; text-align: center;">
             <p style="margin: 1px;">
               <a href="https://www.its-invite.com/">
-                <img style="max-width:150px;" src="https://f003.backblazeb2.com/file/Event-management/logo.png" alt="StackEarn Logo">
+                <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="StackEarn Logo">
               </a>
             </p>
           </td>
@@ -21,55 +21,64 @@ module.exports = (userData) => {
             </p>
             
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #ddd; color: #ffffff;">
-             <tr style=" font-weight: bold;">
-    <td style="padding: 8px; border: 1px solid #ddd;" colspan="2">User Info</td>
+  <!-- User Info Section -->
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;" colspan="2" style="background-color: #4F46E5; color: #ffffff;">User Info</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Name</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">${userData?.datauser?.name}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Email</td>
+    <td style="padding: 8px; border: 1px solid #ddd; ">
+      <a href="mailto:${userEmail}" style="color: #000fff; text-decoration: none;">${userEmail}</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Phone</td>
+    <td style="padding: 8px; border: 1px solid #ddd; ">
+      <a href="tel:${userMobile}" style="color: #ffffff; text-decoration: none;">${userMobile}</a>
+    </td>
   </tr>
   
-              <tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">Name</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${userData?.datauser?.name}</td>
-              </tr>
-              <tr style="">
-                <td style="padding: 8px; border: 1px solid #ddd;">Email</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">
-                  <a href="mailto:${userEmail}" style="color: #ffffff; text-decoration: none;">${userEmail}</a>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">Phone</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">
-                  <a href="tel:${userMobile}" style="color: #ffffff; text-decoration: none;">${userMobile}</a>
-                </td>
-              </tr>
-              <tr style=" font-weight: bold;">
-                <td style="padding: 8px; border: 1px solid #ddd;"  colspan="2">Course Info</td>
-              
-              </tr>
-              <tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">Course Name</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${userData.cousreData}</td>
-              </tr>
-              <tr style="">
-                <td style="padding: 8px; border: 1px solid #ddd;">Price</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">₹${userData.payment.amount}</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">GST</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;;">${"0%"}</td>
-              </tr>
-              <tr style="">
-                <td style="padding: 8px; border: 1px solid #ddd;">Total</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">₹${userData.payment.amount}</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">Transaction ID</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${userData.payment.payment_id}</td>
-              </tr>
-              <tr style="">
-                <td style="padding: 8px; border: 1px solid #ddd;">Payment Method</td>
-                <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${userData.payment.payment_method}</td>
-              </tr>
-            </table>
+  </tr>
+  </table>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #ddd; color: #ffffff;">
+   
+      
+   
+
+  <!-- Course Info Section -->
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;" colspan="2" style="background-color: #4F46E5; color: #ffffff;">Course Info</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Course Name</td>
+    <td style="padding: 8px; border: 1px solid #ddd; ">${userData.cousreData}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Price</td>
+    <td style="padding: 8px; border: 1px solid #ddd;  color: #28a745;">₹${userData.payment.amount}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">GST</td>
+    <td style="padding: 8px; border: 1px solid #ddd; ">{"0%"}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Total</td>
+    <td style="padding: 8px; border: 1px solid #ddd;  color: #28a745;">₹${userData.payment.amount}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Transaction ID</td>
+    <td style="padding: 8px; border: 1px solid #ddd; ">${userData.payment.payment_id}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; border: 1px solid #ddd;">Payment Method</td>
+    <td style="padding: 8px; border: 1px solid #ddd; ">${userData.payment.payment_method}</td>
+  </tr>
+</table>
+
   
             <p style="margin: 0 0 20px;">The user has successfully purchased the course and has access.</p>
             <p style="margin: 0;">Best regards,</p>

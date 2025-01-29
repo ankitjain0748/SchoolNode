@@ -24,7 +24,7 @@ module.exports = (userName) => {
     <td >
    
         <a href="https://www.its-invite.com/">
-          <img style="width: 100%; max-width: 600px; height: auto;" src="${userName.BgImage}" alt="New Blog Post">
+          <img style="width: 100%; max-width: 600px; height: auto; object-fit: cover;" src="${userName.BgImage}" alt="New Blog Post">
         </a>
      
     </td>
@@ -60,7 +60,7 @@ module.exports = (userName) => {
        <tr style="margin-top: 10px;">
 <td style="padding: 0 0 20px 20px; text-align: left;">
   <p style="margin: 1px 10px 2px 5px; margin-top: 10px; margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
-    <strong style="margin: 1px 10px 2px 5px;">🔗  Register Now:</strong><br>
+    <strong style="margin: 1px 10px 2px 5px;">🔗  Register Now:</strong>
     <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: #4c51bf; color: white; font-size: 16px; text-decoration: none; border-radius: 5px; text-align: center;">
      Join Now
     </a>
@@ -108,16 +108,11 @@ module.exports = (userName) => {
             </table>
           </td>
         </tr>
-        <tr bgcolor="#141414" style="margin-top: 10px; margin-bottom: 10px;">
-          <td style="padding: 15px 0 5px 0; border-top:1px solid #444444">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> Copyright (C) 2025 StackEarn. All rights reserved. </p>
-          </td>
-        </tr>
-        <tr bgcolor="#141414" style="margin-top: 10px; margin-bottom: 10px;">
-          <td style="padding: 0 0 15px 0;">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> You are receiving this email because you subscribed to our newsletter. </p>
-          </td>
-        </tr>
+          <tr style="background-color: #000000; text-align: center;">
+        <td style="padding: 10px; font-size: 12px; color: #777777;">
+          &copy; 2025 StackEarn. All rights reserved.
+        </td>
+      </tr>
       </table>
     `;
 };

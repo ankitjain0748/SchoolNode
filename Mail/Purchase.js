@@ -5,7 +5,7 @@ module.exports = (name) => {
         <td style="padding: 20px 2px 0 2px; text-align: center;">
           <p style="margin: 1px;">
             <a href="https://www.its-invite.com/">
-              <img style="max-width:150px;" src="https://f003.backblazeb2.com/file/Event-management/logo.png" alt="StackEarn Logo">
+              <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="StackEarn Logo">
             </a>
           </p>
         </td>
@@ -14,39 +14,41 @@ module.exports = (name) => {
      
       <tr>
         <td style="padding: 20px; color: #ffffff;">
-          <p style="margin: 0 0 20px;">Hello <strong>${name.name}</strong>,</p>
-          <p style="margin: 0 0 20px;">Thank you for purchasing <strong> ${name.cousreData || 'N/A'} </strong>! We are excited to have you on board and help you on your learning journey. Below are the details of your purchase:</p>
+          <p style="margin: 0 0 20px;">Hello <strong style="text-transform: uppercase;">${name.name}</strong>
+,</p>
+          <p style="margin: 0 0 20px;">Thank you for purchasing <strong style="color: #007bff ;"> ${name.cousreData || 'N/A'} </strong>! We are excited to have you on board and help you on your learning journey. Below are the details of your purchase:</p>
           
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 2px solid #ffffff; color: #ffffff;">
+     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #FFF000; color: #ffffff;">
   <tr>
-    <td style="padding: 8px; border: 2px solid #ffffff;">Course Name</td>
-    <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${name.cousreData || 'N/A'}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">Course Name</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">${name.cousreData || 'N/A'}</td>
   </tr>
   <tr>
-    <td style="padding: 8px; border: 2px solid #ffffff;">GST</td>
-    <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${"0 %"}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">GST</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">{"0 %"}</td>
   </tr>
   <tr>
-    <td style="padding: 8px; border: 2px solid #ffffff;">Transaction ID</td>
-    <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${name.payment.payment_id}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">Transaction ID</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">${name.payment.payment_id}</td>
   </tr>
   <tr>
-    <td style="padding: 8px; border: 2px solid #ffffff;">Payment Date</td>
-    <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${name.payment.created_at}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">Payment Date</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">${name.payment.created_at}</td>
   </tr>
   <tr>
-    <td style="padding: 8px; border: 2px solid #ffffff;">Payment Method</td>
-    <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">${name.payment.payment_method}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">Payment Method</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">${name.payment.payment_method}</td>
   </tr>
   <tr>
-    <td style="padding: 8px; border: 2px solid #ffffff;">Total Amount</td>
-    <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">₹${name.payment.amount}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">Total Amount</td>
+    <td style="padding: 8px; border: 1px solid #ffffff; color: #28a745;">₹${name.payment.amount}</td>
   </tr>
   <tr>
-    <td style="padding: 8px; border: 2px solid #ffffff;">Purchase Price</td>
-    <td style="padding: 8px; border: 2px solid #ffffff; font-weight: bold;">₹${name.payment.amount}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">Purchase Price</td>
+    <td style="padding: 8px; border: 1px solid #ffffff; color: #28a745;">₹${name.payment.amount}</td>
   </tr>
 </table>
+
 
           <p style="margin: 0 0 20px;">Access Details:</p>
           <ul style="margin: 0 0 20px; padding: 0 0 0 20px; color: #dddddd;">

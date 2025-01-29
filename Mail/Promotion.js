@@ -24,7 +24,7 @@ module.exports = (userName) => {
     <td >
    
         <a href="https://www.its-invite.com/">
-          <img style="width: 100%; max-width: 600px; height: auto;" src="${userName.BgImage}" alt="New Blog Post">
+          <img style="width: 100%; max-width: 600px; height: auto; object-fit: cover;" src="${userName.BgImage}" alt="New Blog Post">
         </a>
      
     </td>
@@ -41,7 +41,7 @@ module.exports = (userName) => {
             We’re thrilled to announce a special limited-time offer for our new course: ${userName.Webniarrecord.title}. Whether you're looking to advance your career or pick up a new skill, this course has everything you need to succeed!
           </p>
           <p style="margin: 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>🌟 Why Enroll in ${userName.Webniarrecord.title}?</strong>
+         🌟 Why Enroll in    <strong style="color : #000fff">${userName.Webniarrecord.title}?</strong>
           </p>
           <ul style="font-size: 14px; font-weight: normal; color:#CCCCCC; padding-left: 20px;">
             <li style="margin-bottom: 10px; ">In-depth Learning: Dive deep into [key topic] and master the skills that matter most in today’s world.</li>
@@ -55,19 +55,19 @@ module.exports = (userName) => {
             <strong style="margin: 5px 5px;">💥 Special Offer Just for You!</strong>
           </p>
           <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            Save   <span style="font-weight: bold; color:#4F46E5;" > ${userName.dicount}% </span> on Enrollment!
+            Save   <span style=" color:#4F46E5;" > ${userName.dicount}% </span> on Enrollment!
           </p>
           <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>₹ Original Price:</strong>  <span style="font-weight: bold; color:#4F46E5;" > ₹ ${userName.Webniarrecord.price} </span>
+            <strong>₹ Original Price:</strong>  <span style=" color:#28a745;" > ₹ ${userName.Webniarrecord.price} </span>
           </p>
           <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>₹ Discounted Price:</strong>   <span style="font-weight: bold; color:#4F46E5;" >₹ ${userName.Webniarrecord.discountPrice} </span>
+            <strong>₹ Discounted Price:</strong>   <span style=" color:#28a745;" >₹ ${userName.Webniarrecord.discountPrice} </span>
           </p>
           <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
             <strong>Offer ends soon</strong> – Don’t miss out!
           </p>
           <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            <strong>📚 What You’ll Learn in This Course:</strong>  <span style="font-weight: bold; color:#4F46E5;" > ${userName.Webniarrecord.sub_content} </span>
+            <strong>📚 What You’ll Learn in This Course:</strong>  <span style=" color:#4F46E5;" > ${userName.Webniarrecord.sub_content} </span>
           </p>
         </td>
       </tr>
@@ -132,16 +132,11 @@ module.exports = (userName) => {
           </table>
         </td>
       </tr>
-      <tr bgcolor="#141414">
-        <td style="padding: 15px 0 5px 0; border-top:1px solid #444444;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> Copyright (C) 2025 StackEarn. All rights reserved. </p>
-        </td>
-      </tr>
-      <tr bgcolor="#141414">
-        <td style="padding: 0 0 15px 0;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> You are receiving this email because you subscribed to our newsletter. </p>
-        </td>
-      </tr>
+       <tr style="background-color: #000000; text-align: center;">
+          <td style="padding: 10px; font-size: 12px; color: #777777;">
+            &copy; 2025 StackEarn. All rights reserved.
+          </td>
+        </tr>
     </table>
   `;
 };

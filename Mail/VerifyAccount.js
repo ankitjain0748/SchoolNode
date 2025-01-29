@@ -5,7 +5,7 @@ module.exports = (otp, userName) => {
     <td style="padding: 20px 2px 20px 2px; text-align: center;">
       <p style="margin: 1px;">
         <a href="https://www.its-invite.com/">
-          <img style="max-width:150px;" src="https://f003.backblazeb2.com/file/Event-management/logo.png" alt="">
+          <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
         </a>
       </p>
     </td>
@@ -83,16 +83,12 @@ Thank you for registering with StackEarn! To complete your registration, please 
       </table>
     </td>
   </tr>
-  <tr bgcolor="#141414">
-    <td style="padding: 15px 0 5px 0;border-top:1px solid #444444">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> Copyright (C) 2025 StackEarn. All rights reserved. </p>
-    </td>
-  </tr>
-  <tr bgcolor="#141414">
-    <td style="padding: 0 0 15px 0;">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> You are receiving this email because you requested an OTP for your account verification. </p>
-    </td>
-  </tr>
+ 
+   <tr style="background-color: #000000; text-align: center;">
+          <td style="padding: 10px; font-size: 12px; color: #777777;">
+            &copy; 2025 StackEarn. All rights reserved.
+          </td>
+        </tr>
   </table>
     `;
 };

@@ -23,7 +23,7 @@ module.exports = (userName) => {
     <td >
    
         <a href="https://www.its-invite.com/">
-          <img style="width: 100%; max-width: 600px; height: auto;" src="${userName.BgImage}" alt="New Blog Post">
+          <img style="width: 100%; max-width: 600px; height: auto; object-fit: cover;" src="${userName.BgImage}" alt="New Blog Post">
         </a>
      
     </td>
@@ -36,30 +36,30 @@ module.exports = (userName) => {
         <tr>
           <td style="padding: 0 0 20px 20px;">
             <p style="margin: 1px 0 20px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-              We’re excited to announce an exclusive limited-time offer on our <span style="font-weight: bold; color:#FFFFFF; font-size: 16px;">${userName.Webniarrecord.title}</span>!
+              We’re excited to announce an exclusive limited-time offer on our <span style="font-weight: bold; color:#000fff; font-size: 16px;">${userName.Webniarrecord.title}</span> !
             </p>
             <p style="text-align: left; margin-bottom: 20px;">
               <img src="${userName.ImageUrl}" alt="Course Offer Image" style="max-width: 100%; height: auto;"/>
             </p>
 
             <p style="margin: 1px 0 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-              <strong>📝 Course Name:</strong> <span style="font-weight: bold; color:#4F46E5;">${userName.Webniarrecord.title}</span>
+              <strong>📝 Course Name:</strong> <span style="font-weight: normal; color:#4F46E5;">${userName.Webniarrecord.title}</span>
             </p>
             <p style="margin: 1px 10px 10px 0px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
   <strong style="font-size: 16px; color: #FF5733;">[Discount %] Off:</strong>
-  <span style="font-weight: bold; color: #4F46E5; font-size: 18px; padding: 5px 10px; background-color: #FFEB3B; border-radius: 5px;">
+  <span style=" color: #4F46E5; font-size: 18px; padding: 5px 10px; background-color: #FFEB3B; border-radius: 5px;">
     ${userName.dicount} %
   </span>
 </p>
 
             <p style="margin: 1px 0 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-              <strong>Original Price:</strong> <span style="font-weight: bold; color:#4F46E5;" >₹ ${userName.Webniarrecord.price} </span>
+              <strong>Original Price:</strong> <span style="font-weight: normal; color:#28a745;" >₹ ${userName.Webniarrecord.price} </span>
             </p>
             <p style="margin: 1px 0 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-              <strong>Discounted Price:</strong> <span style="font-weight: bold; color:#4F46E5;" >₹ ${userName.Webniarrecord.discountPrice} </span>
+              <strong>Discounted Price:</strong> <span style="font-weight: normal; color:#28a745;" >₹ ${userName.Webniarrecord.discountPrice} </span>
             </p>
             <p style="margin: 1px 0 20px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
-              <strong>🎯 Why You Should Attend:</strong> <span style="font-weight: bold; color:#4F46E5;" > ${userName.SubContent} </span>
+              <strong>🎯 Why You Should Attend:</strong> <span style="font-weight: normal; color:#4F46E5;" > ${userName.SubContent} </span>
             </p>
           </td>
         </tr>
@@ -116,14 +116,9 @@ module.exports = (userName) => {
             </table>
           </td>
         </tr>
-        <tr bgcolor="#141414">
-          <td style="padding: 15px 0 5px 0;border-top:1px solid #444444">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> Copyright (C) 2025 StackEarn. All rights reserved. </p>
-          </td>
-        </tr>
-        <tr bgcolor="#141414">
-          <td style="padding: 0 0 15px 0;">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: center;"> You are receiving this email because you subscribed to our newsletter. </p>
+      <tr style="background-color: #000000; text-align: center;">
+          <td style="padding: 10px; font-size: 12px; color: #777777;">
+            &copy; 2025 StackEarn. All rights reserved.
           </td>
         </tr>
       </table>
