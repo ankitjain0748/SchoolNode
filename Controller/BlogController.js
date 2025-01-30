@@ -26,9 +26,10 @@ exports.createBlog = catchAsync(async (req, res) => {
     });
 const record =     await newBlog.save();
 
-    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
-    const skip = (page - 1) * limit;
+res.status(201).json({
+  status: true,
+  message: "Blog Success"
+});
 
     // Get emails from all three collections
     const contactEmails = await Contact.find({ Email_verify: "valid" }).select("email");
@@ -55,10 +56,7 @@ const record =     await newBlog.save();
           console.error(`Failed to send email to: ${email}`, error);
       }
   }
-    res.status(201).json({
-      status: true,
-      message: "Blog Success"
-    });
+  
   } catch (error) {
     res.status(400).json({
       status: false,
