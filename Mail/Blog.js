@@ -43,7 +43,7 @@ module.exports = (userName) => {
             </tr>
          <tr style="margin-top: 10px;">
     <td style="padding: 0 20px 45px 20px; text-align: center;">
-  <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" 
+  <a href="https://www.its-invite.com/${userName.BlogRecord._id}" 
      style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
     👉  Full Blog Post
   </a>
