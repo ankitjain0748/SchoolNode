@@ -78,9 +78,11 @@ module.exports = (userData) => {
     <td style="padding: 8px; border: 1px solid #ddd; ">${userData.payment.payment_method}</td>
   </tr>
 </table>
+
+  
             <p style="margin: 0 0 20px;">The user has successfully purchased the course and has access.</p>
             <p style="margin: 0;">Best regards,</p>
-            <p style="margin: 0;">StackEarn Team</p>
+            <p style="margin: 0;"><strong>StackEarn Team</strong></p>
           </td>
         </tr>
         <tr style="background-color: #000000; text-align: center;">

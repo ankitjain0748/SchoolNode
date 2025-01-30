@@ -14,6 +14,8 @@ module.exports = (userData) => {
           </p>
         </td>
       </tr>
+     
+     
       <tr>
         <td style="padding: 20px; color: #ffffff;">
           <p style="margin: 0 0 20px;">Hello Admin,</p>
