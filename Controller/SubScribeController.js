@@ -232,9 +232,7 @@ exports.EmailDataContactGet = catchAsync(async (req, res, next) => {
 exports.WebniarEmail = catchAsync(async (req, res) => {
     try {
         const { title ,selectedUsers,content ,BgImage } = req.body;
-        console.log("req.body",req.body)
         const record = await WebinarModal.findOne({ title });
-        console.log("record", record);
         const subject1 = `Join Our Exclusive Webinar: ${title} - Register Now!🎉`;
         for (const email of selectedUsers) {
             try {
@@ -269,9 +267,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
 exports.promtionalEmail = catchAsync(async (req, res) => {
     try {
         const { title ,selectedUsers,content ,dicount ,BgImage } = req.body;
-        console.log("req.body",req.body)
         const record = await Course.findOne({ title });
-        console.log("record", record);
         const subject1 = `${title} - Master New Skills Today! Limited Offer: ${dicount} % OFF!🎉`;
         for (const email of selectedUsers) {
             try {
@@ -307,9 +303,7 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
 exports.OfferCourseEmail = catchAsync(async (req, res) => {
     try {
         const { title ,selectedUsers,content ,dicount,courseImage ,BgImage  ,SubContent} = req.body;
-        console.log("req.body",req.body)
         const record = await Course.findOne({ title });
-        console.log("record", record);
         const subject1 = `🎉 Special Offer:${title} at ${dicount}% Off! Enroll Now!`;
         for (const email of selectedUsers) {
             try {

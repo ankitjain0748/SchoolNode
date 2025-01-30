@@ -1,5 +1,4 @@
 module.exports = (userName) => {
-  console.log("userName", userName);
   return `
   <head>
     <style>

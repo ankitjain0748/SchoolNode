@@ -18,7 +18,6 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 
         // Fetch user details including courseId
         const userData = await User.findById(userId);
-        console.log("userData",userData)
         if (!userData) {
             return res.status(404).json({
                 status: false,
@@ -68,7 +67,6 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 exports.ReviewGet = catchAsync(async (req, res) => {
     try {
         const review = await Review.find({}).populate('userId').populate('CourseId');
-        console.log("review",review)
         res.json({
             status: true,
             message: "Review fetched Successfully",
@@ -181,7 +179,6 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         // Fetch reviews with populated references
         const reviews = await Review.find({ 
             CourseId, status: "read" })
-        console.log("reviews",reviews)
         const profile = await ProfileData.findOne().populate("userId");
         if (!reviews.length) {
             return res.status(404).json({

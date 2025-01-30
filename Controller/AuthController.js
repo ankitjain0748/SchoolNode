@@ -1033,7 +1033,6 @@ exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]
 
 exports.OTP = catchAsync(async (req, res) => {
   try {
-    console.log(req.body)
     const { email, password, name, phone_number, referred_by ,Email_verify } = req.body;
     // Validate email format
     // if (!isValidEmail(email)) {
@@ -1130,7 +1129,6 @@ exports.OTP = catchAsync(async (req, res) => {
       OTP: otp,
       Email_verify :Email_verify
     };
-    console.log("tempUser",tempUser)
 
     // Send OTP email
    
@@ -1261,7 +1259,6 @@ exports.OTP = catchAsync(async (req, res) => {
 // Exported function to verify OTP
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
-    console.log(req.body)
     const { email, OTP } = req.body;
     if (!email || !OTP) {
       return res.status(401).json({
@@ -1278,7 +1275,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         message: "Invalid Email or OTP",
       });
     }
-    console.log("tempUser",tempUser)
 
     if (tempUser.OTP != OTP) {
       return res.status(401).json({
@@ -1298,7 +1294,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       referred_second: tempUser.referred_second,
       Email_verify:tempUser?.Email_verify
     });
-    console.log("newUser",newUser)
     if (tempUser.referred_by) {
       await User.findByIdAndUpdate(tempUser.referred_by, {
         $addToSet: { referrals: newUser._id },
@@ -1314,7 +1309,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         $addToSet: { referrals: newUser._id },
       });
     }
-    console.log("sjs")
     const subject = "Welcome to Stackearn - Registration Successful! 🎉";
     const subject1 = ` New User Registration ${newUser.name} 🎉`;
     if (newUser) {
@@ -1327,7 +1321,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         emailTemplate: RegisterEmail,
       });
     }
-    console.log("hello")
     await sendEmail({
       email: "ankitkumarjain0748@gmail.com",
       name: "Admin",
@@ -1336,7 +1329,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       subject: subject1,
       emailTemplate: AdminEmail,
     });
-    console.log("hello22")
 
     await TempUser.deleteOne({ email });
     await newUser.save();
