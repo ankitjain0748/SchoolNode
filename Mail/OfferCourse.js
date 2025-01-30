@@ -59,10 +59,10 @@ module.exports = (userName) => {
  
        
 
-            <p style="margin: 1px 0 0px 0; font-size: 14px; font-weight: bold; color:#CCCCCC; text-align: left;">
+            <p style="margin: 1px 0 0px 0; font-size: 12px;   font-weight: bold; color:#CCCCCC; text-align: left;">
 💥 Special Offer:
             </p>
-            <p style="margin: 1px 0 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+            <p style="margin: 1px 0 10px 0; font-size: 12px;   font-weight: normal; color:#CCCCCC; text-align: left;">
             <strong>
               Original Price: <span style="font-weight: normal; color:#28a745;" >₹ ${userName.Webniarrecord.price} </span> 
             </strong>
