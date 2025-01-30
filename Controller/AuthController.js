@@ -6,7 +6,6 @@ const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const VerifyAccount = require("../Mail/VerifyAccount")
-// const ForgetPassword = require("../Mail/ForgetPassword");
 const { validationErrorResponse, errorResponse, successResponse } = require("../utill/ErrorHandling");
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
