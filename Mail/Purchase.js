@@ -60,12 +60,12 @@ module.exports = (name) => {
 
     <p style="padding: 10px; text-align: center;">
   <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" 
-     style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
+     style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
     👉 Read Full Post
   </a>
 </p>
 
-<p style="margin: 0 0 20px; font-size: 14px; text-align: center;">
+<p style="margin: 0 0 20px; font-size: 12px; text-align: center;">
   If you have any questions or need assistance, feel free to contact our support team at 
   <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;">support@stackearn.com</a>.
 </p>

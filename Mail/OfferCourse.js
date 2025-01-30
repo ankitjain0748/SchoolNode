@@ -28,7 +28,7 @@ module.exports = (userName) => {
   </tr>
         <tr>
           <td style="padding: 40px 0 20px 20px; text-align: left;">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello User,</p>
+            <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello User,</p>
           </td>
         </tr>
         <tr>
@@ -41,7 +41,7 @@ module.exports = (userName) => {
               <img src="${userName.ImageUrl}" alt="Course Offer Image" style="max-width: 100%; height: auto;"/>
             </p>
             
-           <p style="margin: 1px 0 0px 0; font-size: 14px; font-weight: bold; color:#CCCCCC; text-align: left;">
+           <p style="margin: 1px 0 0px 0; font-size: 12px; font-weight: bold; color:#CCCCCC; text-align: left;">
              🌟 Why Join? 
 <ul>
   <li> <strong>✔ In-Depth Learning– </strong> Master [Key Topic] with expert guidance.</li>
@@ -69,12 +69,12 @@ module.exports = (userName) => {
             
               <strong> → Now:</strong> <span style="font-weight: normal; color:#28a745;" >₹ ${userName.Webniarrecord.discountPrice} </span>
             </p>
-            <p style="margin: 1px 0 20px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+            <p style="margin: 1px 0 20px 0; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
               <strong>⏳ Offer Ends Soon! Don’t miss out!</strong>             </p>
           </td>
         </tr>
         <tr>
-          <td style="padding: 0 20px 45px 20px; text-align: center;">
+          <td style="padding: 0 20px 20px 20px; text-align: center;">
   <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" 
      style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
     👉 Enroll Now
@@ -84,7 +84,7 @@ module.exports = (userName) => {
         </tr>
        <tr>
   <td style="padding: 0 0 45px 20px; text-align: left;">
-    <p style="margin: 1px 0 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC;">
+    <p style="margin: 1px 0 10px 0; font-size: 12px; font-weight: normal; color:#CCCCCC;">
 Need help? Contact us at 
       <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;">support@stackearn.com</a>
     </p>
@@ -93,7 +93,7 @@ Need help? Contact us at
 
         <tr>
           <td style="padding: 0 0 45px 20px; text-align: left;">
-            <p style="margin: 1px 0 10px 0; font-size: 14px; font-weight: normal; color:#CCCCCC;">
+            <p style="margin: 1px 0 10px 0; font-size: 12px; font-weight: normal; color:#CCCCCC;">
              Best regards,
              <br/>
              StackEarn Team

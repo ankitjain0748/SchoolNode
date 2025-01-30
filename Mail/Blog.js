@@ -13,21 +13,28 @@ module.exports = (userName) => {
        
         <tr>
           <td style="padding: 40px 0 20px 20px; text-align: left;">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello Users,</p>
+            <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello Users,</p>
           </td>
         </tr>
         <tr>
           <td style="padding: 0 0 20px 20px;">
-         <p style="margin: 10px 0 15px 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+         <p style="margin: 10px 0 15px 0; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
     We’re excited to share that a new blog post has just been published! 📖
 </p>
-<p style="margin: 10px 0 15px 0; font-size: 16px; font-weight: bold; color:#ffffff; text-align: left;">
+<p style="margin: 10px 0 15px 0; font-size: 12px;  color:#ffffff; text-align: left;">
    
-     Blog Post Title: <span style="font-weight: bold; color:#4F46E5;">${userName.BlogRecord.title}</span>
+     Blog Post Title: 
     
 </p>
-<p style="margin: 10px 0 20px 0; font-size: 14px; font-weight: bold; color:#FFFFFF; text-align: left;">
-    Blog Post Description: <span style="font-weight: bold; color:#4F46E5;">${userName.BlogRecord.short_content}</span>
+
+<p style="margin: 10px 0 20px 0; font-size: 12px;  color:#FFFFFF; text-align: left;">
+    <span style=" color:#28a745;">${userName.BlogRecord.title}</span>
+</p>
+<p style="margin: 10px 0 20px 0; font-size: 12px;  color:#FFFFFF; text-align: left;">
+    Blog Post Description: 
+</p>
+<p style="margin: 10px 0 20px 0; font-size: 12px; color:#FFFFFF; text-align: left;">
+    <span style="font-weight: normal; color:#28a745;">${userName.BlogRecord.short_content}</span>
 </p>
 
           </td>
@@ -43,14 +50,14 @@ module.exports = (userName) => {
 </tr>
         <tr>
           <td style="padding: 0 0 45px 20px; text-align: left;">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
-              We hope you find this post helpful and engaging! If you have any questions, feel free to get in touch with us at <a href="mailto:support@stackearn.com" style="color: #ffffff; text-decoration: none;">support@stackearn.com</a>.
+            <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;">
+              We hope you find this post helpful and engaging! If you have any questions, feel free to get in touch with us at <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: none;">support@stackearn.com</a>.
             </p>
           </td>
         </tr>
         <tr>
           <td style="padding: 0 0 45px 20px; text-align: left;">
-            <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
+            <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;">
               Stay tuned for more updates, <br/>
               StackEarn Team
             </p>

@@ -1,4 +1,5 @@
 module.exports = (userName) => {
+  console.log("userName",userName)
   return `
   <table align="center" style="max-width: 600px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000">
     <tr bgcolor="#141414">
@@ -13,16 +14,16 @@ module.exports = (userName) => {
 
     <tr>
       <td style="padding:40px 0 20px 20px; text-align: left">
-        <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;"> Hi 
+        <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;"> Hi 
         <span style="font-weight :bold ; text-transform: uppercase;">
-          ${userName}
+          ${userName.name}
         </span>
         , </p>
       </td>
     </tr>
     <tr>
       <td style="padding: 0 0 20px 20px;">
-        <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+        <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
           Congratulations! 🎉 Your registration with 
           <span style="color : #000fff">
             StackEarn
@@ -33,7 +34,7 @@ module.exports = (userName) => {
     </tr>
     <tr>
       <td style="padding: 0 0 20px 20px;">
-        <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+        <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
           We’re excited to have you onboard and can’t wait for you to explore everything we have to offer.
         </p>
       </td>
@@ -49,10 +50,10 @@ module.exports = (userName) => {
 
     <tr>
       <td style="padding: 0 0 20px 20px;">
-        <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+        <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
           If you have any questions or need assistance, feel free to reach out to us:
         </p>
-        <p style="margin: 5px 0; font-size: 14px; font-weight: normal; color: #CCCCCC; text-align: left;">
+        <p style="margin: 5px 0; font-size: 12px; font-weight: normal; color: #CCCCCC; text-align: left;">
           📧 <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;"><strong>support@stackearn.com</strong></a>
           📞 <a href="tel:+9123445678909"  style="color: #007bff; text-decoration: underline;"><strong>+91 23445678909</strong></a>
         </p>
@@ -60,7 +61,7 @@ module.exports = (userName) => {
     </tr>
     <tr>
       <td style="padding: 0 0 45px 20px; text-align: left">
-        <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;"> 
+        <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;"> 
           Thank you for choosing StackEarn. We’re here to support you every step of the way.
         </p>
       </td>

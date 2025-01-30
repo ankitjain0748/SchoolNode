@@ -6,7 +6,7 @@ const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const VerifyAccount = require("../Mail/VerifyAccount")
-const ForgetPassword = require("../Mail/ForgetPassword");
+// const ForgetPassword = require("../Mail/ForgetPassword");
 const { validationErrorResponse, errorResponse, successResponse } = require("../utill/ErrorHandling");
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
@@ -1034,6 +1034,7 @@ exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]
 
 exports.OTP = catchAsync(async (req, res) => {
   try {
+    console.log(req.body)
     const { email, password, name, phone_number, referred_by ,Email_verify } = req.body;
     // Validate email format
     // if (!isValidEmail(email)) {
@@ -1053,6 +1054,28 @@ exports.OTP = catchAsync(async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
+
+
+    let transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: parseInt(process.env.MAIL_PORT, 10),
+      secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
+      auth: {
+        user: process.env.user,
+        pass: process.env.password,
+      },
+      tls: {
+        rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
+      },
+    });
+
+    const emailHtml = VerifyAccount(otp, name);
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "StackEarn - Verify your Account",
+      html: emailHtml,
+    });
 
     // Check referral code and get referrer details
     let referrer = null;
@@ -1108,28 +1131,10 @@ exports.OTP = catchAsync(async (req, res) => {
       OTP: otp,
       Email_verify :Email_verify
     };
+    console.log("tempUser",tempUser)
 
     // Send OTP email
-    let transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: parseInt(process.env.MAIL_PORT, 10),
-      secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
-      auth: {
-        user: process.env.user,
-        pass: process.env.password,
-      },
-      tls: {
-        rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
-      },
-    });
-
-    const emailHtml = VerifyAccount(otp, tempUser.name);
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: tempUser.email,
-      subject: "StackEarn - Verify your Account",
-      html: emailHtml,
-    });
+   
 
     // Store tempUser in a temporary collection or in-memory store
     await TempUser.create(tempUser);
@@ -1257,7 +1262,8 @@ exports.OTP = catchAsync(async (req, res) => {
 // Exported function to verify OTP
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
-    const { email, OTP, Email_verify } = req.body;
+    console.log(req.body)
+    const { email, OTP } = req.body;
     if (!email || !OTP) {
       return res.status(401).json({
         status: false,
@@ -1273,6 +1279,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         message: "Invalid Email or OTP",
       });
     }
+    console.log("tempUser",tempUser)
 
     if (tempUser.OTP != OTP) {
       return res.status(401).json({
@@ -1292,6 +1299,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       referred_second: tempUser.referred_second,
       Email_verify:tempUser?.Email_verify
     });
+    console.log("newUser",newUser)
     if (tempUser.referred_by) {
       await User.findByIdAndUpdate(tempUser.referred_by, {
         $addToSet: { referrals: newUser._id },
@@ -1307,25 +1315,30 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         $addToSet: { referrals: newUser._id },
       });
     }
+    console.log("sjs")
     const subject = "Welcome to Stackearn - Registration Successful! 🎉";
     const subject1 = ` New User Registration ${newUser.name} 🎉`;
-    if (newUser?._id) {
+    if (newUser) {
       await sendEmail({
         email: newUser.email,
         name: newUser.name,
+        Webniarrecord :newUser,
         message: "Your booking request was successful!",
         subject: subject,
         emailTemplate: RegisterEmail,
       });
     }
+    console.log("hello")
     await sendEmail({
-      email: "ankitjain0748@gmail.com",
+      email: "ankitkumarjain0748@gmail.com",
       name: "Admin",
       datauser: newUser,
       message: "Your booking request was successful!",
       subject: subject1,
       emailTemplate: AdminEmail,
     });
+    console.log("hello22")
+
     await TempUser.deleteOne({ email });
     await newUser.save();
     const token = await signToken(newUser._id);

@@ -29,17 +29,17 @@ module.exports = (userName) => {
    
       <tr>
         <td style="padding: 20px 20px 10px 20px; text-align: left;">
-          <p style="margin: 0; font-size: 14px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello User,</p>
+          <p style="margin: 0; font-size: 12px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello User,</p>
         </td>
       </tr>
       <tr>
         <td style="padding: 0 20px 20px 20px;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+          <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
  We’re excited to offer <span style=" color:#fd7e14;" > ${userName.dicount}% OFF</span>  on our <strong style="color : #28a745">${userName.Webniarrecord.title}?</strong> course! Gain in-depth knowledge, expert guidance, and flexible learning—all at a discounted price!
           </p>
          
           
-             <p style="margin: 5px; padding: 10px 0px 10px 10px; font-size: 14px; font-weight: bold; color:#CCCCCC; text-align: left;">
+             <p style="margin: 5px; padding: 10px 0px 10px 10px; font-size: 12px; font-weight: bold; color:#CCCCCC; text-align: left;">
              💡 What’s in it for you?
 <ul>
   <li> <strong>✅ Master key skills for the </strong> <span>${userName.Webniarrecord.title} </span> </ li>
@@ -58,11 +58,11 @@ module.exports = (userName) => {
 
   
           
-          <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+          <p style="margin-bottom: 10px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
             <strong>🎉 Special Price:</strong>  <span style=" color:#28a745; font-weight:bold ;" > ₹  ${userName.Webniarrecord.discountPrice} </span>(Original ₹${userName.Webniarrecord.price} )
           </p>
           
-          <p style="margin-bottom: 10px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+          <p style="margin-bottom: 10px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
           📅 Offer Ends Soon!
           </p>
           
@@ -82,7 +82,7 @@ module.exports = (userName) => {
       </tr>
       <tr>
         <td style="padding: 0 20px 45px 20px; text-align: left;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
+          <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;">
      For any queries, reach out to 
            <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;">support@stackearn.com</a>
           </p>
@@ -90,7 +90,7 @@ module.exports = (userName) => {
       </tr>
       <tr>
         <td style="padding: 0 20px 45px 20px; text-align: left;">
-          <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;">
+          <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;">
             Best regards,
             <br/>
             StackEarn Team
