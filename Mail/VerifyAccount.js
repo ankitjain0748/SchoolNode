@@ -4,7 +4,7 @@ module.exports = (otp, userName) => {
   <tr bgcolor="#141414">
     <td style="padding: 20px 2px 20px 2px; text-align: center;">
       <p style="margin: 1px;">
-        <a href="https://www.its-invite.com/">
+        <a href="https://www.stackearn.com/">
           <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
         </a>
       </p>
@@ -20,7 +20,7 @@ module.exports = (otp, userName) => {
     <td style="padding: 0 0 20px 20px;">
       <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
 Thank you for registering with 
-<span style="color: #000fff ;">StackEarn !</span>
+<span style="color: #007bff ;">StackEarn !</span>
  To complete your registration, please verify your email address by using the OTP (One-Time Password) below:
  </p>
     </td>

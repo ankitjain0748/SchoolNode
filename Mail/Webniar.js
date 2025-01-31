@@ -19,15 +19,15 @@ module.exports = (userName) => {
   <tr style="width: 100%; max-width: 600px; height: auto;" >
     <td >
    
-        <a href="https://www.its-invite.com/">
+        <a href="https://www.stackearn.com/">
           <img style="width: 100%; max-width: 600px; height: auto; object-fit: cover;" src="${userName.BgImage}" alt="New Blog Post">
         </a>
      
     </td>
   </tr>
 
-        <tr style="margin-top: 10px; margin-bottom: 10px;">
-          <td style="padding: 40px 0 20px 20px; text-align: left;">
+        <tr >
+          <td style="padding: 20px 0 20px 20px; text-align: left;">
             <p style="margin: 1px; margin-top: 10px; margin-bottom: 10px; font-size: 12px;  font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello User,</p>
           </td>
         </tr>
@@ -55,8 +55,8 @@ module.exports = (userName) => {
         </tr>
        <tr style="margin-top: 10px;">
    <td style="padding: 0 20px 20px 20px; text-align: center;">
-  <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" 
-     style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
+  <a href="https://www.stackearn.com/event" 
+     style="display: inline-block; padding: 10px 10px; background-color: transparent; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
     👉 Join Now
   </a>
 </td>
@@ -66,7 +66,7 @@ module.exports = (userName) => {
           <td style="padding: 0 0 20px 20px; text-align: left;">
             <p style="margin: 1px; font-size: 12px;  font-weight: normal; color:#CCCCCC;">
 Don’t miss out! Feel free to reach out to 
-           <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;">support@stackearn.com</a>.
+           <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;"> support@stackearn.com</a>.
             </p>
           </td>
         </tr>

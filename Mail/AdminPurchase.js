@@ -1,4 +1,5 @@
 module.exports = (userData) => {
+  console.log("userData",userData)
   const userEmail = userData?.datauser?.email || 'N/A';
   const userMobile = `${userData?.datauser?.phone_code || '+91'} ${userData?.datauser?.phone_number || 'N/A'}`;
   return `
@@ -6,7 +7,7 @@ module.exports = (userData) => {
         <tr bgcolor="#141414">
           <td style="padding: 20px 2px 20px 2px; text-align: center;">
             <p style="margin: 1px;">
-              <a href="https://www.its-invite.com/">
+              <a href="https://www.stackearn.com/">
                 <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="StackEarn Logo">
               </a>
             </p>

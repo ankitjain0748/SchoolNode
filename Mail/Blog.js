@@ -4,7 +4,7 @@ module.exports = (userName) => {
         <tr bgcolor="#141414">
           <td style="padding: 20px 2px 20px 2px; text-align: center;">
             <p style="margin: 1px;">
-              <a href="https://www.its-invite.com/">
+              <a href="https://www.stackearn.com/">
                 <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="Logo">
               </a>
             </p>
@@ -13,7 +13,7 @@ module.exports = (userName) => {
        
         <tr>
           <td style="padding: 40px 0 20px 20px; text-align: left;">
-            <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello Users,</p>
+            <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-transform: capitalize;">Hello User,</p>
           </td>
         </tr>
         <tr>
@@ -24,25 +24,27 @@ module.exports = (userName) => {
 <p style="margin: 10px 0 15px 0; font-size: 12px;  color:#ffffff; text-align: left;">
    
      Blog Post Title: 
+     
+     <br/>
+     
+         <span style=" color:#28a745; margin-top:5px;">${userName.BlogRecord.title}</span>
     
 </p>
 
-<p style="margin: 10px 0 20px 0; font-size: 12px;  color:#FFFFFF; text-align: left;">
-    <span style=" color:#28a745;">${userName.BlogRecord.title}</span>
-</p>
+
 <p style="margin: 10px 0 20px 0; font-size: 12px;  color:#FFFFFF; text-align: left;">
     Blog Post Description: 
+    <br>
+     <span style="font-weight: normal; color:#28a745;  margin-top:5px;">${userName.BlogRecord.short_content}</span>
 </p>
-<p style="margin: 10px 0 20px 0; font-size: 12px; color:#FFFFFF; text-align: left;">
-    <span style="font-weight: normal; color:#28a745;">${userName.BlogRecord.short_content}</span>
-</p>
+
 
           </td>
         </tr>
             </tr>
          <tr style="margin-top: 10px;">
     <td style="padding: 0 20px 45px 20px; text-align: center;">
-  <a href="https://www.its-invite.com/${userName.BlogRecord._id}" 
+  <a href="https://www.its-invite.com/blog-details/${userName.BlogRecord._id}" 
      style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
     👉  Full Blog Post
   </a>

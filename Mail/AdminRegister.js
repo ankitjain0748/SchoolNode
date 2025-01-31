@@ -8,7 +8,7 @@ module.exports = (userData) => {
       <tr bgcolor="#141414">
         <td style="padding: 20px 2px 20px 2px; text-align: center;">
           <p style="margin: 1px;">
-            <a href="https://www.its-invite.com/">
+            <a href="https://www.stackearn.com/">
               <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="StackEarn">
             </a>
           </p>
@@ -20,7 +20,7 @@ module.exports = (userData) => {
         <td style="padding: 20px; color: #ffffff;">
           <p style="margin: 0 0 20px;">Hello Admin,</p>
           <p style="margin: 0 0 20px;">
-            A new user has successfully registered on <span style="color : #000fff">StackEarn</span>. Below are their details:
+            A new user has successfully registered on <span style="color : #007bff">StackEarn</span>. Below are their details:
           </p>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <tr>

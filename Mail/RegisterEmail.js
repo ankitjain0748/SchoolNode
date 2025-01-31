@@ -4,7 +4,7 @@ module.exports = (userName) => {
     <tr bgcolor="#141414">
       <td style="padding: 20px 2px 20px 2px; text-align: center;">
         <p style="margin: 1px;">
-          <a href="https://www.its-invite.com/">
+          <a href="https://www.stackearn.com/">
          <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
           </a>
         </p>
@@ -24,7 +24,7 @@ module.exports = (userName) => {
       <td style="padding: 0 0 20px 20px;">
         <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
           Congratulations! 🎉 Your registration with 
-          <span style="color : #000fff">
+          <span style="color : #007bff">
             StackEarn
           </span>
            has been successfully completed.
@@ -40,8 +40,8 @@ module.exports = (userName) => {
     </tr>
    <tr style="margin-top: 10px;">
     <td style="padding: 0 20px 45px 20px; text-align: center;">
-  <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" 
-     style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
+  <a href="https://www.stackearn.com/student/student-dashboard" 
+     style="display: inline-block; padding: 10px 10px;  background-color: transparent; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
     👉  Go To Dashboard
   </a>
 </td>
@@ -51,8 +51,8 @@ module.exports = (userName) => {
       <td style="padding: 0 0 20px 20px;">
         <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
           If you have any questions or need assistance, feel free to reach out to us:
-        </p>
-        <p style="margin: 5px 0; font-size: 12px; font-weight: normal; color: #CCCCCC; text-align: left;">
+       
+   
           📧 <a href="mailto:support@stackearn.com" style="color: #007bff; text-decoration: underline;"><strong>support@stackearn.com</strong></a>
           📞 <a href="tel:+9123445678909"  style="color: #007bff; text-decoration: underline;"><strong>+91 23445678909</strong></a>
         </p>

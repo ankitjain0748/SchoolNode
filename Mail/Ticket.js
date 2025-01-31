@@ -4,7 +4,7 @@ module.exports = (support) => {
       <tr bgcolor="#141414">
         <td style="padding: 20px 2px 20px 2px; text-align: center;">
           <p style="margin: 1px;">
-            <a href="https://www.its-invite.com/">
+            <a href="https://www.stackearn.com/">
               <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
             </a>
           </p>
@@ -23,7 +23,7 @@ module.exports = (support) => {
       <tr>
         <td style="padding: 0 0 20px 20px;">
           <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
-            Thank you for reaching out! We’ve received your support ticket regarding your issue with <strong style="color :#000fff ;">${support.support.message}</strong>.
+            Thank you for reaching out! We’ve received your support ticket regarding your issue with <strong style="color :#007bff ;">${support.support.message}</strong>.
           </p>
         </td>
       </tr>
@@ -49,7 +49,7 @@ module.exports = (support) => {
         </td>
       </tr>
       <tr>
-  <td style="padding: 0 0 45px 20px; text-align: left;">
+  <td style="padding: 0 0 20px 20px; text-align: left;">
     <ul style="list-style-type: disc; padding-left: 20px; color: #CCCCCC;">
       <li style="font-size: 12px; font-weight: normal;">
         Our support team will review your ticket and get back to you as soon as possible.
@@ -62,7 +62,7 @@ module.exports = (support) => {
 </tr>
 
       <tr>
-        <td style="padding: 0 0 45px 20px; text-align: left;">
+        <td style="padding: 0 0 20px 20px; text-align: left;">
           <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;">Best regards,<br> The StackEarn Support Team</p>
         </td>
       </tr>

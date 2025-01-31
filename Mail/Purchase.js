@@ -1,10 +1,11 @@
 module.exports = (name) => {
+  console.log("name",name)
   return `
     <table align="center" style="max-width: 600px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000" color="#ffffff;">
       <tr bgcolor="#141414">
         <td style="padding: 20px 2px 0 2px; text-align: center;">
           <p style="margin: 1px;">
-            <a href="https://www.its-invite.com/">
+            <a href="https://www.stackearn.com/">
               <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="StackEarn Logo">
             </a>
           </p>
@@ -59,8 +60,8 @@ module.exports = (name) => {
           </p>
 
     <p style="padding: 10px; text-align: center;">
-  <a href="https://www.its-invite.com/${userName.Webniarrecord._id}" 
-     style="display: inline-block; margin: 10px 10px; padding: 12px 20px; background-color: transparent; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
+  <a href="https://www.stackearn.com/student/student-courses" 
+     style="display: inline-block; padding: 10px 10px; background-color: transparent; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 5px; border: 2px solid #28a745; text-align: center;">
     👉 Read Full Post
   </a>
 </p>
