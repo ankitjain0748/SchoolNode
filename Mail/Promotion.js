@@ -72,7 +72,7 @@ ol {
 
   
           
-          <p style="margin-bottom: 10px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
+          <p style="margin-bottom: 10px; font-size: 14px; font-weight: bold; color:#CCCCCC; text-align: left;">
             <strong>🎉 Special Price:</strong>  <span style=" color:#28a745; font-weight:bold ;" > ₹  ${userName.Webniarrecord.discountPrice} </span>(Original ₹${userName.Webniarrecord.price} )
           </p>
           
