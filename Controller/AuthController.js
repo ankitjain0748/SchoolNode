@@ -1310,6 +1310,16 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         $addToSet: { referrals: newUser._id },
       });
     }
+
+    await TempUser.deleteOne({ email });
+    await newUser.save();
+
+    const token = await signToken(newUser._id);
+    res.json({
+      status: true,
+      message: "Your account has been verified.",
+      token,
+    });
     const subject = "Welcome to Stackearn - Registration Successful! 🎉";
     const subject1 = ` New User Registration ${newUser.name} 🎉`;
     if (newUser) {
@@ -1331,14 +1341,8 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       emailTemplate: AdminEmail,
     });
 
-    await TempUser.deleteOne({ email });
-    await newUser.save();
-    const token = await signToken(newUser._id);
-    res.json({
-      status: true,
-      message: "Your account has been verified.",
-      token,
-    });
+    
+   
   } catch (error) {
     return res.status(500).json({
       error,

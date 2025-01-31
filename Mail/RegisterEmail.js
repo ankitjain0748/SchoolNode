@@ -1,11 +1,11 @@
 module.exports = (userName) => {
   return `
-  <table align="center" style="max-width: 600px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000">
+  <table align="center" style="max-width: 700px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000">
     <tr bgcolor="#141414">
       <td style="padding: 20px 2px 20px 2px; text-align: center;">
         <p style="margin: 1px;">
           <a href="https://www.stackearn.com/">
-         <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
+         <img style="max-width:250px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
           </a>
         </p>
       </td>
