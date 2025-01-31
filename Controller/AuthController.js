@@ -1054,26 +1054,6 @@ exports.OTP = catchAsync(async (req, res) => {
     const otp = generateOTP();
 
 
-    let transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: parseInt(process.env.MAIL_PORT, 10),
-      secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
-      auth: {
-        user: process.env.user,
-        pass: process.env.password,
-      },
-      tls: {
-        rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
-      },
-    });
-
-    const emailHtml = VerifyAccount(otp, name);
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "StackEarn - Verify your Account",
-      html: emailHtml,
-    });
 
     // Check referral code and get referrer details
     let referrer = null;
@@ -1131,15 +1111,36 @@ exports.OTP = catchAsync(async (req, res) => {
     };
 
     // Send OTP email
-   
-
-    // Store tempUser in a temporary collection or in-memory store
     await TempUser.create(tempUser);
 
     return res.status(201).json({
       status: true,
       message: "OTP has been sent to your email!",
     });
+   
+    let transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: parseInt(process.env.MAIL_PORT, 10),
+      secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
+      auth: {
+        user: process.env.user,
+        pass: process.env.password,
+      },
+      tls: {
+        rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
+      },
+    });
+
+    const emailHtml = VerifyAccount(otp, name);
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "StackEarn - Verify your Account",
+      html: emailHtml,
+    });
+
+    // Store tempUser in a temporary collection or in-memory store
+   
   } catch (error) {
     return res.status(500).json({
       error,
