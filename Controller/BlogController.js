@@ -70,7 +70,7 @@ res.status(201).json({
 // Get all blog posts
 exports.getAllBlogs = catchAsync(async (req, res) => {
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find().sort({ createdAt: -1 }); // Sort by createdAt in descending order (newest first)
     res.status(200).json({
       status: true,
       data: blogs
