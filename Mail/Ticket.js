@@ -5,7 +5,7 @@ module.exports = (support) => {
         <td style="padding: 20px 2px 20px 2px; text-align: center;">
           <p style="margin: 1px;">
             <a href="https://www.stackearn.com/">
-              <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
+              <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/Adobe+Express+-+file.jpg" alt="">
             </a>
           </p>
         </td>
@@ -34,16 +34,16 @@ module.exports = (support) => {
           </p>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; color:#fff;">
             <tr>
-              <td style="padding: 8px; border: 1px solid #ddd;">Ticket ID:</td>
-              <td style="padding: 8px; border: 1px solid #ddd; ">${support.support._id}</td>
+              <td style="padding: 8px; font-size: 12px; border: 1px solid #ddd;">Ticket ID:</td>
+              <td style="padding: 8px; font-size: 12px; border: 1px solid #ddd; ">${support.support._id}</td>
             </tr>
             <tr>
-              <td style="padding: 8px; border: 1px solid #ddd;">Issue Description:</td>
-              <td style="padding: 8px; border: 1px solid #ddd; ">${support.support.message}</td>
+              <td style="padding: 8px; font-size: 12px;  border: 1px solid #ddd;">Issue Description:</td>
+              <td style="padding: 8px; font-size: 12px; border: 1px solid #ddd; ">${support.support.message}</td>
             </tr>
             <tr>
-              <td style="padding: 8px; border: 1px solid #ddd;">Submitted On:</td>
-              <td style="padding: 8px; border: 1px solid #ddd;  color: #ffffff;">${support.support.created_at}</td>
+              <td style="padding: 8px; font-size: 12px; border: 1px solid #ddd;">Submitted On:</td>
+              <td style="padding: 8px; font-size: 12px; border: 1px solid #ddd;  color: #ffffff;">${support.support.created_at}</td>
             </tr>
           </table>
         </td>

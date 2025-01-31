@@ -6,7 +6,7 @@ module.exports = (otp, userName) => {
     <td style="padding: 20px 2px 20px 2px; text-align: center;">
       <p style="margin: 1px;">
         <a href="https://www.stackearn.com/">
-          <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="">
+          <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/Adobe+Express+-+file.jpg" alt="">
         </a>
       </p>
     </td>
@@ -14,12 +14,12 @@ module.exports = (otp, userName) => {
   
   <tr>
     <td style="padding:40px 0 20px 20px; text-align: left">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC;  text-transform: capitalize;"> Hi ${userName}, </p>
+      <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC;  text-transform: capitalize;"> Hi ${userName}, </p>
     </td>
   </tr>
   <tr>
     <td style="padding: 0 0 20px 20px;">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;">
+      <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;">
 Thank you for registering with 
 <span style="color: #007bff ;">StackEarn !</span>
  To complete your registration, please verify your email address by using the OTP (One-Time Password) below:
@@ -28,18 +28,18 @@ Thank you for registering with
   </tr>
   <tr>
     <td style="padding: 0 0 30px 20px;">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC; text-align: left;"> Your OTP is: <strong>${otp}</strong> </p>
+      <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC; text-align: left;"> Your OTP is: <strong style="font-size: 16px; color:#28a745 ; ">${otp}</strong> </p>
     </td>
   </tr>
   <tr>
     <td style="padding: 0 20px 20px 20px; text-align: left">
-      <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> This OTP is valid for 10 minutes. Please do not share this code with anyone. </p>
+      <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC"> This OTP is valid for 10 minutes. Please do not share this code with anyone. </p>
     </td>
   </tr>
   
   <tr>
     <td style="padding: 0 0 45px 20px; text-align: left">
-        <p style="margin: 1px; font-size: 14px; font-weight: normal; color:#CCCCCC"> Warm regards,
+        <p style="margin: 1px; font-size: 12px; font-weight: normal; color:#CCCCCC"> Warm regards,
   , <br> The StackEarn Team 🌟</p>
     </td>
   </tr>

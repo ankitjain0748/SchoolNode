@@ -5,7 +5,7 @@ module.exports = (userName) => {
           <td style="padding: 20px 2px 20px 2px; text-align: center;">
             <p style="margin: 1px;">
               <a href="https://www.stackearn.com/">
-                <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="Logo">
+                <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/Adobe+Express+-+file.jpg" alt="Logo">
               </a>
             </p>
           </td>

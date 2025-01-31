@@ -6,7 +6,7 @@ module.exports = (name) => {
         <td style="padding: 20px 2px 0 2px; text-align: center;">
           <p style="margin: 1px;">
             <a href="https://www.stackearn.com/">
-              <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/applogo.png" alt="StackEarn Logo">
+              <img style="max-width:200px;" src="https://stacklearnimage.s3.ap-south-1.amazonaws.com/uploads/Adobe+Express+-+file.jpg" alt="StackEarn Logo">
             </a>
           </p>
         </td>
@@ -26,7 +26,7 @@ module.exports = (name) => {
   </tr>
   <tr>
     <td style="padding: 8px; border: 1px solid #ffffff;">GST</td>
-    <td style="padding: 8px; border: 1px solid #ffffff;">{"0 %"}</td>
+    <td style="padding: 8px; border: 1px solid #ffffff;">0 %</td>
   </tr>
   <tr>
     <td style="padding: 8px; border: 1px solid #ffffff;">Transaction ID</td>
