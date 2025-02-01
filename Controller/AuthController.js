@@ -17,6 +17,7 @@ const SocialSection = require("../Model/Social");
 const RegisterEmail = require("../Mail/RegisterEmail");
 const AdminEmail = require("../Mail/AdminRegister");
 const sendEmail = require("../utill/Emailer");
+const Payout = require("../Mail/Payout");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -768,7 +769,7 @@ exports.userupdateby = catchAsync(async (req, res, next) => {
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key } = req.body;
+    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key, page } = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -782,6 +783,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
       payment_key,
       transactionId,
       payment_data,
+      payment_income,
       data_payment,
       payment_income,
       referred_user_pay,
@@ -823,6 +825,16 @@ exports.paymentdata = catchAsync(async (req, res) => {
       paymentRecord,
       updatedUser,
     });
+    const subject1 = "🎉 Your Payout Has Been Successfully Received!";
+    if(page === "payout"){
+      await sendEmail({
+        email: updatedUser.email, 
+        name: updatedUser.name,
+        Webniarrecord :paymentRecord,
+        subject: subject1,
+        emailTemplate: Payout,
+    })
+    };
 
   } catch (error) {
     console.error("Error saving payment data and updating user:", error);

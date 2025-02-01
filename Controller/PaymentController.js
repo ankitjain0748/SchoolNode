@@ -77,7 +77,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 
     const record = await payment.save();
-    console.log("recors" ,record)
     const coursedata = await Course.findOne({ _id: CourseId });
     if (!coursedata) {
       return res.status(404).json({ status: false, message: "Course not found" });
@@ -87,11 +86,9 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     if (!user) {
       return res.status(404).json({ status: false, message: "User not found" });
     }
-    console.log("user",user)
 
     const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
     const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
-  console.log("sshs")
   
     if (user) {
       await sendEmail({
@@ -104,7 +101,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         emailTemplate: Purchase,
       });
     }
-    console.log("dhhdhdd")
     await sendEmail({
       email: "sainibhim133@gmail.com",
       name: "Admin",
@@ -116,7 +112,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       emailTemplate: AdminPurchase,
     });
 
-    console.log("Hello")
     if (payment_status === "success") {
 
 
@@ -167,7 +162,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         data,
       });
     }
-    console.log("Hii")
 
     if (payment_status === "failed") {
       return res.status(200).json({

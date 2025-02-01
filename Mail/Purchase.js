@@ -1,5 +1,4 @@
 module.exports = (name) => {
-  console.log("name",name)
   return `
     <table align="center" style="max-width: 600px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000" color="#ffffff;">
       <tr bgcolor="#141414">

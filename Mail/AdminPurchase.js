@@ -1,5 +1,4 @@
 module.exports = (userData) => {
-  console.log("userData",userData)
   const userEmail = userData?.datauser?.email || 'N/A';
   const userMobile = `${userData?.datauser?.phone_code || '+91'} ${userData?.datauser?.phone_number || 'N/A'}`;
   return `
