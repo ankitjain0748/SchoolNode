@@ -90,6 +90,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
+        console.log("userId",userId)
         const user = req?.body?.id;
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
         // Convert to plain object

@@ -1498,6 +1498,7 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
     }
 
     const users = await User.find({ role: "user", isDeleted: false });
+
     const userCount = await User.countDocuments();
 
 
