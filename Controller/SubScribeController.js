@@ -249,7 +249,6 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
                 console.error(`Failed to send email to: ${email}`, error);
             }
         }
-
             res.json({
                 status: true,
                 message: "Request Sent Successfully!!.",

@@ -1113,10 +1113,7 @@ exports.OTP = catchAsync(async (req, res) => {
     // Send OTP email
     await TempUser.create(tempUser);
 
-    return res.status(201).json({
-      status: true,
-      message: "OTP has been sent to your email!",
-    });
+    
    
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
@@ -1139,6 +1136,11 @@ exports.OTP = catchAsync(async (req, res) => {
       html: emailHtml,
     });
 
+
+    return res.status(201).json({
+      status: true,
+      message: "OTP has been sent to your email!",
+    });
     // Store tempUser in a temporary collection or in-memory store
    
   } catch (error) {
