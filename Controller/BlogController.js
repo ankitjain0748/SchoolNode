@@ -24,12 +24,12 @@ exports.createBlog = catchAsync(async (req, res) => {
       short_content,
       Image
     });
-const record =     await newBlog.save();
+    const record = await newBlog.save();
 
-res.status(201).json({
-  status: true,
-  message: "Blog Success"
-});
+    res.status(201).json({
+      status: true,
+      message: "Blog Success"
+    });
 
     // Get emails from all three collections
     const contactEmails = await Contact.find({ Email_verify: "valid" }).select("email");
@@ -45,18 +45,18 @@ res.status(201).json({
     const subject1 = ` 🚀 New Blog Post: ${title} - Don't Miss Out!`;
     for (const email of uniqueEmails) {
       try {
-          await sendEmail({
-              email: email, // Email from the uniqueEmails array
-              BlogRecord: record, // The associated record (if applicable)
-              message: "Your booking request was successful!",
-              subject: subject1,
-              emailTemplate: BlogEmail,
-          });
+        await sendEmail({
+          email: email, // Email from the uniqueEmails array
+          BlogRecord: record, // The associated record (if applicable)
+          message: "Your booking request was successful!",
+          subject: subject1,
+          emailTemplate: BlogEmail,
+        });
       } catch (error) {
-          console.error(`Failed to send email to: ${email}`, error);
+        console.error(`Failed to send email to: ${email}`, error);
       }
-  }
-  
+    }
+
   } catch (error) {
     res.status(400).json({
       status: false,
