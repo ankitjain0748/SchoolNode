@@ -93,6 +93,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         console.log("userId",userId)
         const user = req?.body?.id;
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
+     console.log("UserData",UserData)
         // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
@@ -100,11 +101,10 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const payment = await Payment.findOne({ UserId: userId });
         const AdminPayments = await AdminPay.find({ userId: userId });
         const Transactions = await Transaction.find({ user: user });
+        console.log( ProfileData ,updatedSocials,BankData,payment,AdminPayments,Transactions)
 
 
-        if (!payment) {
-            return { status: false, message: "No payment record found for the user." };
-        }
+        
         // Fetch referral data
         const referralData = await User.find({
             $or: [
