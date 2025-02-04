@@ -398,6 +398,7 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
       message: "An unknown error occurred. Please try again later.",
       error: err.message,
     });
+    
   }
 });
 
