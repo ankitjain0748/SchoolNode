@@ -8,6 +8,7 @@ const ProfileData = require("../Model/Profile");
 exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
         const userId = req.User?._id;
+        console.log("userId",userId)
         if (!userId) {
             logger.warn("User ID not found. Please log in again.");
             return res.status(400).json({

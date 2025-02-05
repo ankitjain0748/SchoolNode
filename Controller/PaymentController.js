@@ -345,7 +345,6 @@ exports.paymentdata = catchAsync(async (req, res) => {
 
 
 exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
-  const UserId = req.User._id;
   try {
     // Fetch user payments with status "success"
     const UserPayments = await Payment.find({  payment_status: "success" })
@@ -374,8 +373,9 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
 
     // Sort course IDs by sales count in descending order
     const sortedCourseIds = Object.keys(courseSalesCount).sort((a, b) => courseSalesCount[b] - courseSalesCount[a]);
-    const bestSellingCourseIds = sortedCourseIds.slice(0, 1); // Adjust the number as needed
+    const bestSellingCourseIds = sortedCourseIds; // Adjust the number as needed
 
+    console.log("bestSellingCourseIds",bestSellingCourseIds)
     const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId");
 
     // Include the purchase count for each best-selling course and sort by purchase count
