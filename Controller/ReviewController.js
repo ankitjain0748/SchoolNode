@@ -8,7 +8,7 @@ const ProfileData = require("../Model/Profile");
 exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
         const userId = req.User?._id;
-        console.log("userId",userId)
+        console.log("userId", userId)
         if (!userId) {
             logger.warn("User ID not found. Please log in again.");
             return res.status(400).json({
@@ -36,7 +36,7 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
         }
 
         // Extract review details from request body
-        const { message ,rating } = req.body;
+        const { message, rating } = req.body;
 
         // Create new review
         const reviewAdd = new Review({
@@ -178,8 +178,9 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         }
 
         // Fetch reviews with populated references
-        const reviews = await Review.find({ 
-            CourseId, status: "read" })
+        const reviews = await Review.find({
+            CourseId, status: "read"
+        })
         const profile = await ProfileData.findOne().populate("userId");
         if (!reviews.length) {
             return res.status(404).json({
