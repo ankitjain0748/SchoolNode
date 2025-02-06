@@ -1,6 +1,6 @@
 module.exports = (userName) => {
   return `
-    <table align="center" style="max-width: 400px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000">
+   <table align="center" style="max-width: 600px; font-family: Arial, sans-serif;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000" color="#ffffff;">
       <tr bgcolor="#141414">
         <td style="padding: 20px 2px 20px 2px; text-align: center;">
           <p style="margin: 1px;">
