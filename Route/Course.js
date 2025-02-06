@@ -40,7 +40,7 @@ Router.get("/video_traning_get", TranningGet);
 
 Router.get("/video_traning_get_by_id/:Id", TranningGetId);
 
-Router.put("/video_traning_update", tranningUpdate);
+Router.post("/video_traning_update", tranningUpdate);
 
 Router.post("/video_traning_delete", trannigIdDelete);
 

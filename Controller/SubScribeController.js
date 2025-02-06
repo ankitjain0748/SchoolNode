@@ -117,7 +117,7 @@ exports.EmailDataprofile = catchAsync(async (req, res, next) => {
         const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
         const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
         const skip = (page - 1) * limit;
-        const users = await User.find({ role: "user", isDeleted: false, Email_verify: "valid", user_status: "Enrolled" })
+        const users = await User.find({ role: "user", isDeleted: false, Email_verify: "valid",  })
             .select("-password")
             .sort({ created_at: -1 })
             .skip(skip)
