@@ -158,3 +158,30 @@ exports.ContactReply = async (req, res) => {
 //         });
 //     }
 // };
+
+
+
+exports.ContactDelete = catchAsync(async (req, res, next) => {
+    try {
+        const { Id } = req.body;
+        if (!Id) {
+            return res.status(400).json({
+                status: false,
+                message: 'CourseUpdate ID is required.',
+            });
+        }
+        await contactmodal.findByIdAndDelete(Id);
+
+        res.status(200).json({
+            status: true,
+            message: 'Contact deleted successfully.',
+        });
+    } catch (error) {
+        logger.error(error)
+
+        res.status(500).json({
+            status: false,
+            message: 'Internal Server Error. Please try again later.',
+        });
+    }
+});

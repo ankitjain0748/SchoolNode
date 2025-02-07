@@ -8,8 +8,8 @@ const contactmodal = require("../Model/Contact");
 const WebinarModal = require("../Model/Webniar");
 const WebniarEmail = require("../Mail/Webniar");
 const Course = require("../Model/Course");
-const PromtionEmail = require("../Mail/Promotion")
-const OfferCourseEmail = require("../Mail/OfferCourse")
+const PromtionEmail = require("../Mail/Promotion");
+const OfferCourseEmail = require("../Mail/OfferCourse");
 
 exports.SubscribePost = catchAsync(async (req, res) => {
     try {
@@ -78,6 +78,30 @@ exports.Subscribeget = catchAsync(async (req, res, next) => {
     }
 });
 
+exports.SubscriberDelete = catchAsync(async (req, res, next) => {
+    try {
+        const { Id } = req.body;
+        if (!Id) {
+            return res.status(400).json({
+                status: false,
+                message: 'CourseUpdate ID is required.',
+            });
+        }
+        await subscribemodal.findByIdAndDelete(Id);
+
+        res.status(200).json({
+            status: true,
+            message: 'Subscribe deleted successfully.',
+        });
+    } catch (error) {
+        logger.error(error)
+
+        res.status(500).json({
+            status: false,
+            message: 'Internal Server Error. Please try again later.',
+        });
+    }
+});
 
 exports.EmailDataSubScribe = catchAsync(async (req, res, next) => {
     try {
@@ -111,13 +135,12 @@ exports.EmailDataSubScribe = catchAsync(async (req, res, next) => {
     }
 });
 
-
 exports.EmailDataprofile = catchAsync(async (req, res, next) => {
     try {
         const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
         const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
         const skip = (page - 1) * limit;
-        const users = await User.find({ role: "user", isDeleted: false, Email_verify: "valid",  })
+        const users = await User.find({ role: "user", isDeleted: false,  user_status: { $ne: "registered" },  Email_verify: "valid",  })
             .select("-password")
             .sort({ created_at: -1 })
             .skip(skip)
@@ -227,8 +250,6 @@ exports.EmailDataContactGet = catchAsync(async (req, res, next) => {
     }
 });
 
-
-
 exports.WebniarEmail = catchAsync(async (req, res) => {
     try {
         const { title ,selectedUsers,content ,BgImage } = req.body;
@@ -261,7 +282,6 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.promtionalEmail = catchAsync(async (req, res) => {
     try {
@@ -297,7 +317,6 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.OfferCourseEmail = catchAsync(async (req, res) => {
     try {

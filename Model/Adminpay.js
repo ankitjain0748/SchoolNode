@@ -20,7 +20,6 @@ const paymentSchema = new mongoose.Schema({
     },
     receipt: String
 });
-
 const Payment = mongoose.model('AdminPayment', paymentSchema);
 
 module.exports = Payment;

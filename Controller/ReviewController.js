@@ -4,7 +4,6 @@ const logger = require("../utill/Loggers");
 const User = require("../Model/User");
 const ProfileData = require("../Model/Profile");
 
-
 exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
         const userId = req.User?._id;
@@ -62,9 +61,6 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
     }
 });
 
-
-
-
 exports.ReviewGet = catchAsync(async (req, res) => {
     try {
         const review = await Review.find({}).populate('userId').populate('CourseId');
@@ -101,7 +97,6 @@ exports.ReviewGetStatus = catchAsync(async (req, res) => {
     }
 });
 
-
 exports.ReviewDelete = catchAsync(async (req, res) => {
     try {
         const { id } = req.params;
@@ -122,7 +117,6 @@ exports.ReviewDelete = catchAsync(async (req, res) => {
         })
     }
 })
-
 
 exports.ReviewStatus = catchAsync(async (req, res) => {
     try {
@@ -162,7 +156,6 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.ReviewCourse = catchAsync(async (req, res) => {
     try {
@@ -206,8 +199,6 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         });
     }
 });
-
-
 
 exports.ReviewCourseUser = catchAsync(async (req, res) => {
     try {

@@ -46,7 +46,8 @@ const userSchema = mongoose.Schema({
     },
     user_status: {
         type: String,
-        default: "registerd"
+        default: "registered",
+        enum  :["registered" , "active" ,"inactive", "enrolled"]
     },
     isDeleted: {
         type: Boolean,

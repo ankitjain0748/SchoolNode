@@ -30,18 +30,14 @@ exports.createBlog = catchAsync(async (req, res) => {
       status: true,
       message: "Blog Success"
     });
-
-    // Get emails from all three collections
     const contactEmails = await Contact.find({ Email_verify: "valid" }).select("email");
     const subscribeEmails = await Subscribe.find({ Email_verify: "valid" }).select("email");
     const userEmails = await User.find({ role: "user", isDeleted: false, Email_verify: "valid" }).select("email");
-    // Extract email lists
     const contactEmailList = contactEmails.map(contact => contact.email);
     const subscribeEmailList = subscribeEmails.map(subscribe => subscribe.email);
     const userEmailList = userEmails.map(user => user.email);
     const allEmails = [...contactEmailList, ...subscribeEmailList, ...userEmailList];
     const uniqueEmails = [...new Set(allEmails)];  // Remove duplicate emails
-
     const subject1 = ` 🚀 New Blog Post: ${title} - Don't Miss Out!`;
     for (const email of uniqueEmails) {
       try {
@@ -66,7 +62,6 @@ exports.createBlog = catchAsync(async (req, res) => {
 }
 );
 
-
 // Get all blog posts
 exports.getAllBlogs = catchAsync(async (req, res) => {
   try {
@@ -82,7 +77,6 @@ exports.getAllBlogs = catchAsync(async (req, res) => {
     });
   }
 });
-
 // Get a single blog post by ID
 exports.getBlogById = catchAsync(
   async (req, res) => {
@@ -112,7 +106,6 @@ exports.getBlogById = catchAsync(
     }
   }
 );
-
 // Update a blog post by ID
 exports.updateBlogById = catchAsync(async (req, res) => {
   try {
@@ -153,7 +146,6 @@ exports.updateBlogById = catchAsync(async (req, res) => {
   }
 });
 
-
 // Delete a blog post by ID
 exports.BlogIdDelete = catchAsync(async (req, res, next) => {
   try {
@@ -169,7 +161,7 @@ exports.BlogIdDelete = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: true,
-      message: 'Blog and associated images deleted successfully.',
+      message: 'Blog deleted successfully.',
     });
   } catch (error) {
     logger.error(error)

@@ -10,7 +10,6 @@ userRoute.post("/login", login)
 
 userRoute.post("/adminlogin", adminlogin)
 
-
 userRoute.get("/profile", profile)
 
 userRoute.post("/updated_status", updateUserStatus)
@@ -50,13 +49,11 @@ userRoute.get('/referrals', getUsersWithTodayRefDate);
 // social icon 
 
 userRoute.post("/user-social", verifyToken, SocialAddOrEdit)
-
 userRoute.get("/adminprofile", profileadmin)
 
 // Bank 
 
 userRoute.post("/bank-data", verifyToken, BankAddOrEdit)
-
 userRoute.get("/userlist",verifyToken , UserListIds)
 
 

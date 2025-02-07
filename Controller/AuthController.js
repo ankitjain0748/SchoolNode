@@ -701,68 +701,68 @@ exports.getCount = catchAsync(async (req, res) => {
 
 
 // working Api  
-exports.userupdateby = catchAsync(async (req, res, next) => {
-  try {
-    const {
-      Id,
-      payment_type,
-      referred_user_pay,
-      widthrawal_reason,
-      success_reasons,
-      payment_data,
-      payment_income,
-    } = req.body;
+// exports.userupdateby = catchAsync(async (req, res, next) => {
+//   try {
+//     const {
+//       Id,
+//       payment_type,
+//       referred_user_pay,
+//       widthrawal_reason,
+//       success_reasons,
+//       payment_data,
+//       payment_income,
+//     } = req.body;
 
-    if (!Id) {
-      return res.status(400).json({
-        status: false,
-        message: "User ID is required.",
-      });
-    }
+//     if (!Id) {
+//       return res.status(400).json({
+//         status: false,
+//         message: "User ID is required.",
+//       });
+//     }
 
-    // Update user data
-    const updatedRecord = await User.findByIdAndUpdate(
-      Id,
-      { referred_user_pay, payment_data },
-      { new: true, runValidators: true }
-    );
+//     // Update user data
+//     const updatedRecord = await User.findByIdAndUpdate(
+//       Id,
+//       { referred_user_pay, payment_data },
+//       { new: true, runValidators: true }
+//     );
 
-    if (!updatedRecord) {
-      return res.status(404).json({
-        status: false,
-        message: "User not found!",
-      });
-    }
+//     if (!updatedRecord) {
+//       return res.status(404).json({
+//         status: false,
+//         message: "User not found!",
+//       });
+//     }
 
-    const transactionData = new Transaction({
-      user: Id,
-      referred_user_pay,
-      widthrawal_reason,
-      success_reasons,
-      payment_data,
-      payment_type,
-      payment_income,
-    });
+//     const transactionData = new Transaction({
+//       user: Id,
+//       referred_user_pay,
+//       widthrawal_reason,
+//       success_reasons,
+//       payment_data,
+//       payment_type,
+//       payment_income,
+//     });
 
-    const result = await transactionData.save();
+//     const result = await transactionData.save();
 
 
-    res.status(200).json({
-      status: true,
-      result: result,
-      message: "User updated and transaction recorded successfully.",
-    });
-  } catch (error) {
-    logger.error("Error updating user and transaction record:", error);
+//     res.status(200).json({
+//       status: true,
+//       result: result,
+//       message: "User updated and transaction recorded successfully.",
+//     });
+//   } catch (error) {
+//     logger.error("Error updating user and transaction record:", error);
 
-    res.status(500).json({
-      status: false,
-      message:
-        "An error occurred while updating the User and transaction. Please try again later.",
-      error: error.message,
-    });
-  }
-});
+//     res.status(500).json({
+//       status: false,
+//       message:
+//         "An error occurred while updating the User and transaction. Please try again later.",
+//       error: error.message,
+//     });
+//   }
+// });
 
 
 
@@ -1404,84 +1404,82 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   }
 });
 
-
-exports.getUsersWithTodayRefDate = async (req, res) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    // Find users with today's ref_date
-    const users = await User.find({
-      ref_date: {
-        $gte: today,
-        $lt: tomorrow,
-      },
-    });
-
-    // Fetch details of referred users and bank details for each user
-    const userDetails = await Promise.all(
-      users.map(async (user) => {
-        const referredBy = user.referred_by
-          ? await User.findById(user.referred_by).select("-password")
-          : null;
-
-        const referredFirst = user.referred_first
-          ? await User.findById(user.referred_first).select("-password")
-          : null;
-
-        const referredSecond = user.referred_second
-          ? await User.findById(user.referred_second).select("-password")
-          : null;
-
-        const userBankDetails = await Bank.findOne({ userId: user._id });
-
-        const referredByBankDetails = referredBy
-          ? await Bank.findOne({ userId: referredBy._id })
-          : null;
-
-        const referredByProfileDetails = referredBy
-          ? await ProfileData.findOne({ userId: referredBy._id })
-          : null;
-
-        const referredFirstBankDetails = referredFirst
-          ? await Bank.findOne({ userId: referredFirst._id })
-          : null;
-
-        const referredSecondBankDetails = referredSecond
-          ? await Bank.findOne({ userId: referredSecond._id })
-          : null;
-
-        return {
-          ...user.toObject(),
-          referred_by_details: referredBy,
-          referred_first_details: referredFirst,
-          referred_second_details: referredSecond,
-          bank_details: userBankDetails,
-          referred_by_bank_details: referredByBankDetails,
-          referred_first_bank_details: referredFirstBankDetails,
-          referred_second_bank_details: referredSecondBankDetails,
-          referredByProfileDetails: referredByProfileDetails
-        };
-      })
-    );
-
-    res.status(200).json({
-      status: true,
-      message: "Users fetched successfully",
-      data: userDetails,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: false,
-      message: "An error occurred while fetching users",
-      error: err.message,
-    });
+exports.getUsersWithTodayRefDate = catchAsync(
+  async (req, res) => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+  
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+  
+      // Find users with today's ref_date
+      const users = await User.find({
+        ref_date: {
+          $gte: today,
+          $lt: tomorrow,
+        },
+      });
+  
+      // Fetch details of referred users and bank details for each user
+      const userDetails = await Promise.all(
+        users.map(async (user) => {
+          const referredBy = user.referred_by
+            ? await User.findById(user.referred_by).select("-password")
+            : null;
+  
+          const referredFirst = user.referred_first
+            ? await User.findById(user.referred_first).select("-password")
+            : null;
+  
+          const referredSecond = user.referred_second
+            ? await User.findById(user.referred_second).select("-password")
+            : null;
+          const userBankDetails = await Bank.findOne({ userId: user._id });
+          const referredByBankDetails = referredBy
+            ? await Bank.findOne({ userId: referredBy._id })
+            : null;
+  
+          const referredByProfileDetails = referredBy
+            ? await ProfileData.findOne({ userId: referredBy._id })
+            : null;
+  
+          const referredFirstBankDetails = referredFirst
+            ? await Bank.findOne({ userId: referredFirst._id })
+            : null;
+  
+          const referredSecondBankDetails = referredSecond
+            ? await Bank.findOne({ userId: referredSecond._id })
+            : null;
+  
+          return {
+            ...user.toObject(),
+            referred_by_details: referredBy,
+            referred_first_details: referredFirst,
+            referred_second_details: referredSecond,
+            bank_details: userBankDetails,
+            referred_by_bank_details: referredByBankDetails,
+            referred_first_bank_details: referredFirstBankDetails,
+            referred_second_bank_details: referredSecondBankDetails,
+            referredByProfileDetails: referredByProfileDetails
+          };
+        })
+      );
+  
+      res.status(200).json({
+        status: true,
+        message: "Users fetched successfully",
+        data: userDetails,
+      });
+    } catch (err) {
+      res.status(500).json({
+        status: false,
+        message: "An error occurred while fetching users",
+        error: err.message,
+      });
+    }
   }
-};
-
+);
 
 exports.profileadmin = catchAsync(async (req, res, next) => {
   try {
@@ -1489,19 +1487,15 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
     const SocialAdmin = await SocialSection.findOne({ userId: adminUser?._id });
     const ProfileAdmin = await ProfileData.findOne({ userId: adminUser?._id });
 
-
     if (!adminUser) {
       return res.status(404).json({
         status: false,
         message: "Admin user not found.",
       });
     }
-
-    const users = await User.find({ role: "user", isDeleted: false });
+    const users = await User.find({ role: "user", user_status: { $ne: "registered" }, isDeleted: false });
 
     const userCount = await User.countDocuments();
-
-
     let activeCount = 0;
     let inactiveCount = 0;
 
@@ -1553,11 +1547,8 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
 
 exports.UserListIds = catchAsync(async (req, res, next) => {
   try {
-
-
     const userId = req.User._id;
     const ProfileDetails = await ProfileData.findOne({ userId }).populate("userId");
-
     // Return response
     return res.status(200).json({
       status: true,
