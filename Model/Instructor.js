@@ -9,6 +9,7 @@ const instructorSchema = new mongoose.Schema(
     },
     Skill:String,
     designation :String,
+    sales :String,
     lessions:String,
     students :String,
     address:String,

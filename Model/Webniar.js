@@ -8,6 +8,7 @@ const OnlineSchema =  mongoose.Schema({
   content: String,
   webnair_date: String,
   webnair_time: String,
+  webniar_end_time :String,
 
   place: String
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt fields

@@ -596,7 +596,6 @@ exports.userfilter = catchAsync(async (req, res, next) => {
     }
 
     if (username) {
-      // Perform an exact match with case insensitivity if required
       filter.username = { $regex: `^${username}$`, $options: 'i' };
     }
 
@@ -763,9 +762,6 @@ exports.getCount = catchAsync(async (req, res) => {
 //     });
 //   }
 // });
-
-
-
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {

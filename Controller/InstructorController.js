@@ -11,11 +11,12 @@ exports.InstructorPost = (async (req, res) => {
         students,
         Skills,
         email,
+        sales,
         phoneNumber,
         address,
-        profileImage,  // For profile image
-        bio,            // For bio
-        gender,         // Gender
+        profileImage,  
+        bio,           
+        gender,        
         rating
     } = req.body;
 
@@ -24,6 +25,7 @@ exports.InstructorPost = (async (req, res) => {
         lastName,
         designation,
         lessions,
+        sales,
         students,
         Skill: Skills,
         email,
@@ -92,6 +94,7 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
             lastName,
             designation,
             lessions,
+            sales,
             students,
             Skill,
             email,
@@ -118,6 +121,7 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
                 lastName,
                 designation,
                 lessions,
+                sales,
                 students,
                 Skill,
                 email,

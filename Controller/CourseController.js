@@ -422,36 +422,40 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
 
 
 
-exports.Webniarpost = async (req, res) => {
-    try {
-        const { title, content, video ,webnair_date ,  place ,webnair_time} = req.body;
-        const record = new Webinar({
-            title,
-            content, video, 
-            webnair_time,
-            webnair_date ,  place
-        });
-        const result = await record.save();
-        if (result) {
-            res.json({
-                status: true,
-                message: "Online Added Successfully!",
+exports.Webniarpost = catchAsync(async (req, res) => {
+        try {
+            const { title, content, video ,webnair_date ,  place ,webnair_time  ,webniar_end_time} = req.body;
+            const record = new Webinar({
+                title,
+                content, 
+                video, 
+                webniar_end_time,
+                webnair_time,
+                webnair_date , 
+                place
             });
-        } else {
-            logger.error("Failed to add Online.")
-            res.status(400).json({
+            const result = await record.save();
+            if (result) {
+                res.json({
+                    status: true,
+                    message: "Online Added Successfully!",
+                });
+            } else {
+                logger.error("Failed to add Online.")
+                res.status(400).json({
+                    status: false,
+                    message: "Failed to add Online.",
+                });
+            }
+        } catch (error) {
+            logger.error(error)
+            res.status(500).json({
                 status: false,
-                message: "Failed to add Online.",
+                message: "Internal Server Error.",
             });
         }
-    } catch (error) {
-        logger.error(error)
-        res.status(500).json({
-            status: false,
-            message: "Internal Server Error.",
-        });
     }
-};
+);
 
 exports.WebniarGet = catchAsync(async (req, res) => {
     try {
@@ -495,6 +499,7 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
             title,
             webnair_time,
             video,
+            webniar_end_time,
             content,
             webnair_date ,  place
         } = req.body;
@@ -512,6 +517,7 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
                 title,
                 video,
                 webnair_time,
+                webniar_end_time,
                 webnair_date ,  place,
                 content
             },
