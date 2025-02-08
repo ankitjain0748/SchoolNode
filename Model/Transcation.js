@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 
-userWidthrawal , userpay 
 const transactionSchema =  mongoose.Schema(
   {
     user: {

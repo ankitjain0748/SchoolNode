@@ -10,8 +10,11 @@ const paymentSchema = new mongoose.Schema({
         required: [true, "User ID is required."],
     },
     payment_key :Number,
+    withdrawal_reason:String,
+    success_reasons:String,
     payment_data: Number,
     payment_income: String, 
+    payment_type :String,
     page:String,
     data_payment: Number,
     payment_date: {

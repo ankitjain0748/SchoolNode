@@ -337,6 +337,7 @@ exports.profile = catchAsync(async (req, res, next) => {
     const totalUsers = await User.countDocuments({ role: "user", isDeleted: false });
     const totalPages = Math.ceil(totalUsers / limit);
 
+    
     // Return response
     return res.status(200).json({
       status: true,
@@ -765,7 +766,7 @@ exports.getCount = catchAsync(async (req, res) => {
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const { Id, data_payment, paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key, page } = req.body;
+    const { Id, data_payment, success_reasons,payment_type , paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key, page ,withdrawal_reason } = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -775,13 +776,17 @@ exports.paymentdata = catchAsync(async (req, res) => {
     const newPayment = new Adminpayment({
       userId: Id, // Ensure the ID is the same
       paymentMethod,
+      payment_type,
+      success_reasons,
       payment_reason,
+      withdrawal_reason,
       payment_key,
       transactionId,
       payment_data,
       payment_income,
       data_payment,
       payment_income,
+      page,
       referred_user_pay,
     });
 

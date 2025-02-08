@@ -7,7 +7,6 @@ const ProfileData = require("../Model/Profile");
 exports.ReviewAdd = catchAsync(async (req, res) => {
     try {
         const userId = req.User?._id;
-        console.log("userId", userId)
         if (!userId) {
             logger.warn("User ID not found. Please log in again.");
             return res.status(400).json({
@@ -63,11 +62,22 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 
 exports.ReviewGet = catchAsync(async (req, res) => {
     try {
+          const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
+            const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+            const skip = (page - 1) * limit;
+            const totalUsers = await Review.countDocuments({  });
+            const totalPages = Math.ceil(totalUsers / limit);
         const review = await Review.find({}).populate('userId').populate('CourseId');
         res.json({
             status: true,
             message: "Review fetched Successfully",
-            review
+            review,
+            totalUsers,
+            totalPages,
+            currentPage: page,
+            perPage: limit,
+            nextPage: page < totalPages ? page + 1 : null,
+            previousPage: page > 1 ? page - 1 : null,
         })
     } catch (error) {
         logger.error(error)
@@ -216,6 +226,7 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
         const profile = await ProfileData.findOne().populate("userId");
 
         if (!reviews) {
+            
             return res.status(404).json({
                 status: false,
                 message: "No review found for the provided courseId.",

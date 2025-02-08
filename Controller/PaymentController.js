@@ -89,7 +89,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
     const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
     const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
-  
+
     if (user) {
       await sendEmail({
         email: user.email,
@@ -181,6 +181,11 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
   try {
+    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+    const skip = (page - 1) * limit;
+    const totalUsers = await Payment.countDocuments({});
+    const totalPages = Math.ceil(totalUsers / limit);
     const payment = await Payment.find({}).populate("UserId").populate("CourseId");
     if (!payment || payment.length === 0) {
       return res.status(204).json({
@@ -193,6 +198,12 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
       status: true,
       message: "Payment retrieved successfully!",
       payment: payment,
+      totalUsers,
+      totalPages,
+      currentPage: page,
+      perPage: limit,
+      nextPage: page < totalPages ? page + 1 : null,
+      previousPage: page > 1 ? page - 1 : null,
     });
   } catch (err) {
     logger.error(err);
@@ -236,14 +247,16 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
 
 exports.PaymentGetdata = catchAsync(async (req, res) => {
   try {
+    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+    const skip = (page - 1) * limit;
     const payment = await AdminPays.find({}).populate({
       path: "userId",
       select: "name phone_number phone_code email"
     });
-    const paymentdata = await Transaction.find({}).populate({
-      path: "user",
-      select: "name phone_number phone_code email"
-    });
+    const totalUsers = await AdminPays.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+
     if (!payment || payment.length === 0) {
       return res.status(204).json({
         status: false,
@@ -255,7 +268,12 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
       status: true,
       message: "Payment retrieved successfully!",
       payment: payment,
-      Transactions: paymentdata,
+      totalUsers,
+      totalPages,
+      currentPage: page,
+      perPage: limit,
+      nextPage: page < totalPages ? page + 1 : null,
+      previousPage: page > 1 ? page - 1 : null,
     });
   } catch (err) {
     logger.error(err);
@@ -270,7 +288,10 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
     const userId = req.User?._id
-    const payment = await AdminPays.find({ userId });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const payment = await AdminPays.find({ userId , page :"payout" });
     if (!payment || payment.length === 0) {
       return res.status(204).json({
         status: false,
@@ -282,6 +303,9 @@ exports.paymentdata = catchAsync(async (req, res) => {
       status: true,
       message: "Payment retrieved successfully!",
       payment: payment,
+      currentPage: page,
+      totalPages: Math.ceil(payment.length / limit), // Calculate total pages
+      totalItems: payment.length,
     });
   } catch (err) {
     logger.error(err);
@@ -293,63 +317,20 @@ exports.paymentdata = catchAsync(async (req, res) => {
   }
 })
 
-// exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
-//   const UserId = req.User._id;
-//   try {
-//     // Fetch user payments with status "success"
-//     const UserPayments = await Payment.find({ UserId, payment_status: "success" })
-//       .populate("UserId")
-//       .populate("CourseId");
-
-//     if (!UserPayments || UserPayments.length === 0) {
-//       return res.status(204).json({
-//         status: false,
-//         message: "No Payment found for this user.",
-//         Payments: [],
-//       });
-//     }
-
-//     const CourseIds = UserPayments.map((payment) => payment.CourseId);
-//     const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId");
-
-//     // Fetch all payments to determine best-selling courses
-//     const allPayments = await Payment.find({ payment_status: "success" });
-
-//     const courseSalesCount = allPayments.reduce((acc, payment) => {
-//       const courseId = payment.CourseId.toString();
-//       acc[courseId] = (acc[courseId] || 0) + 1;
-//       return acc;
-//     }, {});
-
-//     const sortedCourseIds = Object.keys(courseSalesCount).sort((a, b) => courseSalesCount[b] - courseSalesCount[a]);
-//     const bestSellingCourseIds = sortedCourseIds.slice(0, 5); // Adjust the number as needed
-
-//     const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId");
-
-//     res.status(200).json({
-//       status: true,
-//       message: "Courses retrieved successfully!",
-//       Payments: UserPayments,
-//       Courses: courses,
-//       BestSellingCourses: bestSellingCourses,
-//     });
-//   } catch (err) {
-//     logger.error(err);
-//     return res.status(500).json({
-//       status: false,
-//       message: "An unknown error occurred. Please try again later.",
-//       error: err.message,
-//     });
-//   }
-// });
-
 
 exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
   try {
+    // Fetch page and limit from query params, set defaults if not provided
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     // Fetch user payments with status "success"
-    const UserPayments = await Payment.find({  payment_status: "success" })
+    const UserPayments = await Payment.find({ payment_status: "success" })
       .populate("UserId")
-      .populate("CourseId");
+      .populate("CourseId")
+      .skip(skip)
+      .limit(limit);
 
     if (!UserPayments || UserPayments.length === 0) {
       return res.status(204).json({
@@ -373,9 +354,8 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
 
     // Sort course IDs by sales count in descending order
     const sortedCourseIds = Object.keys(courseSalesCount).sort((a, b) => courseSalesCount[b] - courseSalesCount[a]);
-    const bestSellingCourseIds = sortedCourseIds; // Adjust the number as needed
+    const bestSellingCourseIds = sortedCourseIds.slice((page - 1) * limit, page * limit); // Pagination applied
 
-    console.log("bestSellingCourseIds",bestSellingCourseIds)
     const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId");
 
     // Include the purchase count for each best-selling course and sort by purchase count
@@ -387,9 +367,10 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       message: "Courses retrieved successfully!",
-      Payments: UserPayments,
-      Courses: courses,
       BestSellingCourses: bestSellingCoursesWithCount,
+      currentPage: page,
+      totalPages: Math.ceil(bestSellingCoursesWithCount.length / limit), // Calculate total pages
+      totalItems: bestSellingCoursesWithCount.length,
     });
   } catch (err) {
     logger.error(err);
@@ -398,7 +379,7 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
       message: "An unknown error occurred. Please try again later.",
       error: err.message,
     });
-    
   }
 });
+
 

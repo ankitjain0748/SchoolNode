@@ -21,6 +21,4 @@ subscribeget.post("/offer_email" , OfferCourseEmail);
 subscribeget.post("/subscriber_delete", SubscriberDelete);
 
 
-
-
 module.exports = subscribeget;

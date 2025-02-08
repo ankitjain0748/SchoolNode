@@ -65,11 +65,23 @@ exports.createBlog = catchAsync(async (req, res) => {
 // Get all blog posts
 exports.getAllBlogs = catchAsync(async (req, res) => {
   try {
+    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+    const skip = (page - 1) * limit;
+    const totalUsers = await Blog.countDocuments({  });
+    const totalPages = Math.ceil(totalUsers / limit);
     const blogs = await Blog.find().sort({ createdAt: -1 }); // Sort by createdAt in descending order (newest first)
     res.status(200).json({
       status: true,
-      data: blogs
+      data: blogs,
+      totalUsers,
+      totalPages,
+      currentPage: page,
+      perPage: limit,
+      nextPage: page < totalPages ? page + 1 : null,
+      previousPage: page > 1 ? page - 1 : null,
     });
+
   } catch (error) {
     res.status(400).json({
       status: false,
