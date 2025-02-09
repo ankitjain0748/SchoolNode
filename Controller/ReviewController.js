@@ -62,11 +62,11 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 
 exports.ReviewGet = catchAsync(async (req, res) => {
     try {
-          const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-            const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
-            const skip = (page - 1) * limit;
-            const totalUsers = await Review.countDocuments({  });
-            const totalPages = Math.ceil(totalUsers / limit);
+        const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+        const skip = (page - 1) * limit;
+        const totalUsers = await Review.countDocuments({});
+        const totalPages = Math.ceil(totalUsers / limit);
         const review = await Review.find({}).populate('userId').populate('CourseId');
         res.json({
             status: true,
@@ -226,7 +226,7 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
         const profile = await ProfileData.findOne().populate("userId");
 
         if (!reviews) {
-            
+
             return res.status(404).json({
                 status: false,
                 message: "No review found for the provided courseId.",
