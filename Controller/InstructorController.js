@@ -52,7 +52,6 @@ exports.InstructorPost = (async (req, res) => {
     }
 });
 
-
 exports.InstructorGet = catchAsync(async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -68,7 +67,7 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
         .sort({ created_at: -1 })
         .skip(skip)
         .limit(limit);
-        console.log("Instructorget",Instructorget);
+    console.log("Instructorget", Instructorget);
     const totalPages = Math.ceil(totalInstructor / limit);
     res.status(200).json({
         data: {
@@ -83,7 +82,6 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
         msg: "Instructors fetched successfully",
     });
 });
-
 
 exports.InstructorUpdate = catchAsync(async (req, res, next) => {
     try {
@@ -181,7 +179,6 @@ exports.InstructorIdDelete = catchAsync(async (req, res, next) => {
         });
     }
 });
-
 
 exports.InstructorGetId = catchAsync(async (req, res, next) => {
     try {
