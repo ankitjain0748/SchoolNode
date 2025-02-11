@@ -85,7 +85,6 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
 });
 
 
-
 exports.InstructorUpdate = catchAsync(async (req, res, next) => {
     try {
         const {
@@ -157,7 +156,6 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
         });
     }
 });
-
 
 exports.InstructorIdDelete = catchAsync(async (req, res, next) => {
     try {
