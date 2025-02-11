@@ -58,7 +58,7 @@ exports.Subscribeget = catchAsync(async (req, res, next) => {
           query = { email: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
         const totalsubscribemodal = await subscribemodal.countDocuments(query);
-        const subscribedata = await subscribemodal.find({query}).sort({ created_at: -1 })
+        const subscribedata = await subscribemodal.find(query).sort({ created_at: -1 })
             .skip(skip)
             .limit(limit);
         const totalPages = Math.ceil(totalsubscribemodal / limit);

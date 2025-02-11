@@ -58,13 +58,15 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 30;
         const skip = (page - 1) * limit;
         let query = {};
+        const search = req.query.search ? String(req.query.search).trim() : ""; 
         if (search?.trim() !== "") {
             query = { name: { $regex: search, $options: 'i' } };
         }
         const totalcontactmodal = await contactmodal.countDocuments(query);
-        const contactget = await contactmodal.find({query}).sort({ created_at: -1 })
+        const contactget = await contactmodal.find(query).sort({ created_at: -1 })
             .skip(skip)
             .limit(limit);
+            console.log("contactget",contactget)
         const totalPages = Math.ceil(totalcontactmodal / limit);
         res.status(200).json({
             data: {

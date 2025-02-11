@@ -315,35 +315,46 @@ exports.profile = catchAsync(async (req, res, next) => {
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
     const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
-        let query = {};
+    
+    // Construct the query dynamically
+    let query = { role: "user", isDeleted: false };
 
-        if (search !== "") {
-            query = { name: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
-        }
-    const users = await User.find({ role: "user", isDeleted: false , query }).populate("CourseId")
+    if (search !== "") {
+      query.name = { $regex: new RegExp(search, "i") }; // Use RegExp constructor
+    }
+
+    // Fetch users with the associated data (bank and profile details)
+    const users = await User.find(query)
+      .populate("CourseId")
       .select("-password")
       .sort({ created_at: -1 })
       .skip(skip)
       .limit(limit);
 
-    // Fetch bank details for each user
-    const usersWithBankDetails = await Promise.all(
-      users.map(async (user) => {
-        const bankDetails = await Bank.findOne({ userId: user._id }).select("-_id -userId");
-        const ProfileDetails = await ProfileData.findOne({ userId: user._id }).select("-_id -userId");
-        return {
-          ...user.toObject(),
-          bank_details: bankDetails,
-          ProfileDetails: ProfileDetails
-        };
-      })
-    );
+    // Fetch bank and profile details in parallel for all users
+    const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
+    const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
+
+    console.log('Bank Details:', bankDetails);  // Debugging: log fetched bank details
+    console.log('Profile Details:', profileDetails);  // Debugging: log fetched profile details
+
+    // Map the users with their bank and profile details
+    const usersWithBankDetails = users.map(user => {
+      // Safely get the bank detail and profile detail
+      const bankDetail = bankDetails.find(bank => bank.userId && bank.userId.toString() === user._id.toString());
+      const profileDetail = profileDetails.find(profile => profile.userId && profile.userId.toString() === user._id.toString());
+
+      return {
+        ...user.toObject(),
+        bank_details: bankDetail || null,
+        ProfileDetails: profileDetail || null
+      };
+    });
 
     // Total users and pagination details
-    const totalUsers = await User.countDocuments({ role: "user", isDeleted: false  ,query});
+    const totalUsers = await User.countDocuments(query);
     const totalPages = Math.ceil(totalUsers / limit);
 
-    
     // Return response
     return res.status(200).json({
       status: true,
@@ -368,6 +379,8 @@ exports.profile = catchAsync(async (req, res, next) => {
     });
   }
 });
+
+
 
 
 exports.updateUserStatus = catchAsync(async (req, res) => {
@@ -772,7 +785,7 @@ exports.getCount = catchAsync(async (req, res) => {
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const { Id, data_payment, success_reasons,payment_type , paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key, page ,withdrawal_reason } = req.body;
+    const { Id, data_payment, success_reasons, payment_type, paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key, page, withdrawal_reason } = req.body;
     if (!Id) {
       return res.status(400).json({
         status: false,
@@ -833,14 +846,14 @@ exports.paymentdata = catchAsync(async (req, res) => {
       updatedUser,
     });
     const subject1 = "🎉 Your Payout Has Been Successfully Received!";
-    if(page === "payout"){
+    if (page === "payout") {
       await sendEmail({
-        email: updatedUser.email, 
+        email: updatedUser.email,
         name: updatedUser.name,
-        Webniarrecord :paymentRecord,
+        Webniarrecord: paymentRecord,
         subject: subject1,
         emailTemplate: Payout,
-    })
+      })
     };
 
   } catch (error) {
@@ -1052,7 +1065,7 @@ exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]
 
 exports.OTP = catchAsync(async (req, res) => {
   try {
-    const { email, password, name, phone_number, referred_by ,Email_verify } = req.body;
+    const { email, password, name, phone_number, referred_by, Email_verify } = req.body;
     // Validate email format
     // if (!isValidEmail(email)) {
     //   return res.status(400).json({
@@ -1126,14 +1139,14 @@ exports.OTP = catchAsync(async (req, res) => {
       referred_first: referrers ? referrers._id : null,
       referred_second: referrerdata ? referrerdata._id : null,
       OTP: otp,
-      Email_verify :Email_verify
+      Email_verify: Email_verify
     };
 
     // Send OTP email
     await TempUser.create(tempUser);
 
-    
-   
+
+
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT, 10),
@@ -1161,7 +1174,7 @@ exports.OTP = catchAsync(async (req, res) => {
       message: "OTP has been sent to your email!",
     });
     // Store tempUser in a temporary collection or in-memory store
-   
+
   } catch (error) {
     return res.status(500).json({
       error,
@@ -1314,7 +1327,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       referred_by: tempUser.referred_by,
       referred_first: tempUser.referred_first,
       referred_second: tempUser.referred_second,
-      Email_verify:tempUser?.Email_verify
+      Email_verify: tempUser?.Email_verify
     });
     if (tempUser.referred_by) {
       await User.findByIdAndUpdate(tempUser.referred_by, {
@@ -1347,7 +1360,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       await sendEmail({
         email: newUser.email,
         name: newUser.name,
-        Webniarrecord :newUser,
+        Webniarrecord: newUser,
         message: "Your booking request was successful!",
         subject: subject,
         emailTemplate: RegisterEmail,
@@ -1362,8 +1375,8 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       emailTemplate: AdminEmail,
     });
 
-    
-   
+
+
   } catch (error) {
     return res.status(500).json({
       error,
@@ -1416,10 +1429,10 @@ exports.getUsersWithTodayRefDate = catchAsync(
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-  
+
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
-  
+
       // Find users with today's ref_date
       const users = await User.find({
         ref_date: {
@@ -1427,18 +1440,18 @@ exports.getUsersWithTodayRefDate = catchAsync(
           $lt: tomorrow,
         },
       });
-  
+
       // Fetch details of referred users and bank details for each user
       const userDetails = await Promise.all(
         users.map(async (user) => {
           const referredBy = user.referred_by
             ? await User.findById(user.referred_by).select("-password")
             : null;
-  
+
           const referredFirst = user.referred_first
             ? await User.findById(user.referred_first).select("-password")
             : null;
-  
+
           const referredSecond = user.referred_second
             ? await User.findById(user.referred_second).select("-password")
             : null;
@@ -1446,19 +1459,19 @@ exports.getUsersWithTodayRefDate = catchAsync(
           const referredByBankDetails = referredBy
             ? await Bank.findOne({ userId: referredBy._id })
             : null;
-  
+
           const referredByProfileDetails = referredBy
             ? await ProfileData.findOne({ userId: referredBy._id })
             : null;
-  
+
           const referredFirstBankDetails = referredFirst
             ? await Bank.findOne({ userId: referredFirst._id })
             : null;
-  
+
           const referredSecondBankDetails = referredSecond
             ? await Bank.findOne({ userId: referredSecond._id })
             : null;
-  
+
           return {
             ...user.toObject(),
             referred_by_details: referredBy,
@@ -1472,7 +1485,7 @@ exports.getUsersWithTodayRefDate = catchAsync(
           };
         })
       );
-  
+
       res.status(200).json({
         status: true,
         message: "Users fetched successfully",

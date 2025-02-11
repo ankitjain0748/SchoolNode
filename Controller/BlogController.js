@@ -73,7 +73,7 @@ exports.getAllBlogs = catchAsync(async (req, res) => {
     let query = {};
 
     if (search !== "") {
-      query = { name: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
+      query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
     }
 
     const totalUsers = await Blog.countDocuments(query);

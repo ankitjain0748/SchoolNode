@@ -3,7 +3,7 @@ const Online = require("../Model/Online");
 const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
 const Webinar = require('../Model/Webniar'); // Import the model
-const  Tranning = require("../Model/Video")
+const Tranning = require("../Model/Video")
 // Configure Multer for file uploads
 
 
@@ -57,14 +57,14 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
-    let query = {};
+        let query = {};
 
-    if (search !== "") {
-      query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
-    }
+        if (search !== "") {
+            query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
+        }
         const totalCourse = await Course.countDocuments(query);
 
-        const Courseget = await Course.find({query})
+        const Courseget = await Course.find(query)
             .sort({ createdAt: -1 })
             .populate('InstrutorId')
             .skip(skip)
@@ -251,13 +251,13 @@ exports.OnlineGet = catchAsync(async (req, res, next) => {
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
-    
+
         if (search !== "") {
-          query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
+            query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
         const totalCourse = await Online.countDocuments(query);
 
-        const Courseget = await Online.find({query})
+        const Courseget = await Online.find(query )
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -435,38 +435,38 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
 
 
 exports.Webniarpost = catchAsync(async (req, res) => {
-        try {
-            const { title, content, video ,webnair_date ,  place ,webnair_time  ,webniar_end_time} = req.body;
-            const record = new Webinar({
-                title,
-                content, 
-                video, 
-                webniar_end_time,
-                webnair_time,
-                webnair_date , 
-                place
+    try {
+        const { title, content, video, webnair_date, place, webnair_time, webniar_end_time } = req.body;
+        const record = new Webinar({
+            title,
+            content,
+            video,
+            webniar_end_time,
+            webnair_time,
+            webnair_date,
+            place
+        });
+        const result = await record.save();
+        if (result) {
+            res.json({
+                status: true,
+                message: "Online Added Successfully!",
             });
-            const result = await record.save();
-            if (result) {
-                res.json({
-                    status: true,
-                    message: "Online Added Successfully!",
-                });
-            } else {
-                logger.error("Failed to add Online.")
-                res.status(400).json({
-                    status: false,
-                    message: "Failed to add Online.",
-                });
-            }
-        } catch (error) {
-            logger.error(error)
-            res.status(500).json({
+        } else {
+            logger.error("Failed to add Online.")
+            res.status(400).json({
                 status: false,
-                message: "Internal Server Error.",
+                message: "Failed to add Online.",
             });
         }
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({
+            status: false,
+            message: "Internal Server Error.",
+        });
     }
+}
 );
 
 exports.WebniarGet = catchAsync(async (req, res) => {
@@ -476,9 +476,9 @@ exports.WebniarGet = catchAsync(async (req, res) => {
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
-    
+
         if (search !== "") {
-          query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
+            query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
         const totalCourse = await Webinar.countDocuments(query);
 
@@ -519,7 +519,7 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
             video,
             webniar_end_time,
             content,
-            webnair_date ,  place
+            webnair_date, place
         } = req.body;
 
         if (!_id) {
@@ -536,7 +536,7 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
                 video,
                 webnair_time,
                 webniar_end_time,
-                webnair_date ,  place,
+                webnair_date, place,
                 content
             },
             { new: true, runValidators: true }
@@ -622,11 +622,11 @@ exports.WebniarGetId = catchAsync(async (req, res, next) => {
 
 exports.Tranningpost = async (req, res) => {
     try {
-        const { title, content, video ,webnair_date ,  place} = req.body;
+        const { title, content, video, webnair_date, place } = req.body;
         const record = new Tranning({
             title,
-            content, video, 
-            webnair_date ,  place
+            content, video,
+            webnair_date, place
         });
         const result = await record.save();
         if (result) {
@@ -655,6 +655,8 @@ exports.TranningGet = catchAsync(async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
+        const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
+
         let query = {};
         if (search?.trim() !== "") {
             query = { title: { $regex: search, $options: 'i' } };
@@ -696,7 +698,7 @@ exports.tranningUpdate = catchAsync(async (req, res) => {
             title,
             video,
             content,
-            webnair_date ,  place
+            webnair_date, place
         } = req.body;
 
         if (!_id) {
@@ -711,7 +713,7 @@ exports.tranningUpdate = catchAsync(async (req, res) => {
             {
                 title,
                 video,
-                webnair_date ,  place,
+                webnair_date, place,
                 content
             },
             { new: true, runValidators: true }

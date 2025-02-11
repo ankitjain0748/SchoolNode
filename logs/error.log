@@ -206,3 +206,35 @@
 2025-02-08 11:38:39 [ERROR]: Cast to ObjectId failed for value "undefined" (type string) at path "_id" for model "Course"
 2025-02-11 21:06:21 [ERROR]: Cannot read properties of undefined (reading 'trim')
 2025-02-11 21:14:29 [ERROR]: Cannot read properties of undefined (reading 'trim')
+2025-02-11 22:54:54 [ERROR]: search is not defined
+2025-02-11 22:56:09 [ERROR]: search is not defined
+2025-02-11 23:02:10 [ERROR]: search is not defined
+2025-02-11 23:04:09 [ERROR]: search is not defined
+2025-02-11 23:04:24 [ERROR]: search is not defined
+2025-02-11 23:04:45 [ERROR]: search is not defined
+2025-02-11 23:05:20 [ERROR]: search is not defined
+2025-02-11 23:06:17 [ERROR]: search is not defined
+2025-02-11 23:06:38 [ERROR]: search is not defined
+2025-02-11 23:07:27 [ERROR]: search is not defined
+2025-02-11 23:07:27 [ERROR]: search is not defined
+2025-02-11 23:07:27 [ERROR]: search is not defined
+2025-02-11 23:07:28 [ERROR]: search is not defined
+2025-02-11 23:07:30 [ERROR]: search is not defined
+2025-02-11 23:08:34 [ERROR]: search is not defined
+2025-02-11 23:08:34 [ERROR]: search is not defined
+2025-02-11 23:08:34 [ERROR]: search is not defined
+2025-02-11 23:08:34 [ERROR]: search is not defined
+2025-02-11 23:09:39 [ERROR]: search is not defined
+2025-02-11 23:13:07 [ERROR]: search is not defined
+2025-02-11 23:13:36 [ERROR]: search is not defined
+2025-02-11 23:13:37 [ERROR]: search is not defined
+2025-02-11 23:18:20 [ERROR]: Regular expression is invalid: \ at end of pattern
+2025-02-11 23:18:20 [ERROR]: Regular expression is invalid: \ at end of pattern
+2025-02-11 23:18:21 [ERROR]: Regular expression is invalid: \ at end of pattern
+2025-02-11 23:18:21 [ERROR]: Regular expression is invalid: \ at end of pattern
+2025-02-11 23:40:33 [ERROR]: Error fetching users: Unknown expression $regex
+2025-02-12 00:18:59 [ERROR]: search is not defined
+2025-02-12 00:22:35 [ERROR]: search is not defined
+2025-02-12 00:28:15 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
+2025-02-12 00:29:44 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
+2025-02-12 00:29:47 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
