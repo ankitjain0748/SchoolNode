@@ -58,7 +58,7 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 30;
         const skip = (page - 1) * limit;
         let query = {};
-        if (search.trim() !== "") {
+        if (search?.trim() !== "") {
             query = { name: { $regex: search, $options: 'i' } };
         }
         const totalcontactmodal = await contactmodal.countDocuments(query);

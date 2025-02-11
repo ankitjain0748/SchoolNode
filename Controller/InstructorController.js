@@ -55,12 +55,12 @@ exports.InstructorPost = (async (req, res) => {
 exports.InstructorGet = catchAsync(async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const search = req.query.search || "";
     const skip = (page - 1) * limit;
-
+    const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
     let query = {};
-    if (search.trim() !== "") {
-        query = { firstName: { $regex: search, $options: 'i' } };
+
+    if (search !== "") {
+      query = { firstName: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
     }
     const totalInstructor = await Instructor.countDocuments(query);
     const Instructorget = await Instructor.find(query)

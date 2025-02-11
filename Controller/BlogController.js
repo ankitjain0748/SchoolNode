@@ -68,14 +68,18 @@ exports.getAllBlogs = catchAsync(async (req, res) => {
     const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
-    const search = req.query.search
+    
+    const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
     let query = {};
-    if (search.trim() !== "") {
-        query = { name: { $regex: search, $options: 'i' } };
+
+    if (search !== "") {
+      query = { name: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
     }
+
     const totalUsers = await Blog.countDocuments(query);
     const totalPages = Math.ceil(totalUsers / limit);
-    const blogs = await Blog.find(query).sort({ createdAt: -1 }); // Sort by createdAt in descending order (newest first)
+    const blogs = await Blog.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit); // Add pagination
+
     res.status(200).json({
       status: true,
       data: blogs,
@@ -94,6 +98,7 @@ exports.getAllBlogs = catchAsync(async (req, res) => {
     });
   }
 });
+
 // Get a single blog post by ID
 exports.getBlogById = catchAsync(
   async (req, res) => {

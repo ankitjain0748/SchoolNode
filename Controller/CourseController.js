@@ -56,11 +56,12 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        const search = req.query.search
-        let query = {};
-        if (search.trim() !== "") {
-            query = { title: { $regex: search, $options: 'i' } };
-        }
+        const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
+    let query = {};
+
+    if (search !== "") {
+      query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
+    }
         const totalCourse = await Course.countDocuments(query);
 
         const Courseget = await Course.find({query})
@@ -248,10 +249,11 @@ exports.OnlineGet = catchAsync(async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
-        const search = req.query.search;
+        const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
-        if (search.trim() !== "") {
-            query = { title: { $regex: search, $options: 'i' } };
+    
+        if (search !== "") {
+          query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
         const totalCourse = await Online.countDocuments(query);
 
@@ -472,10 +474,11 @@ exports.WebniarGet = catchAsync(async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
-        const search = req.query.search;
+        const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
-        if (search.trim() !== "") {
-            query = { title: { $regex: search, $options: 'i' } };
+    
+        if (search !== "") {
+          query = { title: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
         const totalCourse = await Webinar.countDocuments(query);
 
@@ -653,7 +656,7 @@ exports.TranningGet = catchAsync(async (req, res) => {
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
         let query = {};
-        if (search.trim() !== "") {
+        if (search?.trim() !== "") {
             query = { title: { $regex: search, $options: 'i' } };
         }
         const totalCourse = await Tranning.countDocuments(query);

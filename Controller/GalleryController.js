@@ -34,9 +34,11 @@ exports.getAllGallerys = catchAsync(async (req, res) => {
         const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
         const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
         const skip = (page - 1) * limit;
+        const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
-        if (search.trim() !== "") {
-            query = { title: { $regex: search, $options: 'i' } };
+
+        if (search !== "") {
+            query = { name: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
         const totalUsers = await Gallery.countDocuments(query);
         const totalPages = Math.ceil(totalUsers / limit);

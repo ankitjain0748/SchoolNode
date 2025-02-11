@@ -51,10 +51,11 @@ exports.Subscribeget = catchAsync(async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 50;
         const skip = (page - 1) * limit;
-        const search = req.query.search
+        const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
-        if (search.trim() !== "") {
-            query = { email: { $regex: search, $options: 'i' } };
+    
+        if (search !== "") {
+          query = { email: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
         const totalsubscribemodal = await subscribemodal.countDocuments(query);
         const subscribedata = await subscribemodal.find({query}).sort({ created_at: -1 })
