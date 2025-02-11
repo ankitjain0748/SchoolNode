@@ -1,19 +1,19 @@
-const Blog = require('../Model/Gallery');
+const Gallery = require('../Model/Gallery');
 const catchAsync = require('../utill/catchAsync');
 const Loggers = require('../utill/Loggers');
 
 
-// Create a new blog post
-exports.createBlog = catchAsync(async (req, res) => {
+// Create a new Gallery post
+exports.createGallery = catchAsync(async (req, res) => {
     try {
         const { title, content, Image, short_content } = req.body;
-        const newBlog = new Blog({
+        const newGallery = new Gallery({
             title,
             content,
             short_content,
             Image
         });
-        await newBlog.save();
+        await newGallery.save();
         res.status(201).json({
             status: true,
             message: "Gallery Success"
@@ -28,18 +28,22 @@ exports.createBlog = catchAsync(async (req, res) => {
 );
 
 
-// Get all blog posts
-exports.getAllBlogs = catchAsync(async (req, res) => {
+// Get all Gallery posts
+exports.getAllGallerys = catchAsync(async (req, res) => {
     try {
-         const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-            const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
-            const skip = (page - 1) * limit;
-            const totalUsers = await Blog.countDocuments({  });
-            const totalPages = Math.ceil(totalUsers / limit);
-        const blogs = await Blog.find();
+        const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+        const skip = (page - 1) * limit;
+        let query = {};
+        if (search.trim() !== "") {
+            query = { title: { $regex: search, $options: 'i' } };
+        }
+        const totalUsers = await Gallery.countDocuments(query);
+        const totalPages = Math.ceil(totalUsers / limit);
+        const Gallerys = await Gallery.find(query);
         res.status(200).json({
             status: true,
-            data: blogs,
+            data: Gallerys,
             totalUsers,
             totalPages,
             currentPage: page,
@@ -55,26 +59,26 @@ exports.getAllBlogs = catchAsync(async (req, res) => {
     }
 });
 
-// Get a single blog post by ID
-exports.getBlogById = catchAsync(
+// Get a single Gallery post by ID
+exports.getGalleryById = catchAsync(
     async (req, res) => {
         try {
             const { Id } = req.params;
             if (!Id) {
-                Loggers.warn("Blog ID is required")
-                return res.status(400).json({ msg: "Blog ID is required" });
+                Loggers.warn("Gallery ID is required")
+                return res.status(400).json({ msg: "Gallery ID is required" });
             }
-            const blog = await Blog.findById(Id);
-            if (!blog) {
+            const Gallery = await Gallery.findById(Id);
+            if (!Gallery) {
                 return res.status(404).json({
                     status: false,
-                    message: 'Blog not found',
+                    message: 'Gallery not found',
                 });
             }
             res.status(200).json({
                 status: true,
-                data: blog,
-                message: 'Blog fetched successfully',
+                data: Gallery,
+                message: 'Gallery fetched successfully',
             });
         } catch (error) {
             res.status(400).json({
@@ -85,8 +89,8 @@ exports.getBlogById = catchAsync(
     }
 );
 
-// Update a blog post by ID
-exports.updateBlogById = catchAsync(async (req, res) => {
+// Update a Gallery post by ID
+exports.updateGalleryById = catchAsync(async (req, res) => {
     try {
 
         const { title, content, Image, _id, short_content } = req.body;
@@ -98,7 +102,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
         //         message: "All fields (title, content, Image) are required.",
         //     });
         // }
-        const blog = await Blog.findByIdAndUpdate(
+        const Gallery = await Gallery.findByIdAndUpdate(
             _id,
             { title, content, Image, short_content },
             {
@@ -106,7 +110,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
                 runValidators: true,
             }
         );
-        if (!blog) {
+        if (!Gallery) {
             return res.status(404).json({
                 status: false,
                 message: 'Gallery not found',
@@ -114,7 +118,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
         }
         res.status(200).json({
             status: true,
-            data: blog,
+            data: Gallery,
             message: "Gallery Update"
         });
     } catch (error) {
@@ -126,18 +130,18 @@ exports.updateBlogById = catchAsync(async (req, res) => {
 });
 
 
-// Delete a blog post by ID
-exports.BlogIdDelete = catchAsync(async (req, res, next) => {
+// Delete a Gallery post by ID
+exports.GalleryIdDelete = catchAsync(async (req, res, next) => {
     try {
         const { Id } = req.body;
         if (!Id) {
-            Loggers.warn("Blog ID is required")
+            Loggers.warn("Gallery ID is required")
             return res.status(400).json({
                 status: false,
                 message: 'Gallery ID is required.',
             });
         }
-        await Blog.findByIdAndDelete(Id);
+        await Gallery.findByIdAndDelete(Id);
 
         res.status(200).json({
             status: true,

@@ -184,9 +184,14 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
-    const totalUsers = await Payment.countDocuments({});
+    const search = req.query.search
+    let query = {};
+    if (search.trim() !== "") {
+        query = { payment_id: { $regex: search, $options: 'i' } };
+    }
+    const totalUsers = await Payment.countDocuments(query);
     const totalPages = Math.ceil(totalUsers / limit);
-    const payment = await Payment.find({}).populate("UserId").populate("CourseId");
+    const payment = await Payment.find(query).populate("UserId").populate("CourseId");
     if (!payment || payment.length === 0) {
       return res.status(204).json({
         status: false,

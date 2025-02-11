@@ -56,9 +56,14 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        const totalCourse = await Course.countDocuments();
+        const search = req.query.search
+        let query = {};
+        if (search.trim() !== "") {
+            query = { title: { $regex: search, $options: 'i' } };
+        }
+        const totalCourse = await Course.countDocuments(query);
 
-        const Courseget = await Course.find({})
+        const Courseget = await Course.find({query})
             .sort({ createdAt: -1 })
             .populate('InstrutorId')
             .skip(skip)
@@ -243,9 +248,14 @@ exports.OnlineGet = catchAsync(async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
-        const totalCourse = await Online.countDocuments();
+        const search = req.query.search;
+        let query = {};
+        if (search.trim() !== "") {
+            query = { title: { $regex: search, $options: 'i' } };
+        }
+        const totalCourse = await Online.countDocuments(query);
 
-        const Courseget = await Online.find({})
+        const Courseget = await Online.find({query})
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -462,9 +472,14 @@ exports.WebniarGet = catchAsync(async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
-        const totalCourse = await Webinar.countDocuments();
+        const search = req.query.search;
+        let query = {};
+        if (search.trim() !== "") {
+            query = { title: { $regex: search, $options: 'i' } };
+        }
+        const totalCourse = await Webinar.countDocuments(query);
 
-        const Courseget = await Webinar.find({})
+        const Courseget = await Webinar.find(query)
             .skip(skip)
             .limit(limit);
 
@@ -637,9 +652,13 @@ exports.TranningGet = catchAsync(async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
-        const totalCourse = await Tranning.countDocuments();
+        let query = {};
+        if (search.trim() !== "") {
+            query = { title: { $regex: search, $options: 'i' } };
+        }
+        const totalCourse = await Tranning.countDocuments(query);
 
-        const Courseget = await Tranning.find({})
+        const Courseget = await Tranning.find(query)
             .skip(skip)
             .limit(limit);
 

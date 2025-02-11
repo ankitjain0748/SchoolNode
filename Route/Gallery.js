@@ -1,16 +1,16 @@
 const express = require('express');
-const blogController = require('../Controller/GalleryController');
+const GalleryController = require('../Controller/GalleryController');
 
 const router = express.Router();
 
-router.post("/create", blogController.createBlog)
+router.post("/create", GalleryController.createGallery)
 
-router.get("/get", blogController.getAllBlogs)
+router.get("/get", GalleryController.getAllGallerys)
 
-router.get("/get/:Id", blogController.getBlogById)
+router.get("/get/:Id", GalleryController.getGalleryById)
 
-router.post("/update", blogController.updateBlogById)
+router.post("/update", GalleryController.updateGalleryById)
 
-router.post("/delete", blogController.BlogIdDelete)
+router.post("/delete", GalleryController.GalleryIdDelete)
 
 module.exports = router;

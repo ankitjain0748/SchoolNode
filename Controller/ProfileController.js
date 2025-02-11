@@ -24,13 +24,6 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
         bio,
     } = req.body;
     try {
-        // if (!firstname || !lastname || !username || !phone_number || !designation || !bio || !address || !policy || !term) {
-        //     logger.warn("All fields are required.")
-        //     return res.status(400).json({
-        //         status: false,
-        //         message: "All fields are required.",
-        //     });
-        // }
         const existingProfile = await Profile.findOne({ userId });
         if (existingProfile) {
             existingProfile.firstname = firstname || existingProfile.firstname;

@@ -14,9 +14,9 @@ exports.InstructorPost = (async (req, res) => {
         sales,
         phoneNumber,
         address,
-        profileImage,  
-        bio,           
-        gender,        
+        profileImage,
+        bio,
+        gender,
         rating
     } = req.body;
 
@@ -54,36 +54,36 @@ exports.InstructorPost = (async (req, res) => {
 
 
 exports.InstructorGet = catchAsync(async (req, res, next) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
-        const totalInstructor = await Instructor.countDocuments();
-        const Instructorget = await Instructor.find({}).sort({ created_at: -1 })
-            .skip(skip)
-            .limit(limit);
-        const totalPages = Math.ceil(totalInstructor / limit);
-        res.status(200).json({
-            data: {
-                Instructorget: Instructorget,
-                totalInstructor: totalInstructor,
-                totalPages: totalPages,
-                currentPage: page,
-                perPage: limit,
-                nextPage: page < totalPages ? page + 1 : null,
-                previousPage: page > 1 ? page - 1 : null,
-            },
-            msg: "Instructorget Get",
-        });
-    } catch (error) {
-        logger.error(error)
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const skip = (page - 1) * limit;
 
-        res.status(500).json({
-            msg: "Failed to fetch Instructorget get",
-            error: error.message,
-        });
+    let query = {};
+    if (search.trim() !== "") {
+        query = { firstName: { $regex: search, $options: 'i' } };
     }
+    const totalInstructor = await Instructor.countDocuments(query);
+    const Instructorget = await Instructor.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limit);
+        console.log("Instructorget",Instructorget);
+    const totalPages = Math.ceil(totalInstructor / limit);
+    res.status(200).json({
+        data: {
+            Instructorget,
+            totalInstructor,
+            totalPages,
+            currentPage: page,
+            perPage: limit,
+            nextPage: page < totalPages ? page + 1 : null,
+            previousPage: page > 1 ? page - 1 : null,
+        },
+        msg: "Instructors fetched successfully",
+    });
 });
+
 
 
 exports.InstructorUpdate = catchAsync(async (req, res, next) => {
