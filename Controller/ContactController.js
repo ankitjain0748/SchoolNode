@@ -3,7 +3,6 @@ const contactmodal = require("../Model/Contact");
 const catchAsync = require('../utill/catchAsync');
 const sendEmail = require("../utill/Emailer");
 const logger = require("../utill/Loggers");
-// const sendEmail = require("../utill/EmailMailler");
 
 exports.ContactPost = catchAsync(async (req, res) => {
     try {
@@ -58,8 +57,12 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 30;
         const skip = (page - 1) * limit;
-        const totalcontactmodal = await contactmodal.countDocuments();
-        const contactget = await contactmodal.find({}).sort({ created_at: -1 })
+        let query = {};
+        if (search.trim() !== "") {
+            query = { name: { $regex: search, $options: 'i' } };
+        }
+        const totalcontactmodal = await contactmodal.countDocuments(query);
+        const contactget = await contactmodal.find({query}).sort({ created_at: -1 })
             .skip(skip)
             .limit(limit);
         const totalPages = Math.ceil(totalcontactmodal / limit);
@@ -135,31 +138,6 @@ exports.ContactReply = async (req, res) => {
         });
     }
 };
-// exports.Emailcheck = async (req, res) => {
-//     try {
-//         const result = {
-//             email: "ankit.jain@futureprofilez.com",
-//             name: "ankitjain",
-//             reply_message: "Thank you for reaching out. We appreciate your feedback."
-//         };
-//         const subject = "Thank You for Contacting Us";
-//         await sendEmail(subject, result.email, result.name, EmailBooking);
-
-//         return res.json({
-//             status: true,
-//             message: "You have successfully replied to your query!",
-//         });
-//     } catch (error) {
-
-//         return res.status(500).json({
-//             status: false,
-//             error: error.message,
-//             message: "Failed to send the email.",
-//         });
-//     }
-// };
-
-
 
 exports.ContactDelete = catchAsync(async (req, res, next) => {
     try {
