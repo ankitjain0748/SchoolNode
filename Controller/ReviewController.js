@@ -62,32 +62,70 @@ exports.ReviewAdd = catchAsync(async (req, res) => {
 
 exports.ReviewGet = catchAsync(async (req, res) => {
     try {
-        const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-        const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
-        const totalUsers = await Review.countDocuments({});
-        const totalPages = Math.ceil(totalUsers / limit);
-        const review = await Review.find({}).populate('userId').populate('CourseId');
+        const search = req.query.search ? String(req.query.search).trim() : "";
+
+        let matchStage = {};
+        if (search !== "") {
+            matchStage = {
+                "user.name": { $regex: new RegExp(search, "i") } // user.name पर सर्च
+            };
+        }
+
+        const totalUsers = await Review.aggregate([
+            { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "user" } },
+            { $unwind: "$user" },
+            { $match: matchStage },
+            { $count: "totalUsers" }
+        ]);
+
+        const totalRecords = totalUsers.length > 0 ? totalUsers[0].totalUsers : 0;
+        const totalPages = Math.ceil(totalRecords / limit);
+
+        const reviews = await Review.aggregate([
+            { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "user" } },
+            { $unwind: "$user" },
+            { $lookup: { from: "courses", localField: "CourseId", foreignField: "_id", as: "course" } },
+            { $unwind: { path: "$course", preserveNullAndEmptyArrays: true } },
+            { $match: matchStage },
+            { $project: { 
+                _id: 1, 
+                reviewText: 1, 
+                rating: 1, 
+                createdAt: 1,
+                "user.name": 1, 
+                "user.email": 1, 
+                "user.image": 1, 
+                "course.title": 1 
+            }},
+            { $skip: skip },
+            { $limit: limit }
+        ]);
+
         res.json({
             status: true,
-            message: "Review fetched Successfully",
-            review,
-            totalUsers,
+            message: "Review fetched successfully",
+            reviews,
+            totalUsers: totalRecords,
             totalPages,
             currentPage: page,
             perPage: limit,
             nextPage: page < totalPages ? page + 1 : null,
             previousPage: page > 1 ? page - 1 : null,
-        })
+        });
     } catch (error) {
-        logger.error(error)
-        console.log("erorr", error);
+        logger.error(error);
+        console.log("Error:", error);
         res.json({
             status: false,
-            message: "Failed to Fetch Review"
-        })
+            message: "Failed to fetch reviews"
+        });
     }
 });
+
+
 
 exports.ReviewGetStatus = catchAsync(async (req, res) => {
     try {
