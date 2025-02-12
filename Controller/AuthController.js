@@ -311,19 +311,15 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.profile = catchAsync(async (req, res, next) => {
   try {
-    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1); 
     const skip = (page - 1) * limit;
-    const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
-    
-    // Construct the query dynamically
+    const search = req.query.search ? String(req.query.search).trim() : "";
     let query = { role: "user", isDeleted: false };
 
     if (search !== "") {
-      query.name = { $regex: new RegExp(search, "i") }; // Use RegExp constructor
+      query.name = { $regex: new RegExp(search, "i") }; 
     }
-
-    // Fetch users with the associated data (bank and profile details)
     const users = await User.find(query)
       .populate("CourseId")
       .select("-password")
