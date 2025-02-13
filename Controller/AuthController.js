@@ -336,16 +336,21 @@ exports.profile = catchAsync(async (req, res, next) => {
 
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
-      // Safely get the bank detail and profile detail
-      const bankDetail = bankDetails.find(bank => bank.userId && bank.userId.toString() === user._id.toString());
-      const profileDetail = profileDetails.find(profile => profile.userId && profile.userId.toString() === user._id.toString());
-
+      // Bank detail safely fetch karein
+      const bankDetail = bankDetails.find(bank => bank?.userId === user?._id);
+      
+      // Profile detail safely fetch karein
+      const profileDetail = profileDetails.find(profile => profile?.userId === user?._id);
+  
       return {
-        ...user.toObject(),
-        bank_details: bankDetail || null,
-        ProfileDetails: profileDetail || null
+          ...user.toObject(),
+          bank_details: bankDetail || null,
+          ProfileDetails: profileDetail || null
       };
-    });
+  });
+  
+  console.log("usersWithBankDetails", usersWithBankDetails); // Check the output
+  
 
     // Total users and pagination details
     const totalUsers = await User.countDocuments(query);

@@ -85,24 +85,56 @@ exports.ReviewGet = catchAsync(async (req, res) => {
         const totalPages = Math.ceil(totalRecords / limit);
 
         const reviews = await Review.aggregate([
-            { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "user" } },
+            { 
+                $lookup: { 
+                    from: "users", 
+                    localField: "userId", 
+                    foreignField: "_id", 
+                    as: "user" 
+                } 
+            },
             { $unwind: "$user" },
-            { $lookup: { from: "courses", localField: "CourseId", foreignField: "_id", as: "course" } },
+            
+            // 🔍 Lookup from Profile table to get profile image
+            { 
+                $lookup: { 
+                    from: "profiles", // Ensure the correct collection name
+                    localField: "userId", 
+                    foreignField: "userId", 
+                    as: "profile" 
+                } 
+            },
+            { $unwind: { path: "$profile", preserveNullAndEmptyArrays: true } }, // Preserve if no profile exists
+        
+            { 
+                $lookup: { 
+                    from: "courses", 
+                    localField: "CourseId", 
+                    foreignField: "_id", 
+                    as: "course" 
+                } 
+            },
             { $unwind: { path: "$course", preserveNullAndEmptyArrays: true } },
             { $match: matchStage },
-            { $project: { 
-                _id: 1, 
-                reviewText: 1, 
-                rating: 1, 
-                createdAt: 1,
-                "user.name": 1, 
-                "user.email": 1, 
-                "user.image": 1, 
-                "course.title": 1 
-            }},
+        
+            { 
+                $project: { 
+                    _id: 1, 
+                    message: 1, 
+                    status: 1, 
+                    rating: 1, 
+                    created_at: 1, 
+                    "user.name": 1, 
+                    "user.email": 1, 
+                    "profile.profileImage": 1, // ✅ Get profile image from Profile table
+                    "course.title": 1 
+                } 
+            },
             { $skip: skip },
             { $limit: limit }
         ]);
+        
+        
 
         res.json({
             status: true,
