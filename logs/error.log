@@ -238,3 +238,12 @@
 2025-02-12 00:28:15 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
 2025-02-12 00:29:44 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
 2025-02-12 00:29:47 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
+2025-02-14 20:40:03 [ERROR]: querySrv ETIMEOUT _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-02-14 20:45:11 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-14 20:45:11 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-14 20:45:29 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-14 20:45:29 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-14 20:48:33 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-14 20:48:33 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-14 21:56:58 [ERROR]: Cast to date failed for value "Invalid Date" (type Date) at path "payment_date" for model "AdminPayment"
+2025-02-14 21:58:36 [ERROR]: Cast to date failed for value "Invalid Date" (type Date) at path "payment_date" for model "AdminPayment"

@@ -293,25 +293,50 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const userId = req.User?._id
+    const userId = req.User?._id;
+    console.log("req.query",req.query)
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const payment = await AdminPays.find({ userId , page :"payout" });
-    if (!payment || payment.length === 0) {
+
+    const searchDate = req.query.payment_date; // Get payment date from query params
+
+    let query = { userId, page: "payout" };
+
+    // If `payment_date` is provided, filter by date
+    if (searchDate) {
+      const startOfDay = new Date(searchDate);
+      startOfDay.setHours(0, 0, 0, 0);
+      
+      const endOfDay = new Date(searchDate);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      query.payment_date = { $gte: startOfDay, $lte: endOfDay };
+    }
+
+    // Get total count for pagination
+    const totalItems = await AdminPays.countDocuments(query);
+
+    const payments = await AdminPays.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ payment_date: -1 }); // Sort by latest payments
+
+    if (!payments || payments.length === 0) {
       return res.status(204).json({
         status: false,
         message: "No Payment found for this user.",
         payment: [],
       });
     }
+
     res.status(200).json({
       status: true,
       message: "Payment retrieved successfully!",
-      payment: payment,
+      payment: payments,
       currentPage: page,
-      totalPages: Math.ceil(payment.length / limit), // Calculate total pages
-      totalItems: payment.length,
+      totalPages: Math.ceil(totalItems / limit), // Calculate total pages
+      totalItems: totalItems,
     });
   } catch (err) {
     logger.error(err);
@@ -321,7 +346,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
       error: err.message,
     });
   }
-})
+});
 
 
 exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
