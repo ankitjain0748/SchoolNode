@@ -35,7 +35,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             existingProfile.bio = bio || existingProfile.bio;
             existingProfile.address = address || existingProfile.address;
             existingProfile.policy = policy || existingProfile.policy;
-            existingProfile.term = address || existingProfile.term;
+            existingProfile.term = term || existingProfile.term;
             existingProfile.profileImage = profileImage || existingProfile.profileImage;
             existingProfile.bsemail = bsemail || existingProfile.bsemail;
             const updatedProfile = await existingProfile.save();
