@@ -331,8 +331,6 @@ exports.profile = catchAsync(async (req, res, next) => {
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
     const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
 
-    console.log('Bank Details:', bankDetails);  // Debugging: log fetched bank details
-    console.log('Profile Details:', profileDetails);  // Debugging: log fetched profile details
 
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
