@@ -239,10 +239,7 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
 
 exports.ReviewCourse = catchAsync(async (req, res) => {
     try {
-        const userId = req.User._id
-        const { CourseId } = req.body;
-
-        // Validate courseId
+        const { CourseId, page = 1, limit = 10 } = req.body;
         if (!CourseId) {
             return res.status(400).json({
                 status: false,
@@ -250,11 +247,23 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
             });
         }
 
-        // Fetch reviews with populated references
-        const reviews = await Review.find({
-            CourseId, status: "read"
-        })
+        // Convert page and limit to numbers and ensure valid values
+        const pageNumber = Math.max(1, parseInt(page, 10));
+        const limitNumber = Math.max(1, parseInt(limit, 10));
+        const skip = (pageNumber - 1) * limitNumber;
+
+        // Fetch paginated reviews
+        const reviews = await Review.find({ CourseId, status: "read" })
+            .skip(skip)
+            .limit(limitNumber)
+            .populate("userId", "name email"); // Optional: Populate user data
+
+        // Get total number of reviews for the course
+        const totalReviews = await Review.countDocuments({ CourseId, status: "read" });
+
+        // Fetch profile data
         const profile = await ProfileData.findOne().populate("userId");
+
         if (!reviews.length) {
             return res.status(404).json({
                 status: false,
@@ -267,7 +276,10 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
             status: true,
             data: {
                 reviews,
-                profile
+                profile,
+                    currentPage: pageNumber,
+                    totalPages: Math.ceil(totalReviews / limitNumber),
+                    totalReviews,
             },
             message: "Reviews fetched successfully.",
         });
@@ -279,6 +291,7 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 exports.ReviewCourseUser = catchAsync(async (req, res) => {
     try {
