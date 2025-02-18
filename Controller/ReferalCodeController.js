@@ -65,6 +65,7 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 
 exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?._id;
+    let { page = 1, limit = 10, paymentDate } = req.query;
 
     // Check if userId exists
     if (!userId) {
@@ -84,11 +85,17 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             });
         }
 
-        const payment = await Payment.findOne({ UserId: userId });
+        // Fetch payment details (without filtering by date unless provided)
+        let paymentFilter = { UserId: userId };
 
-        if (!payment) {
-            return { status: false, message: "No payment record found for the user." };
+        if (paymentDate) {
+            paymentFilter.createdAt = {
+                $gte: new Date(paymentDate + "T00:00:00.000Z"),
+                $lt: new Date(paymentDate + "T23:59:59.999Z"),
+            };
         }
+
+        const payment = await Payment.findOne(paymentFilter);
 
         // Fetch referral data based on referred_by, referred_first, and referred_second
         const referralData = await User.find({
@@ -97,23 +104,30 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
                 { referred_first: userId },
                 { referred_second: userId }
             ]
-        }).populate({
-            path: "CourseId",
-            select: "title discountPrice category courseImage"
+        })
+        .populate("CourseId", "title discountPrice category courseImage")
+        .skip((page - 1) * limit)
+
+        // Get total referral count (for pagination metadata)
+        const totalReferrals = await User.countDocuments({
+            $or: [
+                { referred_by: userId },
+                { referred_first: userId },
+                { referred_second: userId }
+            ]
         });
 
         // Fetch referral codes from the Referral table
         const referralCodes = await RefralModel.find({
-            userId: { $in: referralData.map(user => user._id) } // Match with user IDs in the referral data
+            userId: { $in: referralData.map(user => user._id) }
         });
 
         // Map referral codes to each user in the referral data
         const referralUsersWithCode = referralData.map(referralUser => {
-            // Find the corresponding referral code
             const referralCode = referralCodes.find(code => code.userId.toString() === referralUser._id.toString());
             return {
                 ...referralUser.toObject(),
-                referralCode: referralCode ? referralCode.code : null, // Add referral code if exists
+                referralCode: referralCode ? referralCode.code : null,
             };
         });
 
@@ -121,9 +135,13 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
             status: true,
+            page,
+            limit,
+            totalPages: Math.ceil(totalReferrals / limit),
+            totalReferrals,
             data: referralUsersWithCode,
-            user: user,
-            payment: payment
+            user,
+            payment: payment || null, // If no payment, return null instead of error
         });
     } catch (error) {
         console.error("Error fetching referral data:", error);
@@ -133,6 +151,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 
 

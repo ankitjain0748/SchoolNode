@@ -255,3 +255,9 @@
 2025-02-15 21:57:55 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
 2025-02-15 21:58:42 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
 2025-02-16 12:59:05 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-01.g69we.mongodb.net
+2025-02-18 21:04:57 [ERROR]: querySrv ETIMEOUT _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-02-18 22:02:26 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-18 22:02:27 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-18 22:02:37 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-18 22:03:04 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-18 22:03:21 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
