@@ -253,27 +253,53 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
 
 exports.PaymentGetdata = catchAsync(async (req, res) => {
   try {
-    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 15, 1); // Use the provided limit or a reasonable default (15)
     const skip = (page - 1) * limit;
-    const payment = await AdminPays.find({}).populate({
-      path: "userId",
-      select: "name phone_number phone_code email"
-    });
-    const totalUsers = await AdminPays.countDocuments();
+    const searchQuery = req.query.search ? req.query.search.trim() : ""; // Corrected typo: serach to search
+
+    const filter = {};
+
+    if (searchQuery) {
+      // Correct filter for direct userId reference:
+      const users = await User.find({ name: { $regex: searchQuery, $options: "i" } }, '_id'); //get all user id match with search query
+      const userIds = users.map(user => user._id);
+      filter.userId = { $in: userIds }; // Filter by user IDs
+
+    }
+    console.log("searchQuery",searchQuery)
+
+    const payment = await AdminPays.find(filter)
+      .populate({
+        path: "userId",
+        select: "name phone_number phone_code email",
+      })
+      .sort({ payment_date: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalUsers = await AdminPays.countDocuments(filter);
     const totalPages = Math.ceil(totalUsers / limit);
 
-    if (!payment || payment.length === 0) {
-      return res.status(204).json({
-        status: false,
-        message: "No Payment found for this user.",
+    // Improved empty result handling:  Return consistent structure
+    if (payment.length === 0) {
+      return res.status(200).json({
+        status: true,
+        message: "No payments found.", // Clearer message
         payment: [],
+        totalUsers: 0,
+        totalPages: 0,
+        currentPage: page,
+        perPage: limit,
+        nextPage: null,
+        previousPage: null,
       });
     }
+
     res.status(200).json({
       status: true,
-      message: "Payment retrieved successfully!",
-      payment: payment,
+      message: "Payments retrieved successfully!",
+      payment, // Shorthand for payment: payment
       totalUsers,
       totalPages,
       currentPage: page,
@@ -281,20 +307,22 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
       nextPage: page < totalPages ? page + 1 : null,
       previousPage: page > 1 ? page - 1 : null,
     });
+
   } catch (err) {
-    logger.error(err);
-    return res.status(500).json({
+    logger.error(err); // Keep logging the error for debugging
+    res.status(500).json({
       status: false,
-      message: "An unknown error occurred. Please try again later.",
-      error: err.message,
+      message: "An error occurred. Please try again later.", // User-friendly message
+      // error: err.message,  // Remove in production for security!  Don't expose internal errors.
     });
   }
 });
 
+
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
     const userId = req.User?._id;
-    console.log("req.query",req.query)
+    console.log("req.query", req.query)
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -307,7 +335,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
     if (searchDate) {
       const startOfDay = new Date(searchDate);
       startOfDay.setHours(0, 0, 0, 0);
-      
+
       const endOfDay = new Date(searchDate);
       endOfDay.setHours(23, 59, 59, 999);
 

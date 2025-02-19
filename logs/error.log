@@ -261,3 +261,18 @@
 2025-02-18 22:02:37 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
 2025-02-18 22:03:04 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-02-18 22:03:21 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-19 22:00:01 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-01.g69we.mongodb.net
+2025-02-19 22:00:06 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-01.g69we.mongodb.net
+2025-02-19 22:00:11 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-01.g69we.mongodb.net
+2025-02-19 22:00:16 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-01.g69we.mongodb.net
+2025-02-19 22:00:42 [ERROR]: querySrv ETIMEOUT _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-02-19 22:01:05 [ERROR]: Error fetching users: Operation `contacts.find()` buffering timed out after 10000ms
+2025-02-19 22:01:05 [ERROR]: Operation `webinars.countDocuments()` buffering timed out after 10000ms
+2025-02-19 22:01:05 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-19 22:01:15 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-19 22:01:23 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-19 22:01:44 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-19 22:02:28 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-19 22:03:42 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-20 00:01:15 [ERROR]: searchQuery is not defined
+2025-02-20 00:03:38 [ERROR]: co is not defined
