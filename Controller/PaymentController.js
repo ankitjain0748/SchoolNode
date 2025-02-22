@@ -184,12 +184,17 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
+    const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : ""; // Assuming you'll use this later
+   
     const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
     let query = {};
 
     if (search !== "") {
       query = { payment_id: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
     }
+    if (selectoption) {
+      query.payment_status = selectoption; // Assuming 'valid' means verified
+  }
     const totalUsers = await Payment.countDocuments(query);
     const totalPages = Math.ceil(totalUsers / limit);
     const payment = await Payment.find(query).populate("UserId").populate("CourseId");

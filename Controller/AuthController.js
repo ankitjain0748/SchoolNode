@@ -18,6 +18,7 @@ const RegisterEmail = require("../Mail/RegisterEmail");
 const AdminEmail = require("../Mail/AdminRegister");
 const sendEmail = require("../utill/Emailer");
 const Payout = require("../Mail/Payout");
+const Payment = require("../Model/Payment");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -314,12 +315,18 @@ exports.profile = catchAsync(async (req, res, next) => {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 50, 1); 
     const skip = (page - 1) * limit;
+    const selectoption = req.query.selectedoption ? String(req.query.selectedoption).trim() : ""; // Assuming you'll use this later
+
     const search = req.query.search ? String(req.query.search).trim() : "";
     let query = { role: "user", isDeleted: false };
 
     if (search !== "") {
       query.name = { $regex: new RegExp(search, "i") }; 
     }
+    if (selectoption) {
+      query.user_status = selectoption; // Assuming 'valid' means verified
+  }
+
     const users = await User.find(query)
       .populate("CourseId")
       .select("-password")
@@ -1583,4 +1590,36 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
       error: error.message || "Internal Server Error",
     });
   }
+});
+
+
+
+exports.AdminDashboard = catchAsync(async (req, res) => {
+try {
+  const registeredCount = await User.countDocuments({ user_status: "registered" });
+  const activeCount = await User.countDocuments({ user_status: "active" });
+  const inactiveCount = await User.countDocuments({ user_status: "inactive" });
+  const enrolledCount = await User.countDocuments({ user_status: "enrolled" });
+  const totalusercount = await User.countDocuments({  });
+  const totalAmount = await Payment.aggregate([
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    success: true,
+      registered: registeredCount,
+      active: activeCount,
+      inactive: inactiveCount,
+      enrolled: enrolledCount,
+      totalusercount:totalusercount,
+      totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0, // Directly return the total value
+  });
+} catch (error) {
+  console.log("error",error)
+}
 });

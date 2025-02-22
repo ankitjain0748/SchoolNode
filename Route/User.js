@@ -1,4 +1,4 @@
-const { login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin, userupdateby, paymentdata, OTP, VerifyOtp, UserPriceUpdate, getUsersWithTodayRefDate, profileadmin, UserListIds } = require("../Controller/AuthController");
+const { login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, getCount, profilegettoken, userfilter, VerifyUser, UserIdDelete, adminlogin, userupdateby, paymentdata, OTP, VerifyOtp, UserPriceUpdate, getUsersWithTodayRefDate, profileadmin, UserListIds, AdminDashboard } = require("../Controller/AuthController");
 const { BankAddOrEdit } = require("../Controller/BankController");
 const { ProfileData, ProfileDataId, profileAddOrUpdate } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
@@ -29,6 +29,8 @@ userRoute.get("/all", getCount)
 userRoute.get("/profile-token", verifyToken, profilegettoken)
 
 userRoute.post("/verifyaccount", VerifyUser)
+
+userRoute.get('/admin_dashboard', AdminDashboard)
 
 userRoute.post("/user-filter", userfilter);
 

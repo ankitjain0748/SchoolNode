@@ -48,15 +48,23 @@ exports.SubscribePost = catchAsync(async (req, res) => {
 
 exports.Subscribeget = catchAsync(async (req, res, next) => {
     try {
+        console.log(req.query)
+
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 50;
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
+        const selectoption = req.query.selectedoption ? String(req.query.selectedoption).trim() : ""; // Assuming you'll use this later
+      
         let query = {};
 
         if (search !== "") {
             query = { email: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
         }
+        if (selectoption) {
+            query.Email_verify = selectoption; // Assuming 'valid' means verified
+        }
+
         const totalsubscribemodal = await subscribemodal.countDocuments(query);
         const subscribedata = await subscribemodal.find(query).sort({ created_at: -1 })
             .skip(skip)

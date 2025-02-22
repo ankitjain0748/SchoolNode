@@ -6,7 +6,8 @@ const logger = require("../utill/Loggers");
 
 exports.ContactPost = catchAsync(async (req, res) => {
     try {
-        const { email, name, message, subject, role, phone_number  ,Email_verify} = req.body;
+        console.log("req.body" ,req.body)
+        const { email, name, message, subject, role, phone_number, Email_verify } = req.body;
 
         if (!email || !name || !message || !subject || !role || !phone_number) {
             logger.warn("All fields (email, name, message, subject, role, phone_number) are required.")
@@ -16,20 +17,20 @@ exports.ContactPost = catchAsync(async (req, res) => {
             });
         }
         const record = new contactmodal({
-            email, name, message, subject, role, phone_number,Email_verify
+            email, name, message, subject, role, phone_number, Email_verify
         });
 
         const result = await record.save();
-        if(result.role = "support"){
+        if (result.role = "support") {
             const subject1 = `Your Support Ticket ${result?._id} has been Created 🎉`;
             await sendEmail({
                 email: email,
-                support : result,
+                support: result,
                 message: "Your booking request was successful!",
                 subject: subject1,
                 emailTemplate: EmailContact,
             });
-    
+
         }
         if (result) {
             res.json({
@@ -58,16 +59,29 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 30;
         const skip = (page - 1) * limit;
         let query = {};
-        const search = req.query.search ? String(req.query.search).trim() : ""; 
+        const search = req.query.search ? String(req.query.search).trim() : "";
+        const selectoption = req.query.selectoption ? String(req.query.selectoption).trim() : ""; // Assuming you'll use this later
+
         if (search?.trim() !== "") {
-            query = { name: { $regex: search, $options: 'i' } };
+            query.name = { $regex: search, $options: 'i' };
         }
+
+        // Add filter based on selectoption if provided
+        if (selectoption) {
+            query.Email_verify = selectoption; // Assuming 'valid' means verified
+        }
+
+
         const totalcontactmodal = await contactmodal.countDocuments(query);
+        console.log("totalcontactmodal",totalcontactmodal)
         const contactget = await contactmodal.find(query).sort({ created_at: -1 })
             .skip(skip)
             .limit(limit);
-            console.log("contactget",contactget)
+
+        console.log("contactget", contactget);
+
         const totalPages = Math.ceil(totalcontactmodal / limit);
+
         res.status(200).json({
             data: {
                 contactget: contactget,
