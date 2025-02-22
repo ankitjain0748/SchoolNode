@@ -337,8 +337,8 @@ exports.profile = catchAsync(async (req, res, next) => {
     // Fetch bank and profile details in parallel for all users
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
     const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
-
-
+console.log("bankDetails",bankDetails)
+console.log('profileDetails',profileDetails)
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
       // Bank detail safely fetch karein

@@ -276,3 +276,13 @@
 2025-02-19 22:03:42 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-02-20 00:01:15 [ERROR]: searchQuery is not defined
 2025-02-20 00:03:38 [ERROR]: co is not defined
+2025-02-22 16:58:54 [ERROR]: querySrv ETIMEOUT _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-02-22 17:00:02 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-22 17:00:02 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-22 17:00:12 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-22 17:00:16 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-22 23:19:45 [ERROR]: query is not defined
+2025-02-22 23:20:02 [ERROR]: query is not defined
+2025-02-22 23:20:20 [ERROR]: query is not defined
+2025-02-22 23:20:57 [ERROR]: query is not defined
+2025-02-22 23:21:16 [ERROR]: query is not defined

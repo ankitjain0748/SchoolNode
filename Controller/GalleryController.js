@@ -70,8 +70,9 @@ exports.getGalleryById = catchAsync(
                 Loggers.warn("Gallery ID is required")
                 return res.status(400).json({ msg: "Gallery ID is required" });
             }
-            const Gallery = await Gallery.findById(Id);
-            if (!Gallery) {
+            const Gallerys = await Gallery.findById(Id);
+            console.log("Gallery",Gallerys)
+            if (!Gallerys) {
                 return res.status(404).json({
                     status: false,
                     message: 'Gallery not found',
@@ -79,7 +80,7 @@ exports.getGalleryById = catchAsync(
             }
             res.status(200).json({
                 status: true,
-                data: Gallery,
+                data: Gallerys,
                 message: 'Gallery fetched successfully',
             });
         } catch (error) {
@@ -104,7 +105,7 @@ exports.updateGalleryById = catchAsync(async (req, res) => {
         //         message: "All fields (title, content, Image) are required.",
         //     });
         // }
-        const Gallery = await Gallery.findByIdAndUpdate(
+        const Gallerys = await Gallery.findByIdAndUpdate(
             _id,
             { title, content, Image, short_content },
             {
@@ -112,7 +113,7 @@ exports.updateGalleryById = catchAsync(async (req, res) => {
                 runValidators: true,
             }
         );
-        if (!Gallery) {
+        if (!Gallerys) {
             return res.status(404).json({
                 status: false,
                 message: 'Gallery not found',
@@ -120,7 +121,7 @@ exports.updateGalleryById = catchAsync(async (req, res) => {
         }
         res.status(200).json({
             status: true,
-            data: Gallery,
+            data: Gallerys,
             message: "Gallery Update"
         });
     } catch (error) {

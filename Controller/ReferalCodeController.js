@@ -62,10 +62,9 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 });
 
 
-
 exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?._id;
-    let { page = 1, limit = 10, paymentDate } = req.query;
+    let { page = 1, limit = 10, paymentDate, name } = req.query;
 
     // Check if userId exists
     if (!userId) {
@@ -97,25 +96,28 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
         const payment = await Payment.findOne(paymentFilter);
 
-        // Fetch referral data based on referred_by, referred_first, and referred_second
-        const referralData = await User.find({
+        // Build referral search query
+        let referralFilter = {
             $or: [
                 { referred_by: userId },
                 { referred_first: userId },
                 { referred_second: userId }
             ]
-        })
-        .populate("CourseId", "title discountPrice category courseImage")
-        .skip((page - 1) * limit)
+        };
+
+        // Add name search filter if provided
+        if (name) {
+            referralFilter.name = { $regex: name, $options: "i" }; // Case-insensitive search
+        }
+
+        // Fetch referral data with pagination
+        const referralData = await User.find(referralFilter)
+            .populate("CourseId", "title discountPrice category courseImage")
+            .skip((page - 1) * limit)
+            .limit(limit);
 
         // Get total referral count (for pagination metadata)
-        const totalReferrals = await User.countDocuments({
-            $or: [
-                { referred_by: userId },
-                { referred_first: userId },
-                { referred_second: userId }
-            ]
-        });
+        const totalReferrals = await User.countDocuments(referralFilter);
 
         // Fetch referral codes from the Referral table
         const referralCodes = await RefralModel.find({
@@ -141,7 +143,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             totalReferrals,
             data: referralUsersWithCode,
             user,
-            payment: payment || null, // If no payment, return null instead of error
+            payment: payment || null,
         });
     } catch (error) {
         console.error("Error fetching referral data:", error);
@@ -151,6 +153,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 
 

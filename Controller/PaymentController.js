@@ -181,23 +181,38 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
   try {
-    const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-    const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+    console.log("req", req.query)
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
-    const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : ""; // Assuming you'll use this later
-   
-    const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
+
+    const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
+    const search = req.query.search ? String(req.query.search).trim() : "";
+
     let query = {};
 
-    if (search !== "") {
-      query = { payment_id: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
+    // Search by payment ID or user's name
+    if (search) {
+      // Correct filter for direct userId reference:
+      const users = await User.find({ name: { $regex: search, $options: "i" } }, '_id'); //get all user id match with search query
+      const userIds = users.map(user => user._id);
+      filter.userId = { $in: userIds }; // Filter by user IDs
+
     }
+    
     if (selectoption) {
-      query.payment_status = selectoption; // Assuming 'valid' means verified
-  }
+      query.payment_status = selectoption;
+    }
+
     const totalUsers = await Payment.countDocuments(query);
     const totalPages = Math.ceil(totalUsers / limit);
-    const payment = await Payment.find(query).populate("UserId").populate("CourseId");
+
+    const payment = await Payment.find(query)
+      .populate("UserId")
+      .populate("CourseId")
+      .skip(skip)
+      .limit(limit);
+
     if (!payment || payment.length === 0) {
       return res.status(204).json({
         status: false,
@@ -205,6 +220,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
         payment: [],
       });
     }
+
     res.status(200).json({
       status: true,
       message: "Payment retrieved successfully!",
@@ -258,11 +274,14 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
 
 exports.PaymentGetdata = catchAsync(async (req, res) => {
   try {
+    console.log("searchQuery",req.query)
+
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 15, 1); // Use the provided limit or a reasonable default (15)
     const skip = (page - 1) * limit;
     const searchQuery = req.query.search ? req.query.search.trim() : ""; // Corrected typo: serach to search
-
+    const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
+console.log("req.query.selectedOption",req.query.selectedOption)
     const filter = {};
 
     if (searchQuery) {
@@ -272,8 +291,13 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
       filter.userId = { $in: userIds }; // Filter by user IDs
 
     }
-    console.log("searchQuery",searchQuery)
 
+       
+    if (selectoption) {
+      filter.page = selectoption;
+    }
+
+    console.log("filter",filter)
     const payment = await AdminPays.find(filter)
       .populate({
         path: "userId",
