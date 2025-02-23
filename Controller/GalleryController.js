@@ -71,7 +71,6 @@ exports.getGalleryById = catchAsync(
                 return res.status(400).json({ msg: "Gallery ID is required" });
             }
             const Gallerys = await Gallery.findById(Id);
-            console.log("Gallery",Gallerys)
             if (!Gallerys) {
                 return res.status(404).json({
                     status: false,

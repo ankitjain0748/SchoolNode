@@ -11,6 +11,8 @@ const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
 const Transaction = require("../Model/Transcation");
+const Course = require("../Model/Course");
+
 const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
 const SocialSection = require("../Model/Social");
@@ -77,7 +79,7 @@ const signToken = async (id) => {
 
 const signEmail = async (id) => {
   const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: "3m",
+    expiresIn: "15m",
   });
   return token;
 };
@@ -313,7 +315,7 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.profile = catchAsync(async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
-    const limit = Math.max(parseInt(req.query.limit) || 50, 1); 
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
     const selectoption = req.query.selectedoption ? String(req.query.selectedoption).trim() : ""; // Assuming you'll use this later
 
@@ -321,11 +323,11 @@ exports.profile = catchAsync(async (req, res, next) => {
     let query = { role: "user", isDeleted: false };
 
     if (search !== "") {
-      query.name = { $regex: new RegExp(search, "i") }; 
+      query.name = { $regex: new RegExp(search, "i") };
     }
     if (selectoption) {
       query.user_status = selectoption; // Assuming 'valid' means verified
-  }
+    }
 
     const users = await User.find(query)
       .populate("CourseId")
@@ -337,25 +339,22 @@ exports.profile = catchAsync(async (req, res, next) => {
     // Fetch bank and profile details in parallel for all users
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
     const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
-console.log("bankDetails",bankDetails)
-console.log('profileDetails',profileDetails)
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
       // Bank detail safely fetch karein
       const bankDetail = bankDetails.find(bank => bank?.userId === user?._id);
-      
+
       // Profile detail safely fetch karein
       const profileDetail = profileDetails.find(profile => profile?.userId === user?._id);
-  
+
       return {
-          ...user.toObject(),
-          bank_details: bankDetail || null,
-          ProfileDetails: profileDetail || null
+        ...user.toObject(),
+        bank_details: bankDetail || null,
+        ProfileDetails: profileDetail || null
       };
-  });
-  
-  console.log("usersWithBankDetails", usersWithBankDetails); // Check the output
-  
+    });
+
+
 
     // Total users and pagination details
     const totalUsers = await User.countDocuments(query);
@@ -520,6 +519,7 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
 
 exports.forgotlinkrecord = async (req, res) => {
   try {
+
     const { email } = req.body;
     if (!email) {
       return validationErrorResponse(res, { email: 'Email is required' });
@@ -540,7 +540,8 @@ exports.forgotlinkrecord = async (req, res) => {
         pass: process.env.password,
       },
     });
-    const emailHtml = ForgetPassword(resetLink, customerUser);
+    const emailHtml = VerifyAccount(resetLink, customerUser);
+
     await transporter.sendMail({
       from: process.env.user,
       to: record.email,
@@ -548,12 +549,10 @@ exports.forgotlinkrecord = async (req, res) => {
       html: emailHtml,
     });
 
-
     return successResponse(res, "Email has been sent to your registered email");
 
   } catch (error) {
     logger.error("Error deleting user record:", error);
-
     return errorResponse(res, "Failed to send email");
   }
 };
@@ -1436,38 +1435,44 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    console.log("req.query",req.query)
+
+
     const { search, page = 1, limit = 10 } = req.query;
 
+    // Build the query object
+    const query = {
+      ref_date: { $gte: today, $lt: tomorrow }, // Filter users with today's ref_date
+    };
+
+    // Add search filter if present
     if (search) {
-      search.name = { $regex: search, $options: "i" }; // Case-insensitive search
+      query.name = { $regex: search, $options: "i" }; // Case-insensitive name search
     }
+
     // Pagination setup
     const pageNumber = Math.max(1, parseInt(page, 10));
     const limitNumber = Math.max(1, parseInt(limit, 10));
     const skip = (pageNumber - 1) * limitNumber;
-    // Find users with today's ref_date and search criteria
-    const users = await User.find(query)
-      .skip(skip)
-      .limit(limitNumber);
+
+    // Find users with the query and pagination
+    const users = await User.find(query).skip(skip).limit(limitNumber);
+
     // Fetch details for referred users and bank details
     const userDetails = await Promise.all(
       users.map(async (user) => {
-        const [referredBy, referredFirst, referredSecond, userBankDetails] =
-          await Promise.all([
-            user.referred_by ? User.findById(user.referred_by).select("-password") : null,
-            user.referred_first ? User.findById(user.referred_first).select("-password") : null,
-            user.referred_second ? User.findById(user.referred_second).select("-password") : null,
-            Bank.findOne({ userId: user._id }),
-          ]);
+        const [referredBy, referredFirst, referredSecond, userBankDetails] = await Promise.all([
+          user.referred_by ? User.findById(user.referred_by).select("-password") : null,
+          user.referred_first ? User.findById(user.referred_first).select("-password") : null,
+          user.referred_second ? User.findById(user.referred_second).select("-password") : null,
+          Bank.findOne({ userId: user._id }),
+        ]);
 
-        const [referredByBankDetails, referredByProfileDetails, referredFirstBankDetails, referredSecondBankDetails] =
-          await Promise.all([
-            referredBy ? Bank.findOne({ userId: referredBy._id }) : null,
-            referredBy ? ProfileData.findOne({ userId: referredBy._id }) : null,
-            referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
-            referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
-          ]);
+        const [referredByBankDetails, referredByProfileDetails, referredFirstBankDetails, referredSecondBankDetails] = await Promise.all([
+          referredBy ? Bank.findOne({ userId: referredBy._id }) : null,
+          referredBy ? ProfileData.findOne({ userId: referredBy._id }) : null,
+          referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
+          referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
+        ]);
 
         return {
           ...user.toObject(),
@@ -1490,12 +1495,10 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
       status: true,
       message: "Users fetched successfully",
       data: userDetails,
-      pagination: {
         totalUsers,
         currentPage: pageNumber,
         totalPages: Math.ceil(totalUsers / limitNumber),
         limit: limitNumber,
-      },
     });
   } catch (err) {
     res.status(500).json({
@@ -1593,33 +1596,106 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
 });
 
 
-
 exports.AdminDashboard = catchAsync(async (req, res) => {
-try {
-  const registeredCount = await User.countDocuments({ user_status: "registered" });
-  const activeCount = await User.countDocuments({ user_status: "active" });
-  const inactiveCount = await User.countDocuments({ user_status: "inactive" });
-  const enrolledCount = await User.countDocuments({ user_status: "enrolled" });
-  const totalusercount = await User.countDocuments({  });
-  const totalAmount = await Payment.aggregate([
-    {
-      $group: {
-        _id: null,
-        total: { $sum: "$amount" },
+  try {
+    const registeredCount = await User.countDocuments({ user_status: "registered" });
+    const activeCount = await User.countDocuments({ user_status: "active" });
+    const inactiveCount = await User.countDocuments({ user_status: "inactive" });
+    const enrolledCount = await User.countDocuments({ user_status: "enrolled" });
+    const totalusercount = await User.countDocuments({});
+    // Calculate total amount
+    const totalAmount = await Payment.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount" },
+        },
       },
-    },
-  ]);
+    ]);
 
-  res.status(200).json({
-    success: true,
+    // Calculate today's income
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const todayIncome = await Payment.aggregate([
+      {
+        $match: {
+          payment_date: { $gte: today, $lt: tomorrow },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    today.setHours(0, 0, 0, 0);
+
+    tomorrow.setDate(today.getDate() + 1);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    // Aaj aur kal ka collection
+    const collections = await Payment.aggregate([
+      {
+        $facet: {
+          todayCollection: [
+            {
+              $match: {
+                createdAt: { $gte: today, $lt: tomorrow }, // Aaj ka collection
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                totalAmount: { $sum: "$amount" }, // Aaj ka amount ka total
+              },
+            },
+          ],
+          yesterdayCollection: [
+            {
+              $match: {
+                createdAt: { $gte: yesterday, $lt: today }, // Kal ka collection
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                totalAmount: { $sum: "$amount" }, // Kal ka amount ka total
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    // Calculate pending courses
+    const pendingCoursesCount = await Course.countDocuments({});
+
+
+    res.status(200).json({
+      success: true,
       registered: registeredCount,
       active: activeCount,
       inactive: inactiveCount,
       enrolled: enrolledCount,
-      totalusercount:totalusercount,
-      totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0, // Directly return the total value
-  });
-} catch (error) {
-  console.log("error",error)
-}
+      totalusercount: totalusercount,
+       todayTotal : collections[0]?.todayCollection[0]?.totalAmount || 0,
+       yesterdayTotal : collections[0]?.yesterdayCollection[0]?.totalAmount || 0,
+      totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
+      todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,
+      pendingCourses: pendingCoursesCount,
+    });
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
 });
+
+// Let me know if you’d like any changes or more features! 🚀
+

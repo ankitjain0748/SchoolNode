@@ -181,7 +181,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
   try {
-    console.log("req", req.query)
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
@@ -274,14 +273,12 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
 
 exports.PaymentGetdata = catchAsync(async (req, res) => {
   try {
-    console.log("searchQuery",req.query)
 
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 15, 1); // Use the provided limit or a reasonable default (15)
     const skip = (page - 1) * limit;
     const searchQuery = req.query.search ? req.query.search.trim() : ""; // Corrected typo: serach to search
     const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
-console.log("req.query.selectedOption",req.query.selectedOption)
     const filter = {};
 
     if (searchQuery) {
@@ -297,7 +294,6 @@ console.log("req.query.selectedOption",req.query.selectedOption)
       filter.page = selectoption;
     }
 
-    console.log("filter",filter)
     const payment = await AdminPays.find(filter)
       .populate({
         path: "userId",
@@ -351,7 +347,6 @@ console.log("req.query.selectedOption",req.query.selectedOption)
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
     const userId = req.User?._id;
-    console.log("req.query", req.query)
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;

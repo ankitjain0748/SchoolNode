@@ -67,7 +67,6 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
         .sort({ created_at: -1 })
         .skip(skip)
         .limit(limit);
-    console.log("Instructorget", Instructorget);
     const totalPages = Math.ceil(totalInstructor / limit);
     res.status(200).json({
         data: {

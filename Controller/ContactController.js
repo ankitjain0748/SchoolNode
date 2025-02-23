@@ -6,7 +6,6 @@ const logger = require("../utill/Loggers");
 
 exports.ContactPost = catchAsync(async (req, res) => {
     try {
-        console.log("req.body" ,req.body)
         const { email, name, message, subject, role, phone_number, Email_verify } = req.body;
 
         if (!email || !name || !message || !subject || !role || !phone_number) {
@@ -73,12 +72,10 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
 
 
         const totalcontactmodal = await contactmodal.countDocuments(query);
-        console.log("totalcontactmodal",totalcontactmodal)
         const contactget = await contactmodal.find(query).sort({ created_at: -1 })
             .skip(skip)
             .limit(limit);
 
-        console.log("contactget", contactget);
 
         const totalPages = Math.ceil(totalcontactmodal / limit);
 

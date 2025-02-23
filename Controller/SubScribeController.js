@@ -48,7 +48,6 @@ exports.SubscribePost = catchAsync(async (req, res) => {
 
 exports.Subscribeget = catchAsync(async (req, res, next) => {
     try {
-        console.log(req.query)
 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 50;
@@ -152,7 +151,6 @@ exports.EmailDataSubScribe = catchAsync(async (req, res, next) => {
 exports.EmailDataprofile = catchAsync(async (req, res, next) => {
     try {
         const { page = 1, limit = 50, email } = req.query;
-        console.log("req.query", req.query)
         // Ensure valid page and limit
         const pageNum = Math.max(parseInt(page) || 1, 1);
         const limitNum = Math.max(parseInt(limit) || 50, 1);
@@ -201,7 +199,6 @@ exports.EmailDataprofile = catchAsync(async (req, res, next) => {
 
 exports.EmailDataContactGet = catchAsync(async (req, res, next) => {
     try {
-        console.log("req" ,req.query)
         const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
         const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
         const skip = (page - 1) * limit;
@@ -266,7 +263,6 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
                     subject: subject1,
                     emailTemplate: WebniarEmail,
                 });
-                console.log(`Email successfully sent to: ${email}`);
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
             }
@@ -300,7 +296,6 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
                     subject: subject1,
                     emailTemplate: PromtionEmail,
                 });
-                console.log(`Email successfully sent to: ${email}`);
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
             }
@@ -337,7 +332,6 @@ exports.OfferCourseEmail = catchAsync(async (req, res) => {
                     subject: subject1,
                     emailTemplate: OfferCourseEmail,
                 });
-                console.log(`Email successfully sent to: ${email}`);
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
             }
