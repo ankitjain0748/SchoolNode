@@ -303,3 +303,18 @@
 2025-02-23 20:31:20 [ERROR]: Error deleting user record: connection timed out
 2025-02-23 20:31:24 [ERROR]: Error deleting user record: connection <monitor> to 13.234.193.81:27017 timed out
 2025-02-23 20:31:30 [ERROR]: Error deleting user record: connection timed out
+2025-02-24 20:35:36 [ERROR]: querySrv ETIMEOUT _mongodb._tcp.cluster0.g69we.mongodb.net
+2025-02-24 20:37:37 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-24 20:37:37 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-24 20:37:37 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-24 20:37:37 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-02-24 20:37:41 [ERROR]: Operation `onlines.countDocuments()` buffering timed out after 10000ms
+2025-02-24 20:37:47 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-24 20:37:51 [ERROR]: Operation `onlines.countDocuments()` buffering timed out after 10000ms
+2025-02-24 20:41:57 [ERROR]: Operation `onlines.countDocuments()` buffering timed out after 10000ms
+2025-02-24 20:42:55 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-24 20:43:13 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-24 20:45:19 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-02-24 21:33:46 [ERROR]: read ECONNRESET
+2025-02-24 21:33:46 [ERROR]: Error fetching users: read ECONNRESET
+2025-02-24 21:33:46 [ERROR]: read ECONNRESET
