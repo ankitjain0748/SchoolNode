@@ -1,7 +1,6 @@
 const catchAsync = require("../utill/catchAsync");
 const Bank = require("../Model/Bank");
 const logger = require("../utill/Loggers");
-const { validationErrorResponse } = require("../utill/ErrorHandling");
 
 exports.BankAddOrEdit = catchAsync(async (req, res) => {
     const userId = req?.User?._id;

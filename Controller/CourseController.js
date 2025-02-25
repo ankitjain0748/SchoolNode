@@ -49,8 +49,6 @@ exports.CoursePost = async (req, res) => {
     }
 };
 
-
-
 exports.CourseGet = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -92,8 +90,6 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
         });
     }
 });
-
-
 
 exports.CourseUpdate = catchAsync(async (req, res, next) => {
     try {
@@ -165,7 +161,6 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
     }
 });
 
-
 exports.CourseIdDelete = catchAsync(async (req, res, next) => {
     try {
         const { Id } = req.body;
@@ -191,7 +186,6 @@ exports.CourseIdDelete = catchAsync(async (req, res, next) => {
     }
 });
 
-
 exports.CourseGetId = catchAsync(async (req, res, next) => {
     try {
         const { Id } = req.params;
@@ -214,35 +208,36 @@ exports.CourseGetId = catchAsync(async (req, res, next) => {
         });
     }
 });
-
-exports.onlinePost = async (req, res) => {
-    try {
-        const { title, content, video } = req.body;
-        const record = new Online({
-            title,
-            content, video
-        });
-        const result = await record.save();
-        if (result) {
-            res.json({
-                status: true,
-                message: "Online Added Successfully!",
+exports.onlinePost = catchAsync(
+    async (req, res) => {
+        try {
+            const { title, content, video } = req.body;
+            const record = new Online({
+                title,
+                content, video
             });
-        } else {
-            logger.error("Failed to add Online.")
-            res.status(400).json({
+            const result = await record.save();
+            if (result) {
+                res.json({
+                    status: true,
+                    message: "Online Added Successfully!",
+                });
+            } else {
+                logger.error("Failed to add Online.")
+                res.status(400).json({
+                    status: false,
+                    message: "Failed to add Online.",
+                });
+            }
+        } catch (error) {
+            logger.error(error)
+            res.status(500).json({
                 status: false,
-                message: "Failed to add Online.",
+                message: "Internal Server Error.",
             });
         }
-    } catch (error) {
-        logger.error(error)
-        res.status(500).json({
-            status: false,
-            message: "Internal Server Error.",
-        });
     }
-};
+);
 
 exports.OnlineGet = catchAsync(async (req, res, next) => {
     try {
@@ -257,7 +252,7 @@ exports.OnlineGet = catchAsync(async (req, res, next) => {
         }
         const totalCourse = await Online.countDocuments(query);
 
-        const Courseget = await Online.find(query )
+        const Courseget = await Online.find(query)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);

@@ -80,7 +80,7 @@ const signToken = async (id) => {
 
 const signEmail = async (id) => {
   const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: "15m",
+    expiresIn: "120m",
   });
   return token;
 };
@@ -530,26 +530,26 @@ exports.forgotlinkrecord = async (req, res) => {
       return errorResponse(res, "No user found with this email", 404);
     }
     const token = await signEmail(record._id);
-    const resetLink = `http://localhost:3000/new-password/${token}`;
-    const customerUser = record.name;
-    let transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
-      secure: false,
-      auth: {
-        user: process.env.user,
-        pass: process.env.password,
-      },
-    });
-    const emailHtml = VerifyMail(resetLink, customerUser);
-    await transporter.sendMail({
-      from: process.env.user,
-      to: record.email,
-      subject: "Forgot Your Password",
-      html: emailHtml,
-    });
+    // const resetLink = `http://localhost:3000/new-password/${token}`;
+    // const customerUser = record.name;
+    // let transporter = nodemailer.createTransport({
+    //   host: process.env.MAIL_HOST,
+    //   port: process.env.MAIL_PORT,
+    //   secure: false,
+    //   auth: {
+    //     user: process.env.user,
+    //     pass: process.env.password,
+    //   },
+    // });
+    // const emailHtml = VerifyMail(resetLink, customerUser);
+    // await transporter.sendMail({
+    //   from: process.env.user,
+    //   to: record.email,
+    //   subject: "Forgot Your Password",
+    //   html: emailHtml,
+    // });
 
-    return successResponse(res, "Email has been sent to your registered email");
+    return successResponse(res, "Email has been sent to your registered email", token);
 
   } catch (error) {
     logger.error("Error deleting user record:", error);
@@ -1495,10 +1495,10 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
       status: true,
       message: "Users fetched successfully",
       data: userDetails,
-        totalUsers,
-        currentPage: pageNumber,
-        totalPages: Math.ceil(totalUsers / limitNumber),
-        limit: limitNumber,
+      totalUsers,
+      currentPage: pageNumber,
+      totalPages: Math.ceil(totalUsers / limitNumber),
+      limit: limitNumber,
     });
   } catch (err) {
     res.status(500).json({
@@ -1674,9 +1674,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
       },
     ]);
 
-    // Calculate pending courses
     const pendingCoursesCount = await Course.countDocuments({});
-
 
     res.status(200).json({
       success: true,
@@ -1685,8 +1683,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
       inactive: inactiveCount,
       enrolled: enrolledCount,
       totalusercount: totalusercount,
-       todayTotal : collections[0]?.todayCollection[0]?.totalAmount || 0,
-       yesterdayTotal : collections[0]?.yesterdayCollection[0]?.totalAmount || 0,
+      todayTotal: collections[0]?.todayCollection[0]?.totalAmount || 0,
+      yesterdayTotal: collections[0]?.yesterdayCollection[0]?.totalAmount || 0,
       totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
       todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,
       pendingCourses: pendingCoursesCount,

@@ -2,7 +2,6 @@ const Gallery = require('../Model/Gallery');
 const catchAsync = require('../utill/catchAsync');
 const Loggers = require('../utill/Loggers');
 
-
 // Create a new Gallery post
 exports.createGallery = catchAsync(async (req, res) => {
     try {
@@ -26,8 +25,6 @@ exports.createGallery = catchAsync(async (req, res) => {
     }
 }
 );
-
-
 // Get all Gallery posts
 exports.getAllGallerys = catchAsync(async (req, res) => {
     try {
@@ -60,10 +57,8 @@ exports.getAllGallerys = catchAsync(async (req, res) => {
         });
     }
 });
-
 // Get a single Gallery post by ID
-exports.getGalleryById = catchAsync(
-    async (req, res) => {
+exports.getGalleryById = catchAsync(async (req, res) => {
         try {
             const { Id } = req.params;
             if (!Id) {
@@ -90,7 +85,6 @@ exports.getGalleryById = catchAsync(
         }
     }
 );
-
 // Update a Gallery post by ID
 exports.updateGalleryById = catchAsync(async (req, res) => {
     try {
@@ -130,8 +124,6 @@ exports.updateGalleryById = catchAsync(async (req, res) => {
         });
     }
 });
-
-
 // Delete a Gallery post by ID
 exports.GalleryIdDelete = catchAsync(async (req, res, next) => {
     try {
@@ -157,5 +149,3 @@ exports.GalleryIdDelete = catchAsync(async (req, res, next) => {
         });
     }
 });
-
-
