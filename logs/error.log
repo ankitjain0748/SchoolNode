@@ -318,3 +318,15 @@
 2025-02-24 21:33:46 [ERROR]: read ECONNRESET
 2025-02-24 21:33:46 [ERROR]: Error fetching users: read ECONNRESET
 2025-02-24 21:33:46 [ERROR]: read ECONNRESET
+2025-02-25 22:12:17 [ERROR]: Error deleting user record: Invalid status code: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWU0OWM1OGQ5MjRiMjFkZGFhOGZjMCIsImlhdCI6MTc0MDUwMTczNywiZXhwIjoxNzQwNTA4OTM3fQ.oPOFzw00HKxAXK67ZOYMUF45DEtrnJaixw0ZYtTDzD8
+2025-02-25 22:14:37 [ERROR]: Error deleting user record: Invalid status code: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWU0OWM1OGQ5MjRiMjFkZGFhOGZjMCIsImlhdCI6MTc0MDUwMTg3NywiZXhwIjoxNzQwNTA5MDc3fQ.CaJaw2MkHrmiriw-7vdCkfEOxATa8amevOEbVEog4bA
+2025-02-25 22:15:19 [ERROR]: Error deleting user record: Invalid status code: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWU0OWM1OGQ5MjRiMjFkZGFhOGZjMCIsImlhdCI6MTc0MDUwMTkxOSwiZXhwIjoxNzQwNTA5MTE5fQ.brDDLi0w6Huh_HZyBdALBTwC9IxyCCdK2CWCGuM_7tU
+2025-02-25 22:16:13 [ERROR]: Error in forgot password flow: Invalid status code: {
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWU0OWM1OGQ5MjRiMjFkZGFhOGZjMCIsImlhdCI6MTc0MDUwMTk3MywiZXhwIjoxNzQwNTA5MTczfQ.g57w4YY57INEqXRrnkZbtI8U7xBzEDKMzbQOxLK3Zdw'
+}
+2025-02-25 22:17:35 [ERROR]: Error in forgot password flow: Invalid status code: {
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWU0OWM1OGQ5MjRiMjFkZGFhOGZjMCIsImlhdCI6MTc0MDUwMjA1NSwiZXhwIjoxNzQxMzY2MDU1fQ.XiLz7b9FqDM0QjdaklQFf2BGnOr9X4D-pOyL_K2mne0'
+}
+2025-02-25 22:18:11 [ERROR]: Error in forgot password flow: token is not defined
+2025-02-25 22:19:08 [ERROR]: Error in forgot password flow: res.status is not a function
+2025-02-25 22:19:35 [ERROR]: Error in forgot password flow: res.status is not a function

@@ -66,6 +66,13 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?._id;
     let { page = 1, limit = 10, paymentDate, name } = req.query;
 
+    // Convert page and limit to numbers and handle invalid values
+    page = parseInt(page, 10);
+    limit = parseInt(limit, 10);
+
+    if (isNaN(page) || page < 1) page = 1;
+    if (isNaN(limit) || limit < 1) limit = 10;
+
     // Check if userId exists
     if (!userId) {
         return res.status(400).json({
@@ -84,16 +91,14 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             });
         }
 
-        // Fetch payment details (without filtering by date unless provided)
+        // Fetch payment details (optional date filter)
         let paymentFilter = { UserId: userId };
-
         if (paymentDate) {
             paymentFilter.createdAt = {
                 $gte: new Date(paymentDate + "T00:00:00.000Z"),
                 $lt: new Date(paymentDate + "T23:59:59.999Z"),
             };
         }
-
         const payment = await Payment.findOne(paymentFilter);
 
         // Build referral search query
@@ -107,7 +112,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
         // Add name search filter if provided
         if (name) {
-            referralFilter.name = { $regex: name, $options: "i" }; // Case-insensitive search
+            referralFilter.name = { $regex: name, $options: "i" };
         }
 
         // Fetch referral data with pagination
@@ -153,15 +158,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         });
     }
 });
-
-
-
-
-
-
-
-
-
 
 
 exports.RefralCodeDelete = catchAsync(async (req, res) => {

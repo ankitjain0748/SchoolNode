@@ -520,42 +520,38 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
 
 exports.forgotlinkrecord = async (req, res) => {
   try {
-
     const { email } = req.body;
+
+    // Validate email input
     if (!email) {
       return validationErrorResponse(res, { email: 'Email is required' });
     }
-    const record = await User.findOne({ email: email });
+
+    // Find the user by email
+    const record = await User.findOne({ email });
     if (!record) {
       return errorResponse(res, "No user found with this email", 404);
     }
-    const token = await signEmail(record._id);
-    // const resetLink = `http://localhost:3000/new-password/${token}`;
-    // const customerUser = record.name;
-    // let transporter = nodemailer.createTransport({
-    //   host: process.env.MAIL_HOST,
-    //   port: process.env.MAIL_PORT,
-    //   secure: false,
-    //   auth: {
-    //     user: process.env.user,
-    //     pass: process.env.password,
-    //   },
-    // });
-    // const emailHtml = VerifyMail(resetLink, customerUser);
-    // await transporter.sendMail({
-    //   from: process.env.user,
-    //   to: record.email,
-    //   subject: "Forgot Your Password",
-    //   html: emailHtml,
-    // });
 
-    return successResponse(res, "Email has been sent to your registered email", token);
+    // Generate token
+    const token = await signToken(record._id);
+    console.log("token:", token);
+
+    // Send success response with the token
+    res.json({
+      status:true,
+      token: token,
+      message: "Successful"
+    });
 
   } catch (error) {
-    logger.error("Error deleting user record:", error);
-    return errorResponse(res, "Failed to send email");
+    // Log the error and send an appropriate response
+    logger.error("Error in forgot password flow:", error);
+    return errorResponse(res, "Failed to send password reset link", 500);
   }
 };
+
+
 
 exports.forgotpassword = async (req, res) => {
   try {
