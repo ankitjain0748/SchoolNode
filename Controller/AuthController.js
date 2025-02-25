@@ -21,6 +21,7 @@ const AdminEmail = require("../Mail/AdminRegister");
 const sendEmail = require("../utill/Emailer");
 const Payout = require("../Mail/Payout");
 const Payment = require("../Model/Payment");
+const VerifyMail = require("../Mail/VerifyMail");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -540,8 +541,7 @@ exports.forgotlinkrecord = async (req, res) => {
         pass: process.env.password,
       },
     });
-    const emailHtml = VerifyAccount(resetLink, customerUser);
-
+    const emailHtml = VerifyMail(resetLink, customerUser);
     await transporter.sendMail({
       from: process.env.user,
       to: record.email,
