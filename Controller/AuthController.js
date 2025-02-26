@@ -94,14 +94,14 @@ exports.signup = catchAsync(async (req, res) => {
     if (existingUser) {
       const errors = {};
       if (existingUser.email === email) {
-        errors.email = "Email is already in use!";
+        errors = "Email is already in use!";
       }
       if (existingUser.phone_number === phone_number) {
-        errors.phone_number = "Phone number is already in use!";
+        errors = "Phone number is already in use!";
       }
       return res.status(400).json({
         status: false,
-        message: "Email or phone number already exists",
+        message: errors,
         errors,
       });
     }
@@ -1075,14 +1075,6 @@ exports.OTP = catchAsync(async (req, res) => {
     //   });
     // }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
-    if (existingUser) {
-      return res.status(400).json({
-        status: false,
-        message: "Email or phone number already exists",
-      });
-    }
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
 

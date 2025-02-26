@@ -330,3 +330,6 @@
 2025-02-25 22:18:11 [ERROR]: Error in forgot password flow: token is not defined
 2025-02-25 22:19:08 [ERROR]: Error in forgot password flow: res.status is not a function
 2025-02-25 22:19:35 [ERROR]: Error in forgot password flow: res.status is not a function
+2025-02-26 23:20:37 [ERROR]: Error fetching users: connection <monitor> to 13.234.182.151:27017 timed out
+2025-02-26 23:21:36 [ERROR]: Error fetching booking: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-02-26 23:31:33 [ERROR]: Error fetching booking: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
