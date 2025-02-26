@@ -245,7 +245,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;
   try {
-    const UserPayments = await Payment.find({ UserId, payment_status: "success" }).populate("UserId").populate("CourseId");
+    const UserPayments = await Payment.find({ UserId}).populate("UserId").populate("CourseId");
     if (!UserPayments || UserPayments.length === 0) {
       return res.status(204).json({
         status: false,
