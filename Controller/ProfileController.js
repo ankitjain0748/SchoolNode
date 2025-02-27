@@ -79,8 +79,6 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     }
 });
 
-
-
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
@@ -131,7 +129,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     }
 });
 
-
 exports.ProfileDataId = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.User?._id;
@@ -157,4 +154,3 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
         });
     }
 });
-

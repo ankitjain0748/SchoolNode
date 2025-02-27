@@ -157,8 +157,6 @@ exports.ReviewGet = catchAsync(async (req, res) => {
     }
 });
 
-
-
 exports.ReviewGetStatus = catchAsync(async (req, res) => {
     try {
         const review = await Review.find({ status: "read" });
@@ -291,7 +289,6 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.ReviewCourseUser = catchAsync(async (req, res) => {
     try {

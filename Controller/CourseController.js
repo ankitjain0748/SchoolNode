@@ -208,6 +208,59 @@ exports.CourseGetId = catchAsync(async (req, res, next) => {
         });
     }
 });
+
+
+exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
+    try {
+        const {
+            _id, // Course ID
+            firstuser,
+            seconduser,
+            directuser,
+            percentage_passive
+        } = req.body;
+
+        if (!_id) {
+            return res.status(400).json({
+                status: false,
+                message: "Course ID is required.",
+            });
+        }
+        const updatedRecord = await Course.findByIdAndUpdate(
+            _id,
+            {
+                firstuser,
+                seconduser,
+                directuser,
+                percentage_passive
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedRecord) {
+            return res.status(404).json({
+                status: false,
+                message: "Course not found!",
+            });
+        }
+
+        res.status(200).json({
+            status: true,
+            data: updatedRecord,
+            message: "Course updated successfully.",
+        });
+    } catch (error) {
+        logger.error(error)
+
+        res.status(500).json({
+            status: false,
+            message: "An error occurred while updating the Course. Please try again later.",
+            error: error.message,
+        });
+    }
+});
+
+// Online Videos Section 
 exports.onlinePost = catchAsync(
     async (req, res) => {
         try {
@@ -375,55 +428,7 @@ exports.OnlineGetId = catchAsync(async (req, res, next) => {
 });
 
 
-exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
-    try {
-        const {
-            _id, // Course ID
-            firstuser,
-            seconduser,
-            directuser,
-            percentage_passive
-        } = req.body;
 
-        if (!_id) {
-            return res.status(400).json({
-                status: false,
-                message: "Course ID is required.",
-            });
-        }
-        const updatedRecord = await Course.findByIdAndUpdate(
-            _id,
-            {
-                firstuser,
-                seconduser,
-                directuser,
-                percentage_passive
-            },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedRecord) {
-            return res.status(404).json({
-                status: false,
-                message: "Course not found!",
-            });
-        }
-
-        res.status(200).json({
-            status: true,
-            data: updatedRecord,
-            message: "Course updated successfully.",
-        });
-    } catch (error) {
-        logger.error(error)
-
-        res.status(500).json({
-            status: false,
-            message: "An error occurred while updating the Course. Please try again later.",
-            error: error.message,
-        });
-    }
-});
 
 // webniar  Post
 
@@ -611,39 +616,39 @@ exports.WebniarGetId = catchAsync(async (req, res, next) => {
 });
 
 
-//Tranning Video 
+//Tranning Video Section
 
-
-
-exports.Tranningpost = async (req, res) => {
-    try {
-        const { title, content, video, webnair_date, place } = req.body;
-        const record = new Tranning({
-            title,
-            content, video,
-            webnair_date, place
-        });
-        const result = await record.save();
-        if (result) {
-            res.json({
-                status: true,
-                message: "Online Added Successfully!",
+exports.Tranningpost = catchAsync(
+    async (req, res) => {
+        try {
+            const { title, content, video, webnair_date, place } = req.body;
+            const record = new Tranning({
+                title,
+                content, video,
+                webnair_date, place
             });
-        } else {
-            logger.error("Failed to add Online.")
-            res.status(400).json({
+            const result = await record.save();
+            if (result) {
+                res.json({
+                    status: true,
+                    message: "Online Added Successfully!",
+                });
+            } else {
+                logger.error("Failed to add Online.")
+                res.status(400).json({
+                    status: false,
+                    message: "Failed to add Online.",
+                });
+            }
+        } catch (error) {
+            logger.error(error)
+            res.status(500).json({
                 status: false,
-                message: "Failed to add Online.",
+                message: "Internal Server Error.",
             });
         }
-    } catch (error) {
-        logger.error(error)
-        res.status(500).json({
-            status: false,
-            message: "Internal Server Error.",
-        });
     }
-};
+);
 
 exports.TranningGet = catchAsync(async (req, res) => {
     try {
@@ -684,7 +689,6 @@ exports.TranningGet = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.tranningUpdate = catchAsync(async (req, res) => {
     try {
@@ -737,7 +741,6 @@ exports.tranningUpdate = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.trannigIdDelete = catchAsync(async (req, res, next) => {
     try {
