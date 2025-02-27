@@ -6,6 +6,9 @@ const userRoute = require("express").Router();
 
 userRoute.post("/signup", OTP)
 
+userRoute.post("/OTP", VerifyOtp)
+
+
 userRoute.post("/login", login)
 
 userRoute.post("/adminlogin", adminlogin)
@@ -37,7 +40,6 @@ userRoute.post("/user-filter", userfilter);
 userRoute.post("/delete", UserIdDelete)
 
 
-userRoute.post("/OTP", VerifyOtp)
 
 
 // Profile Manage

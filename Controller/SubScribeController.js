@@ -116,6 +116,8 @@ exports.SubscriberDelete = catchAsync(async (req, res, next) => {
     }
 });
 
+
+// Email Format Api  /
 exports.EmailDataSubScribe = catchAsync(async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;

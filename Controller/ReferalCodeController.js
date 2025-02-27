@@ -61,9 +61,8 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
     }
 });
 
-
 exports.RefralCodeGet = catchAsync(async (req, res) => {
-    const userId = req.User?._id;
+    const userId = req.User?._id ?req.User?._id  :req.query?.id  ;
     let { page = 1, limit = 10, paymentDate, name } = req.query;
 
     // Convert page and limit to numbers and handle invalid values
@@ -158,7 +157,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.RefralCodeDelete = catchAsync(async (req, res) => {
     try {

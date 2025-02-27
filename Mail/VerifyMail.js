@@ -1,6 +1,6 @@
-module.exports = ( userName, verificationLink) => {
-    return `
-    <table align="center" style="max-width: 600px; font-family: arial;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000">
+module.exports = (userName, verificationLink) => {
+  return `
+    <table align="center" style="max-width: 400px; font-family: arial;" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#000">
     <tr bgcolor="#141414">
       <td style="padding: 20px 2px 20px 2px; text-align: center;">
         <p style="margin: 1px;">
@@ -34,7 +34,7 @@ module.exports = ( userName, verificationLink) => {
   
     <tr>
       <td style="padding: 20px; text-align: center;">
-        <a href="${verificationLink}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; display: inline-block;">
+        <a href="${verificationLink}" target="_blank" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; display: inline-block;">
           Verify Your Account
         </a>
       </td>
@@ -92,5 +92,4 @@ module.exports = ( userName, verificationLink) => {
     </tr>
     </table>
     `;
-  };
-  
+};

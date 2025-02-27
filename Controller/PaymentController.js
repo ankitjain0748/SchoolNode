@@ -241,7 +241,6 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
   }
 });
 
-
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;
   try {
@@ -343,7 +342,6 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
   }
 });
 
-
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
     const userId = req.User?._id;
@@ -399,7 +397,6 @@ exports.paymentdata = catchAsync(async (req, res) => {
     });
   }
 });
-
 
 exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
   try {
