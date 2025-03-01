@@ -65,6 +65,16 @@ const userSchema = mongoose.Schema({
         type: String,
         // deafult: false
     },
+    payment_Add:Number,
+    referred_user_pay_overall :Number , 
+    referred_user_pay_monthly :Number,
+    referred_user_pay_weekly :Number,
+    referred_user_pay_daily :Number ,
+    payment_key_daily :Number,
+    lastPaymentMonth: String , 
+    lastPaymentWeek :String , 
+    lastPaymentDay :String,
+    paymentWidthrawal:Number,
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",

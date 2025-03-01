@@ -900,20 +900,73 @@ exports.getCount = catchAsync(async (req, res) => {
   }
 });
 
+const moment = require('moment');
+
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
-    const { Id, data_payment, success_reasons, payment_type, paymentMethod, payment_reason, transactionId, payment_data, payment_income, referred_user_pay, payment_key, page, withdrawal_reason } = req.body;
+    const {
+      Id, data_payment, success_reasons, payment_type, paymentMethod, 
+      payment_reason, transactionId, payment_data, payment_income, 
+      referred_user_pay, payment_key, page, withdrawal_reason,
+      paymentWidthrawal ,
+      payment_Add
+    } = req.body;
+
     if (!Id) {
       return res.status(400).json({
         status: false,
-        message: "User ID is required.",
+        message: "User ID is required."
       });
     }
+
+    const currentDate = moment();
+    const currentMonth = currentDate.format('YYYY-MM');
+    const currentWeek = currentDate.format('YYYY-WW');
+    const currentDay = currentDate.format('YYYY-MM-DD');
+
+    const user = await User.findById(Id);
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found!"
+      });
+    }
+
+    // Accumulate referred_user_pay
+    let updatedReferredUserPayOverall = user.referred_user_pay_overall || 0;
+    let updatedReferredUserPayMonthly = user.referred_user_pay_monthly || 0;
+    let updatedReferredUserPayWeekly = user.referred_user_pay_weekly || 0;
+    let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
+    let updatedPaymentKey = user.payment_key_daily || 0;
+
+console.log("updatedPaymentKey",updatedPaymentKey)
+    // Check for period resets
+    if (user.lastPaymentMonth !== currentMonth) {
+      updatedReferredUserPayMonthly = 0;
+    }
+    if (user.lastPaymentWeek !== currentWeek) {
+      updatedReferredUserPayWeekly = 0;
+    }
+    if (user.lastPaymentDay !== currentDay) {
+      updatedReferredUserPayDaily = 0;
+      updatedPaymentKey = 0; // Reset payment_key daily
+    }
+
+    // Add current referral payment
+    const referralAmount = Number(payment_Add) || 0;
+    updatedReferredUserPayOverall += referralAmount;
+    updatedReferredUserPayMonthly += referralAmount;
+    updatedReferredUserPayWeekly += referralAmount;
+    updatedReferredUserPayDaily += referralAmount;
+    updatedPaymentKey += Number(paymentWidthrawal) || 0;
+
+
     const newPayment = new Adminpayment({
-      userId: Id, // Ensure the ID is the same
+      userId: Id,
       paymentMethod,
       payment_type,
       success_reasons,
+      paymentWidthrawal,
       payment_reason,
       withdrawal_reason,
       payment_key,
@@ -924,26 +977,33 @@ exports.paymentdata = catchAsync(async (req, res) => {
       payment_income,
       page,
       referred_user_pay,
+      payment_Add
     });
 
-    // Save the payment record
     const paymentRecord = await newPayment.save();
 
-    // If no payment record was saved (edge case)
     if (!paymentRecord) {
       return res.status(400).json({
         status: false,
-        message: "Failed to save payment data.",
+        message: "Failed to save payment data."
       });
     }
 
-    // Update the user with the new payment data
+    console.log("updatedPaymentKey",updatedPaymentKey);
     const updatedUser = await User.findByIdAndUpdate(
       Id,
       {
+        payment_Add,
         payment_data,
-        referred_user_pay
-
+        referred_user_pay,
+        referred_user_pay_overall: updatedReferredUserPayOverall,
+        referred_user_pay_monthly: updatedReferredUserPayMonthly,
+        referred_user_pay_weekly: updatedReferredUserPayWeekly,
+        referred_user_pay_daily: updatedReferredUserPayDaily,
+        lastPaymentMonth: currentMonth,
+        lastPaymentWeek: currentWeek,
+        lastPaymentDay: currentDay,
+        payment_key_daily: updatedPaymentKey,
       },
       { new: true, runValidators: true }
     );
@@ -951,17 +1011,17 @@ exports.paymentdata = catchAsync(async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({
         status: false,
-        message: "User not found for update!",
+        message: "User not found for update!"
       });
     }
 
-    // Send success response
     res.status(200).json({
       status: true,
       message: "Payment data saved and user updated successfully.",
       paymentRecord,
-      updatedUser,
+      updatedUser
     });
+
     const subject1 = "🎉 Your Payout Has Been Successfully Received!";
     if (page === "payout") {
       await sendEmail({
@@ -970,20 +1030,19 @@ exports.paymentdata = catchAsync(async (req, res) => {
         Webniarrecord: paymentRecord,
         subject: subject1,
         emailTemplate: Payout,
-      })
-    };
-
+      });
+    }
   } catch (error) {
     console.error("Error saving payment data and updating user:", error);
-
     res.status(500).json({
       status: false,
       message: "An error occurred while processing the payment. Please try again later.",
-      error: error.message,
+      error: error.message
     });
   }
 });
 
+// Let me know if you want me to make any adjustments or add more features! 🚀
 exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   try {
     const UserId = req?.User?._id

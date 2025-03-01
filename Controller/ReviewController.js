@@ -302,9 +302,8 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
         }
 
         const reviews = await Review.find({ userId }).populate("userId");
-
-        const profile = await ProfileData.findOne().populate("userId");
-
+        const profile = await ProfileData.findOne({ userId }).populate("userId");
+        const userdata = await User.findOne({_id : userId });
         if (!reviews) {
 
             return res.status(404).json({
@@ -316,7 +315,8 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
             status: true,
             data: {
                 reviews,
-                profile
+                profile,
+                userdata
             },
             message: "Review fetched successfully for the provided courseId.",
         });
