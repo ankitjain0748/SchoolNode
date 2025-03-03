@@ -129,6 +129,49 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     }
 });
 
+exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
+    try {
+        const userId = req?.query?.id;
+        const { page = 1, limit = 10, payment_date } = req.query;
+        
+        const query = { userId: userId };
+
+        // Add start date filter if provided
+        if (payment_date) {
+            query.paymentDate = {
+                $gte: new Date(payment_date)
+            };
+        }
+
+        const AdminPayments = await AdminPay.find(query)
+            .sort({ paymentDate: -1 }) // Sort by paymentDate descending
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        const totalPayments = await AdminPay.countDocuments(query);
+
+        return res.status(200).json({
+            status: true,
+            AdminPayments: AdminPayments,
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(totalPayments / limit),
+            totalPayments,
+            message: "Users retrieved successfully with enquiry counts updated",
+        });
+    } catch (error) {
+        logger.error(error);
+        return res.status(500).json({
+            status: false,
+            message: "An error occurred while fetching users and updating enquiry counts.",
+            error: error.message || "Internal Server Error",
+        });
+    }
+});
+
+// Example query: 
+// GET /api/payments?page=1&limit=10&startDate=2024-01-01
+
+// Let me know if you want me to add an end date or any other filters! 🚀
 exports.ProfileDataId = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.User?._id;
