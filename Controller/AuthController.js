@@ -905,11 +905,10 @@ const moment = require('moment');
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
     const {
-      Id, data_payment, success_reasons, payment_type, paymentMethod, 
-      payment_reason, transactionId, payment_data, payment_income, 
+      Id, data_payment, success_reasons, payment_type, paymentMethod,
+      payment_reason, transactionId, payment_data, payment_income,
       referred_user_pay, payment_key, page, withdrawal_reason,
-      paymentWidthrawal ,
-      payment_Add
+      paymentWidthrawal, payment_Add
     } = req.body;
 
     if (!Id) {
@@ -932,27 +931,22 @@ exports.paymentdata = catchAsync(async (req, res) => {
       });
     }
 
-    // Accumulate referred_user_pay
+    // Initialize or reset values
     let updatedReferredUserPayOverall = user.referred_user_pay_overall || 0;
     let updatedReferredUserPayMonthly = user.referred_user_pay_monthly || 0;
     let updatedReferredUserPayWeekly = user.referred_user_pay_weekly || 0;
     let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
     let updatedPaymentKey = user.payment_key_daily || 0;
 
-console.log("updatedPaymentKey",updatedPaymentKey)
-    // Check for period resets
-    if (user.lastPaymentMonth !== currentMonth) {
-      updatedReferredUserPayMonthly = 0;
-    }
-    if (user.lastPaymentWeek !== currentWeek) {
-      updatedReferredUserPayWeekly = 0;
-    }
+    // Reset values when period changes
+    if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
+    if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
     if (user.lastPaymentDay !== currentDay) {
       updatedReferredUserPayDaily = 0;
-      updatedPaymentKey = 0; // Reset payment_key daily
+      updatedPaymentKey = 0;
     }
 
-    // Add current referral payment
+    // Add current payments
     const referralAmount = Number(payment_Add) || 0;
     updatedReferredUserPayOverall += referralAmount;
     updatedReferredUserPayMonthly += referralAmount;
@@ -960,28 +954,14 @@ console.log("updatedPaymentKey",updatedPaymentKey)
     updatedReferredUserPayDaily += referralAmount;
     updatedPaymentKey += Number(paymentWidthrawal) || 0;
 
-
     const newPayment = new Adminpayment({
-      userId: Id,
-      paymentMethod,
-      payment_type,
-      success_reasons,
-      paymentWidthrawal,
-      payment_reason,
-      withdrawal_reason,
-      payment_key,
-      transactionId,
-      payment_data,
-      payment_income,
-      data_payment,
-      payment_income,
-      page,
-      referred_user_pay,
-      payment_Add
+      userId: Id, paymentMethod, payment_type, success_reasons,
+      paymentWidthrawal, payment_reason, withdrawal_reason, payment_key,
+      transactionId, payment_data, payment_income, data_payment, page,
+      referred_user_pay, payment_Add
     });
 
     const paymentRecord = await newPayment.save();
-
     if (!paymentRecord) {
       return res.status(400).json({
         status: false,
@@ -989,13 +969,11 @@ console.log("updatedPaymentKey",updatedPaymentKey)
       });
     }
 
-    console.log("updatedPaymentKey",updatedPaymentKey);
+    // Update user payment data
     const updatedUser = await User.findByIdAndUpdate(
       Id,
       {
-        payment_Add,
-        payment_data,
-        referred_user_pay,
+        payment_Add, payment_data, referred_user_pay,
         referred_user_pay_overall: updatedReferredUserPayOverall,
         referred_user_pay_monthly: updatedReferredUserPayMonthly,
         referred_user_pay_weekly: updatedReferredUserPayWeekly,
@@ -1022,8 +1000,9 @@ console.log("updatedPaymentKey",updatedPaymentKey)
       updatedUser
     });
 
-    const subject1 = "🎉 Your Payout Has Been Successfully Received!";
+    // Send email notification on successful payout
     if (page === "payout") {
+      const subject1 = "🎉 Your Payout Has Been Successfully Received!";
       await sendEmail({
         email: updatedUser.email,
         name: updatedUser.name,
@@ -1041,6 +1020,53 @@ console.log("updatedPaymentKey",updatedPaymentKey)
     });
   }
 });
+
+// Let me know if you want me to refine anything further! 🚀
+
+const cron = require('node-cron');
+cron.schedule('0 0 * * *', async () => {
+  try {
+    console.log('Running daily payment reset job...');
+    const currentDate = moment();
+    const currentMonth = currentDate.format('YYYY-MM');
+    const currentWeek = currentDate.format('YYYY-WW');
+    const currentDay = currentDate.format('YYYY-MM-DD');
+
+    const users = await User.find();
+    
+    for (let user of users) {
+      let updates = {};
+
+      if (user.lastPaymentDay !== currentDay) {
+        updates.referred_user_pay_daily = 0;
+        updates.payment_key_daily = 0;
+        updates.lastPaymentDay = currentDay;
+      }
+
+      if (user.lastPaymentWeek !== currentWeek) {
+        updates.referred_user_pay_weekly = 0;
+        updates.lastPaymentWeek = currentWeek;
+      }
+
+      if (user.lastPaymentMonth !== currentMonth) {
+        updates.referred_user_pay_monthly = 0;
+        updates.lastPaymentMonth = currentMonth;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await User.findByIdAndUpdate(user._id, updates, { new: true });
+        console.log(`Reset stats for user: ${user._id}`);
+      }
+    }
+
+    console.log('Payment reset job completed successfully.');
+  } catch (error) {
+    console.error('Error running payment reset job:', error);
+  }
+});
+
+console.log('Cron job scheduled for daily resets!');
+
 
 // Let me know if you want me to make any adjustments or add more features! 🚀
 exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
@@ -1247,6 +1273,7 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
   }
 });
 
+
 exports.AdminDashboard = catchAsync(async (req, res) => {
   try {
     const registeredCount = await User.countDocuments({ user_status: "registered" });
@@ -1254,14 +1281,16 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
     const inactiveCount = await User.countDocuments({ user_status: "inactive" });
     const enrolledCount = await User.countDocuments({ user_status: "enrolled" });
     const totalusercount = await User.countDocuments({});
+
     const AdminPaidAmount = await Adminpayment.aggregate([
       {
         $group: {
-          _id: "$paymentType", // Grouping by paymentType
-          totalAmount: { $sum: "$amount" } // Summing the amount field
+          _id: "$paymentType",
+          totalAmount: { $sum: "$amount" }
         }
       }
     ]);
+
     const totalAmount = await Payment.aggregate([
       {
         $group: {
@@ -1270,11 +1299,18 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         },
       },
     ]);
-    // Calculate today's income
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
+
     const todayIncome = await Payment.aggregate([
       {
         $match: {
@@ -1289,41 +1325,30 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
       },
     ]);
 
-    today.setHours(0, 0, 0, 0);
-
-    tomorrow.setDate(today.getDate() + 1);
-
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const collections = await Payment.aggregate([
+    const weekIncome = await Payment.aggregate([
       {
-        $facet: {
-          todayCollection: [
-            {
-              $match: {
-                createdAt: { $gte: today, $lt: tomorrow }, // Aaj ka collection
-              },
-            },
-            {
-              $group: {
-                _id: null,
-                totalAmount: { $sum: "$amount" }, // Aaj ka amount ka total
-              },
-            },
-          ],
-          yesterdayCollection: [
-            {
-              $match: {
-                createdAt: { $gte: yesterday, $lt: today }, // Kal ka collection
-              },
-            },
-            {
-              $group: {
-                _id: null,
-                totalAmount: { $sum: "$amount" }, // Kal ka amount ka total
-              },
-            },
-          ],
+        $match: {
+          payment_date: { $gte: startOfWeek, $lte: tomorrow },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const monthIncome = await Payment.aggregate([
+      {
+        $match: {
+          payment_date: { $gte: startOfMonth, $lte: tomorrow },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount" },
         },
       },
     ]);
@@ -1338,10 +1363,10 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
       enrolled: enrolledCount,
       AdmintotalAmount: AdminPaidAmount,
       totalusercount: totalusercount,
-      todayTotal: collections[0]?.todayCollection[0]?.totalAmount || 0,
-      yesterdayTotal: collections[0]?.yesterdayCollection[0]?.totalAmount || 0,
       totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
       todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,
+      thisWeekIncome: weekIncome.length > 0 ? weekIncome[0].total : 0,
+      thisMonthIncome: monthIncome.length > 0 ? monthIncome[0].total : 0,
       pendingCourses: pendingCoursesCount,
     });
   } catch (error) {
@@ -1349,3 +1374,12 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
+
+// This now returns:
+// - todayIncome
+// - thisWeekIncome
+// - thisMonthIncome
+// - totalAmount
+
+// Let me know if you want me to add a yearly income or refine the logic further! 🚀
+
