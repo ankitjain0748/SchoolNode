@@ -75,6 +75,7 @@ const userSchema = mongoose.Schema({
     lastPaymentWeek :String , 
     lastPaymentDay :String,
     paymentWidthrawal:Number,
+    lastTodayIncome:Number,
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
