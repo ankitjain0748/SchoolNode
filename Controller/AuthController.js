@@ -726,7 +726,7 @@ exports.forgotlinkrecord = catchAsync(
           pass: process.env.password,
         },
       });
-      const emailHtml = VerifyMail( customerUser ,resetLink);
+      const emailHtml = VerifyMail(customerUser, resetLink);
       await transporter.sendMail({
         from: process.env.user,
         to: record.email,
@@ -981,7 +981,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
         referred_user_pay_monthly: updatedReferredUserPayMonthly,
         referred_user_pay_weekly: updatedReferredUserPayWeekly,
         referred_user_pay_daily: updatedReferredUserPayDaily,
-        lastTodayIncome: updatedLastTodayIncome, 
+        lastTodayIncome: updatedLastTodayIncome,
         lastPaymentMonth: currentMonth,
         lastPaymentWeek: currentWeek,
         lastPaymentDay: currentDay,
@@ -1038,7 +1038,7 @@ cron.schedule('0 0 * * *', async () => {
     const currentDay = currentDate.format('YYYY-MM-DD');
 
     const users = await User.find();
-    
+
     for (let user of users) {
       let updates = {};
 
@@ -1113,72 +1113,79 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   }
 });
 
+
+
 exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-
     const { search, page = 1, limit = 10 } = req.query;
 
-    // Build the query object
-    const query = {
-      ref_date: { $gte: today, $lt: tomorrow }, // Filter users with today's ref_date
-    };
+    let  query ={};
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate());
+    startDate.setHours(0, 0, 0, 0);
 
-    // Add search filter if present
-    if (search) {
-      query.name = { $regex: search, $options: "i" }; // Case-insensitive name search
+    // Extract YYYY-MM-DD format
+    const formattedDate = startDate.toISOString().split("T")[0];
+    // Add name search if provided
+    if (search && search.trim() !== "") {
+      query.name = { $regex: search, $options: "i" };
     }
 
-    // Pagination setup
     const pageNumber = Math.max(1, parseInt(page, 10));
     const limitNumber = Math.max(1, parseInt(limit, 10));
     const skip = (pageNumber - 1) * limitNumber;
-
-    // Find users with the query and pagination
+    console.log("formattedDate", formattedDate)
+    // Correct query usage
     const users = await User.find(query).skip(skip).limit(limitNumber);
-
-    // Fetch details for referred users and bank details
-    const userDetails = await Promise.all(
+    console.log("Users Found:", users);
+    const record = await Promise.all(
       users.map(async (user) => {
-        const [referredBy, referredFirst, referredSecond, userBankDetails] = await Promise.all([
-          user.referred_by ? User.findById(user.referred_by).select("-password") : null,
-          user.referred_first ? User.findById(user.referred_first).select("-password") : null,
-          user.referred_second ? User.findById(user.referred_second).select("-password") : null,
-          Bank.findOne({ userId: user._id }),
+        const [userBankDetails] = await Promise.all([
+          Bank.findOne({ userId: user._id }), // Bank details fetch kar rahe hain
         ]);
-
-        const [referredByBankDetails, referredByProfileDetails, referredFirstBankDetails, referredSecondBankDetails] = await Promise.all([
-          referredBy ? Bank.findOne({ userId: referredBy._id }) : null,
-          referredBy ? ProfileData.findOne({ userId: referredBy._id }) : null,
-          referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
-          referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
-        ]);
-
+    
         return {
-          ...user.toObject(),
-          referred_by_details: referredBy,
-          referred_first_details: referredFirst,
-          referred_second_details: referredSecond,
-          bank_details: userBankDetails,
-          referred_by_bank_details: referredByBankDetails,
-          referred_first_bank_details: referredFirstBankDetails,
-          referred_second_bank_details: referredSecondBankDetails,
-          referredByProfileDetails,
+          ...user.toObject(), // User ka pura data
+          bank_details: userBankDetails, // Bank ka data
         };
       })
     );
 
-    // Total count for pagination metadata
+    console.log("record",record)
+    const userDetails = await Promise.all(
+users.map(async (user) => {
+      const [referredBy, referredFirst, referredSecond, userBankDetails] = await Promise.all([
+        user.referred_by ? User.findById(user.referred_by).select("-password") : null,
+        user.referred_first ? User.findById(user.referred_first).select("-password") : null,
+        user.referred_second ? User.findById(user.referred_second).select("-password") : null,
+        Bank.findOne({ userId: user._id }),
+      ]);
+      const [referredByBankDetails, referredByProfileDetails, referredFirstBankDetails, referredSecondBankDetails] = await Promise.all([
+        referredBy ? Bank.findOne({ userId: referredBy._id }) : null,
+        referredBy ? ProfileData.findOne({ userId: referredBy._id }) : null,
+        referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
+        referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
+      ]);
+
+      return {
+        ...user.toObject(),
+        referred_by_details: referredBy,
+        referred_first_details: referredFirst,
+        referred_second_details: referredSecond,
+        bank_details: userBankDetails,
+        referred_by_bank_details: referredByBankDetails,
+        referred_first_bank_details: referredFirstBankDetails,
+        referred_second_bank_details: referredSecondBankDetails,
+        referredByProfileDetails,
+      };
+    }));
     const totalUsers = await User.countDocuments(query);
 
     res.status(200).json({
       status: true,
       message: "Users fetched successfully",
-      data: userDetails,
+      data: record,
+      userDetails: userDetails,
       totalUsers,
       currentPage: pageNumber,
       totalPages: Math.ceil(totalUsers / limitNumber),
@@ -1192,6 +1199,10 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
     });
   }
 });
+
+
+
+
 
 exports.profileadmin = catchAsync(async (req, res, next) => {
   try {
