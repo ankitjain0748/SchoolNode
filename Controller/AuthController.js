@@ -726,7 +726,7 @@ exports.forgotlinkrecord = catchAsync(
           pass: process.env.password,
         },
       });
-      const emailHtml = VerifyMail(resetLink, customerUser);
+      const emailHtml = VerifyMail( customerUser ,resetLink);
       await transporter.sendMail({
         from: process.env.user,
         to: record.email,
@@ -937,7 +937,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
     let updatedReferredUserPayWeekly = user.referred_user_pay_weekly || 0;
     let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
     let updatedPaymentKey = user.payment_key_daily || 0;
-    let updatedLastTodayIncome = user.lastTodayIncome || 0;
+    let updatedLastTodayIncome = user.lastTodayIncome - payment_key || 0;
 
     // Reset values when period changes
     if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
@@ -981,7 +981,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
         referred_user_pay_monthly: updatedReferredUserPayMonthly,
         referred_user_pay_weekly: updatedReferredUserPayWeekly,
         referred_user_pay_daily: updatedReferredUserPayDaily,
-        lastTodayIncome: updatedLastTodayIncome, // Store last day income
+        lastTodayIncome: updatedLastTodayIncome, 
         lastPaymentMonth: currentMonth,
         lastPaymentWeek: currentWeek,
         lastPaymentDay: currentDay,
