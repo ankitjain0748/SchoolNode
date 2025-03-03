@@ -726,7 +726,7 @@ exports.forgotlinkrecord = catchAsync(
           pass: process.env.password,
         },
       });
-      const emailHtml = ForgetPassword(resetLink, customerUser);
+      const emailHtml = VerifyMail(resetLink, customerUser);
       await transporter.sendMail({
         from: process.env.user,
         to: record.email,
