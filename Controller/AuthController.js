@@ -1311,10 +1311,27 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
     const todayIncome = await Payment.aggregate([
       {
         $match: {
           payment_date: { $gte: today, $lt: tomorrow },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const yesterdayIncome = await Payment.aggregate([
+      {
+        $match: {
+          payment_date: { $gte: yesterday, $lt: today },
         },
       },
       {
@@ -1365,6 +1382,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
       totalusercount: totalusercount,
       totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
       todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,
+      yesterdayIncome: yesterdayIncome.length > 0 ? yesterdayIncome[0].total : 0,
       thisWeekIncome: weekIncome.length > 0 ? weekIncome[0].total : 0,
       thisMonthIncome: monthIncome.length > 0 ? monthIncome[0].total : 0,
       pendingCourses: pendingCoursesCount,
@@ -1374,6 +1392,16 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
+
+// Now you have:
+// - todayIncome
+// - yesterdayIncome
+// - thisWeekIncome
+// - thisMonthIncome
+// - totalAmount
+
+// Let me know if you want any more tweaks! 🚀
+
 
 // This now returns:
 // - todayIncome
