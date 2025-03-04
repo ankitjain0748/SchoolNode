@@ -703,8 +703,7 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.forgotlinkrecord = catchAsync(
-  async (req, res) => {
+exports.forgotlinkrecord = catchAsync( async (req, res) => {
     try {
       const { email } = req.body;
       if (!email) {
@@ -715,7 +714,7 @@ exports.forgotlinkrecord = catchAsync(
         return errorResponse(res, "No user found with this email", 404);
       }
       const token = await signEmail(record._id);
-      const resetLink = `http://localhost:3000/new-password/${token}`;
+      const resetLink = `www.stackearn.com/new-password/${token}`;
       const customerUser = record.name;
       let transporter = nodemailer.createTransport({
         host: process.env.MAIL_HOST,
@@ -742,8 +741,7 @@ exports.forgotlinkrecord = catchAsync(
   }
 );
 
-exports.forgotpassword = catchAsync(
-  async (req, res) => {
+exports.forgotpassword = catchAsync(async (req, res) => {
     try {
       const { token, newPassword } = req.body;
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
