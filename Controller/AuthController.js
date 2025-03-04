@@ -982,6 +982,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
         lastTodayIncome: updatedLastTodayIncome,
         lastPaymentMonth: currentMonth,
         lastPaymentWeek: currentWeek,
+        payment_key:payment_key,
         lastPaymentDay: currentDay,
         payment_key_daily: updatedPaymentKey,
       },
@@ -1066,18 +1067,28 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
 exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
-    let query = {};
+    let query = {
+      role: 'user', // Adding filter for users with role 'user'
+      lastTodayIncome: { $gt: 0 } // Adding filter for lastTodayIncome greater than 0
+    };
+
     const startDate = new Date();
     startDate.setDate(startDate.getDate());
     startDate.setHours(0, 0, 0, 0);
     const formattedDate = startDate.toISOString().split("T")[0];
+
     if (search && search.trim() !== "") {
-      query.name = { $regex: search, $options: "i" };
+      query.name = { $regex: search, $options: "i" }; // Search query for name
     }
+
     const pageNumber = Math.max(1, parseInt(page, 10));
     const limitNumber = Math.max(1, parseInt(limit, 10));
     const skip = (pageNumber - 1) * limitNumber;
+
+    // Fetch users based on the query, with pagination
     const users = await User.find(query).skip(skip).limit(limitNumber);
+
+    // Fetch additional user details
     const userDetails = await Promise.all(
       users.map(async (user) => {
         const [referredBy, referredFirst, referredSecond, userBankDetails] = await Promise.all([
@@ -1086,12 +1097,14 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
           user.referred_second ? User.findById(user.referred_second).select("-password") : null,
           Bank.findOne({ userId: user._id }),
         ]);
+        
         const [referredByBankDetails, referredByProfileDetails, referredFirstBankDetails, referredSecondBankDetails] = await Promise.all([
           referredBy ? Bank.findOne({ userId: referredBy._id }) : null,
           referredBy ? ProfileData.findOne({ userId: referredBy._id }) : null,
           referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
           referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
         ]);
+        
         return {
           ...user.toObject(),
           referred_by_details: referredBy,
@@ -1103,8 +1116,10 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
           referred_second_bank_details: referredSecondBankDetails,
           referredByProfileDetails,
         };
-      }));
-    const totalUsers = await User.countDocuments(query);
+      })
+    );
+
+    const totalUsers = await User.countDocuments(query); // Get total users count with filters
 
     res.status(200).json({
       status: true,
@@ -1123,6 +1138,7 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
     });
   }
 });
+
 
 exports.profileadmin = catchAsync(async (req, res, next) => {
   try {

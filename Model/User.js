@@ -49,6 +49,7 @@ const userSchema = mongoose.Schema({
         default: "registered",
         enum: ["registered", "active", "inactive", "enrolled"]
     },
+    payment_key :String,
     isDeleted: {
         type: Boolean,
         default: false,
