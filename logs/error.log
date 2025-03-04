@@ -16,3 +16,34 @@
 2025-03-03 23:05:29 [ERROR]: Error fetching users: connection 8 to 13.126.129.193:27017 timed out
 2025-03-03 23:05:35 [ERROR]: Error deleting user record: read ECONNRESET
 2025-03-04 00:07:28 [ERROR]: userPay is not defined
+2025-03-04 21:45:50 [ERROR]: connection <monitor> to 13.126.129.193:27017 timed out
+2025-03-04 21:45:50 [ERROR]: connection <monitor> to 13.126.129.193:27017 timed out
+2025-03-04 21:46:11 [ERROR]: read ECONNRESET
+2025-03-04 21:46:11 [ERROR]: read ECONNRESET
+2025-03-04 21:46:11 [ERROR]: read ECONNRESET
+2025-03-04 21:46:21 [ERROR]: read ECONNRESET
+2025-03-04 21:46:21 [ERROR]: read ECONNRESET
+2025-03-04 21:46:21 [ERROR]: read ECONNRESET
+2025-03-04 21:46:31 [ERROR]: read ECONNRESET
+2025-03-04 21:46:31 [ERROR]: read ECONNRESET
+2025-03-04 21:46:31 [ERROR]: read ECONNRESET
+2025-03-04 21:46:41 [ERROR]: connection timed out
+2025-03-04 21:46:41 [ERROR]: connection timed out
+2025-03-04 21:46:41 [ERROR]: connection timed out
+2025-03-04 21:48:34 [ERROR]: Connection pool for cluster0-shard-00-02.g69we.mongodb.net:27017 was cleared because another operation failed with: "read ECONNRESET"
+2025-03-04 21:48:34 [ERROR]: Connection pool for cluster0-shard-00-02.g69we.mongodb.net:27017 was cleared because another operation failed with: "read ECONNRESET"
+2025-03-04 21:48:34 [ERROR]: read ECONNRESET
+2025-03-04 21:48:44 [ERROR]: connection <monitor> to 13.126.129.193:27017 closed
+2025-03-04 21:48:44 [ERROR]: connection <monitor> to 13.126.129.193:27017 closed
+2025-03-04 21:48:44 [ERROR]: connection <monitor> to 13.126.129.193:27017 closed
+2025-03-04 21:48:54 [ERROR]: connection <monitor> to 13.126.129.193:27017 closed
+2025-03-04 21:48:54 [ERROR]: connection <monitor> to 13.126.129.193:27017 closed
+2025-03-04 21:49:04 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:04 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:04 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:14 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:14 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:14 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:24 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:24 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-03-04 21:49:24 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
