@@ -1116,7 +1116,6 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
 exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
-
     let query = {};
     const startDate = new Date();
     startDate.setDate(startDate.getDate());
@@ -1143,7 +1142,6 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
           referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
           referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
         ]);
-
         return {
           ...user.toObject(),
           referred_by_details: referredBy,
