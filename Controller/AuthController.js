@@ -1347,7 +1347,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
 
 
 
-cron.schedule('5 22 * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
   try {
     console.log('Running daily payment reset job...');
     const currentDate = moment();

@@ -94,9 +94,10 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const Transactions = await Transaction.find({ user: user });
 
         // Fetch referral data
+
         const referralData = await User.find({
             $or: [
-                { referred_by: userId },
+                { referred_by: UserData?.referred_by },
                 { referred_first: userId },
                 { referred_second: userId }
             ]
