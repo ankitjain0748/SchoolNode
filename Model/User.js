@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema({
     referred_second: {
         type: String
     },
-    passive_income :Number ,
+    passive_income: Number,
     country_code: {
         type: String,
         default: "IN"
@@ -47,7 +47,7 @@ const userSchema = mongoose.Schema({
     user_status: {
         type: String,
         default: "registered",
-        enum  :["registered" , "active" ,"inactive", "enrolled"]
+        enum: ["registered", "active", "inactive", "enrolled"]
     },
     isDeleted: {
         type: Boolean,
@@ -57,7 +57,7 @@ const userSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    ref_date :{
+    ref_date: {
         type: Date,
         default: Date.now
     },
@@ -65,34 +65,34 @@ const userSchema = mongoose.Schema({
         type: String,
         // deafult: false
     },
-    payment_Add:Number,
-    referred_user_pay_overall :Number , 
-    referred_user_pay_monthly :Number,
-    referred_user_pay_weekly :Number,
-    referred_user_pay_daily :Number ,
-    payment_key_daily :Number,
-    lastPaymentMonth: String , 
-    lastPaymentWeek :String , 
-    lastPaymentDay :String,
-    paymentWidthrawal:Number,
-    lastTodayIncome:Number,
+    payment_Add: Number,
+    referred_user_pay_overall: Number,
+    referred_user_pay_monthly: Number,
+    referred_user_pay_weekly: Number,
+    referred_user_pay_daily: Number,
+    payment_key_daily: Number,
+    lastPaymentMonth: String,
+    lastPaymentWeek: String,
+    lastPaymentDay: String,
+    paymentWidthrawal: Number,
+    lastTodayIncome: Number,
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
     },
     payment_data: Number,
-    payment_key :String ,  
-    referred_user_pay : Number , 
-    first_user_pay :Number , 
-    second_user_pay :Number , 
-    widthrawal_reason :String ,
-    success_reasons :String ,
-    transactionId :String , 
-    payment_reason :String , 
-    paymentMethod :String ,
-    OTP : Number,
-    ActiveUserPrice : Number , 
-    InActiveUserPercanetage : Number , 
+    payment_key: String,
+    referred_user_pay: Number,
+    first_user_pay: Number,
+    second_user_pay: Number,
+    widthrawal_reason: String,
+    success_reasons: String,
+    transactionId: String,
+    payment_reason: String,
+    paymentMethod: String,
+    OTP: Number,
+    ActiveUserPrice: Number,
+    InActiveUserPercanetage: Number,
 });
 
 const User = mongoose.model("User", userSchema);
