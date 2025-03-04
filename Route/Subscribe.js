@@ -6,6 +6,8 @@ subscribeget.post("/subscribe-add", SubscribePost);
 
 subscribeget.get("/subscribe-list", Subscribeget);
 
+subscribeget.post("/subscriber_delete", SubscriberDelete);
+
 subscribeget.get("/subscribe-email", EmailDataSubScribe);
 
 subscribeget.get("/contact-email", EmailDataContactGet);
@@ -18,7 +20,6 @@ subscribeget.post("/promotion_email" , promtionalEmail);
 
 subscribeget.post("/offer_email" , OfferCourseEmail);
 
-subscribeget.post("/subscriber_delete", SubscriberDelete);
 
 
 module.exports = subscribeget;

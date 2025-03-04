@@ -1,7 +1,5 @@
-// Import mongoose
 const mongoose = require('mongoose');
 
-// Define schema for lectures (nested in the Online schema)
 const OnlineSchema =  mongoose.Schema({
   title: String,
   video: String,
@@ -9,11 +7,9 @@ const OnlineSchema =  mongoose.Schema({
   webnair_date: String,
   webnair_time: String,
   webniar_end_time :String,
-
   place: String
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
+}, { timestamps: true }); 
 
-// Create a model for webinars
 const Online = mongoose.model('webinar', OnlineSchema);
 
 module.exports = Online;
