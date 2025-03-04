@@ -59,31 +59,31 @@ exports.getAllGallerys = catchAsync(async (req, res) => {
 });
 // Get a single Gallery post by ID
 exports.getGalleryById = catchAsync(async (req, res) => {
-        try {
-            const { Id } = req.params;
-            if (!Id) {
-                Loggers.warn("Gallery ID is required")
-                return res.status(400).json({ msg: "Gallery ID is required" });
-            }
-            const Gallerys = await Gallery.findById(Id);
-            if (!Gallerys) {
-                return res.status(404).json({
-                    status: false,
-                    message: 'Gallery not found',
-                });
-            }
-            res.status(200).json({
-                status: true,
-                data: Gallerys,
-                message: 'Gallery fetched successfully',
-            });
-        } catch (error) {
-            res.status(400).json({
+    try {
+        const { Id } = req.params;
+        if (!Id) {
+            Loggers.warn("Gallery ID is required")
+            return res.status(400).json({ msg: "Gallery ID is required" });
+        }
+        const Gallerys = await Gallery.findById(Id);
+        if (!Gallerys) {
+            return res.status(404).json({
                 status: false,
-                message: error.message,
+                message: 'Gallery not found',
             });
         }
+        res.status(200).json({
+            status: true,
+            data: Gallerys,
+            message: 'Gallery fetched successfully',
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: false,
+            message: error.message,
+        });
     }
+}
 );
 // Update a Gallery post by ID
 exports.updateGalleryById = catchAsync(async (req, res) => {

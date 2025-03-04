@@ -12,7 +12,7 @@ const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
 const Transaction = require("../Model/Transcation");
 const Course = require("../Model/Course");
-
+const cron = require('node-cron');
 const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
 const SocialSection = require("../Model/Social");
@@ -1025,54 +1025,6 @@ exports.paymentdata = catchAsync(async (req, res) => {
   }
 });
 
-
-// Let me know if you want me to refine anything further! 🚀
-
-const cron = require('node-cron');
-cron.schedule('0 0 * * *', async () => {
-  try {
-    console.log('Running daily payment reset job...');
-    const currentDate = moment();
-    const currentMonth = currentDate.format('YYYY-MM');
-    const currentWeek = currentDate.format('YYYY-WW');
-    const currentDay = currentDate.format('YYYY-MM-DD');
-
-    const users = await User.find();
-
-    for (let user of users) {
-      let updates = {};
-
-      if (user.lastPaymentDay !== currentDay) {
-        updates.referred_user_pay_daily = 0;
-        updates.payment_key_daily = 0;
-        updates.lastPaymentDay = currentDay;
-      }
-
-      if (user.lastPaymentWeek !== currentWeek) {
-        updates.referred_user_pay_weekly = 0;
-        updates.lastPaymentWeek = currentWeek;
-      }
-
-      if (user.lastPaymentMonth !== currentMonth) {
-        updates.referred_user_pay_monthly = 0;
-        updates.lastPaymentMonth = currentMonth;
-      }
-
-      if (Object.keys(updates).length > 0) {
-        await User.findByIdAndUpdate(user._id, updates, { new: true });
-        console.log(`Reset stats for user: ${user._id}`);
-      }
-    }
-
-    console.log('Payment reset job completed successfully.');
-  } catch (error) {
-    console.error('Error running payment reset job:', error);
-  }
-});
-
-console.log('Cron job scheduled for daily resets!');
-
-
 // Let me know if you want me to make any adjustments or add more features! 🚀
 exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   try {
@@ -1379,21 +1331,47 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
   }
 });
 
-// Now you have:
-// - todayIncome
-// - yesterdayIncome
-// - thisWeekIncome
-// - thisMonthIncome
-// - totalAmount
-
-// Let me know if you want any more tweaks! 🚀
 
 
-// This now returns:
-// - todayIncome
-// - thisWeekIncome
-// - thisMonthIncome
-// - totalAmount
+cron.schedule('0 0 * * *', async () => {
+  try {
+    console.log('Running daily payment reset job...');
+    const currentDate = moment();
+    const currentMonth = currentDate.format('YYYY-MM');
+    const currentWeek = currentDate.format('YYYY-WW');
+    const currentDay = currentDate.format('YYYY-MM-DD');
 
-// Let me know if you want me to add a yearly income or refine the logic further! 🚀
+    const users = await User.find();
 
+    for (let user of users) {
+      let updates = {};
+
+      if (user.lastPaymentDay !== currentDay) {
+        updates.referred_user_pay_daily = 0;
+        updates.payment_key_daily = 0;
+        updates.lastPaymentDay = currentDay;
+      }
+
+      if (user.lastPaymentWeek !== currentWeek) {
+        updates.referred_user_pay_weekly = 0;
+        updates.lastPaymentWeek = currentWeek;
+      }
+
+      if (user.lastPaymentMonth !== currentMonth) {
+        updates.referred_user_pay_monthly = 0;
+        updates.lastPaymentMonth = currentMonth;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await User.findByIdAndUpdate(user._id, updates, { new: true });
+        console.log(`Reset stats for user: ${user._id}`);
+      }
+    }
+
+    console.log('Payment reset job completed successfully.');
+  } catch (error) {
+    console.error('Error running payment reset job:', error);
+  }
+});
+
+console.log('Cron job scheduled for daily resets!');
