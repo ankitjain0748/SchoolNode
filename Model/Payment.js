@@ -9,6 +9,10 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  GST_Number: {
+    type: String,
+    required: true,
+  },
    CourseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
