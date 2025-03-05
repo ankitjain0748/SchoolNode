@@ -61,9 +61,13 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
     }
 });
 
+
+
+
 exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?.id || req.query?.id;
-    console.log("userId",userId)
+
+    console.log("userId", userId);
     let { page = 1, limit = 10, paymentDate, name } = req.query;
 
     // Convert page and limit to numbers and handle invalid values
@@ -102,28 +106,23 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         const payment = await Payment.findOne(paymentFilter);
 
         // Build referral search query
-     
-        const testReferrals = await User.find({
+        let referralQuery = {
             $or: [
                 { referred_by: userId },
                 { referred_first: userId },
                 { referred_second: userId }
             ]
-        }).populate("CourseId", "title discountPrice category courseImage").skip((page - 1) * limit)
-        .limit(limit);
-        
+        };
+
+        const testReferrals = await User.find(referralQuery)
+            .populate("CourseId", "title discountPrice category courseImage")
+            .skip((page - 1) * limit)
+            .limit(limit);
+
         console.log("Test Referrals with Course Data:", testReferrals);
-        
-        
-        console.log("Test Referrals:", testReferrals);
-        
-
-
-        // Fetch referral data with pagination
-       
 
         // Get total referral count (for pagination metadata)
-        const totalReferrals = await User.countDocuments(testReferrals);
+        const totalReferrals = await User.countDocuments(referralQuery);
 
         const referralCodes = await RefralModel.find({
             $or: [
@@ -132,27 +131,29 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
                 { userId: { $in: testReferrals.map(user => user.referred_second).filter(id => id !== null) } }
             ]
         });
-        
-        
-        console.log("Mapped User IDs for Referral Lookup:", testReferrals.map(user => user._id));
 
-        
-        
         console.log("Referral Codes:", referralCodes);
-        
+
         // Combine user data with referral codes
-        const referralUsersWithCode = testReferrals.map(referralUser => {
+        let referralUsersWithCode = testReferrals.map(referralUser => {
             const referralCode = referralCodes.find(code => code.userId.toString() === referralUser.referred_by?.toString());
             return {
                 ...referralUser.toObject(),
                 referral_code: referralCode ? referralCode.referral_code : null,
             };
         });
-        
-        console.log("Referral Users with Code and Course Data:", referralUsersWithCode);
-    
 
-       
+        console.log("Referral Users with Code and Course Data:", referralUsersWithCode);
+
+        // If `name` is provided, filter the `referralUsersWithCode` array by name
+        if (name) {
+            referralUsersWithCode = referralUsersWithCode.filter(referralUser =>
+                referralUser.name && referralUser.name.toLowerCase().includes(name.toLowerCase())
+            );
+        }
+
+        console.log("Filtered Referral Users by Name:", referralUsersWithCode);
+
         // Send the response
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
@@ -174,9 +175,9 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
     }
 });
 
-exports.RefralCodeGetId= catchAsync(async (req, res) => {
-    const userId = req.User?.id ;
-    console.log("userId",userId)
+exports.RefralCodeGetId = catchAsync(async (req, res) => {
+    const userId = req.query?.id;
+    console.log("userId", userId);
     let { page = 1, limit = 10, paymentDate, name } = req.query;
 
     // Convert page and limit to numbers and handle invalid values
@@ -215,28 +216,23 @@ exports.RefralCodeGetId= catchAsync(async (req, res) => {
         const payment = await Payment.findOne(paymentFilter);
 
         // Build referral search query
-     
-        const testReferrals = await User.find({
+        let referralQuery = {
             $or: [
                 { referred_by: userId },
                 { referred_first: userId },
                 { referred_second: userId }
             ]
-        }).populate("CourseId", "title discountPrice category courseImage").skip((page - 1) * limit)
-        .limit(limit);
-        
+        };
+
+        const testReferrals = await User.find(referralQuery)
+            .populate("CourseId", "title discountPrice category courseImage")
+            .skip((page - 1) * limit)
+            .limit(limit);
+
         console.log("Test Referrals with Course Data:", testReferrals);
-        
-        
-        console.log("Test Referrals:", testReferrals);
-        
-
-
-        // Fetch referral data with pagination
-       
 
         // Get total referral count (for pagination metadata)
-        const totalReferrals = await User.countDocuments(testReferrals);
+        const totalReferrals = await User.countDocuments(referralQuery);
 
         const referralCodes = await RefralModel.find({
             $or: [
@@ -245,27 +241,29 @@ exports.RefralCodeGetId= catchAsync(async (req, res) => {
                 { userId: { $in: testReferrals.map(user => user.referred_second).filter(id => id !== null) } }
             ]
         });
-        
-        
-        console.log("Mapped User IDs for Referral Lookup:", testReferrals.map(user => user._id));
 
-        
-        
         console.log("Referral Codes:", referralCodes);
-        
+
         // Combine user data with referral codes
-        const referralUsersWithCode = testReferrals.map(referralUser => {
+        let referralUsersWithCode = testReferrals.map(referralUser => {
             const referralCode = referralCodes.find(code => code.userId.toString() === referralUser.referred_by?.toString());
             return {
                 ...referralUser.toObject(),
                 referral_code: referralCode ? referralCode.referral_code : null,
             };
         });
-        
-        console.log("Referral Users with Code and Course Data:", referralUsersWithCode);
-    
 
-       
+        console.log("Referral Users with Code and Course Data:", referralUsersWithCode);
+
+        // If `name` is provided, filter the `referralUsersWithCode` array by name
+        if (name) {
+            referralUsersWithCode = referralUsersWithCode.filter(referralUser =>
+                referralUser.name && referralUser.name.toLowerCase().includes(name.toLowerCase())
+            );
+        }
+
+        console.log("Filtered Referral Users by Name:", referralUsersWithCode);
+
         // Send the response
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
@@ -286,6 +284,8 @@ exports.RefralCodeGetId= catchAsync(async (req, res) => {
         });
     }
 });
+
+
 
 exports.RefralCodeDelete = catchAsync(async (req, res) => {
     try {

@@ -148,7 +148,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             inactive: inactiveCount,
             enrolled: enrolledCount,
             totalusercount: totalusercount,
-            AdminPaidAmount: AdminPaidAmount,
+            AdminPaidAmount: AdminPaidAmount.length > 0 ? AdminPaidAmount[0] :{},
             totalPaymentAddAmount: totalPaymentAddAmount.length > 0 ? totalPaymentAddAmount[0].total : {},
             totalGSTAmount: totalGSTAmount.length > 0 ? totalGSTAmount[0].totalGSTAmount : {},
             totaluserIncome: totaluserIncome.length > 0 ? totaluserIncome[0] : {},

@@ -130,44 +130,59 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     }
 });
 
+// ProfileAdminPayeData Controller Function
 exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
     try {
-        const userId = req?.query?.id;
-        const { page = 1, limit = 10, payment_date } = req.query;
-        
+        const userId = req?.query?.id; // Extract userId from query parameters
+        const { page = 1, limit = 10, payment_date } = req.query; // Pagination and payment_date query
+
+        // Initialize the query with userId
         const query = { userId: userId };
 
-        // Add start date filter if provided
+        // Add date filtering if payment_date is provided
         if (payment_date) {
-            query.paymentDate = {
-                $gte: new Date(payment_date)
+            const startDate = new Date(payment_date); // Start of the day
+            const endDate = new Date(payment_date);  // End of the day
+            endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
+
+            query.payment_date = {
+                $gte: startDate, // Greater than or equal to start of the day
+                $lte: endDate,   // Less than or equal to end of the day
             };
         }
 
-        const AdminPayments = await AdminPay.find(query)
-            .sort({ paymentDate: -1 }) // Sort by paymentDate descending
-            .skip((page - 1) * limit)
-            .limit(parseInt(limit));
+        // Debugging: Log query object to verify
+        console.log("Query Object:", query);
 
+        // Fetch payments from the database with pagination and sorting
+        const AdminPayments = await AdminPay.find(query)
+            .sort({ payment_date: -1 }) // Sort by payment_date in descending order
+            .skip((page - 1) * limit) // Apply pagination: skip documents
+            .limit(parseInt(limit)); // Limit documents per page
+
+        // Count total documents matching the query
         const totalPayments = await AdminPay.countDocuments(query);
 
+        // Return the response with pagination details
         return res.status(200).json({
             status: true,
             AdminPayments: AdminPayments,
             currentPage: parseInt(page),
             totalPages: Math.ceil(totalPayments / limit),
             totalPayments,
-            message: "Users retrieved successfully with enquiry counts updated",
+            message: "Users retrieved successfully with payment data filtered by date",
         });
     } catch (error) {
+        // Log the error and return a server error response
         logger.error(error);
         return res.status(500).json({
             status: false,
-            message: "An error occurred while fetching users and updating enquiry counts.",
+            message: "An error occurred while fetching payment data.",
             error: error.message || "Internal Server Error",
         });
     }
 });
+
 
 // Example query: 
 // GET /api/payments?page=1&limit=10&startDate=2024-01-01

@@ -48,3 +48,10 @@
 2025-03-04 21:49:24 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
 2025-03-04 21:49:24 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
 2025-03-04 21:52:34 [ERROR]: Cast to ObjectId failed for value "" (type string) at path "userId" for model "AdminPayment"
+2025-03-05 22:54:08 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-05 22:54:12 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-05 22:54:18 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-05 22:55:18 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-05 22:55:18 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-05 22:55:18 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-05 22:57:04 [ERROR]: Error fetching users: read ECONNRESET
