@@ -141,7 +141,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-
         res.status(200).json({
             success: true,
             registered: registeredCount,
