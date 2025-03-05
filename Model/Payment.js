@@ -10,7 +10,7 @@ const paymentSchema = new mongoose.Schema({
     required: true,
   },
   GST_Number: {
-    type: String,
+    type: Number,
     required: true,
   },
    CourseId: {

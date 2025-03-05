@@ -2,6 +2,7 @@ const User = require("../Model/User");
 const AdminPayment = require("../Model/Adminpay");
 const catchAsync = require("../utill/catchAsync");
 const Payment = require("../Model/Payment");
+const moment = require("moment");
 
 exports.AdminDashboard = catchAsync(async (req, res) => {
     try {
@@ -14,6 +15,10 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         tomorrow.setDate(today.getDate() + 1);
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
+        const startOfDay = moment().startOf('day').toDate();
+        const startOfWeeks = moment().startOf('week').toDate();
+        const startOfMonths = moment().startOf('month').toDate();
+        const previousDate = moment().subtract(1, 'days').toDate()
         const registeredCount = await User.countDocuments({ user_status: "registered" });
         const activeCount = await User.countDocuments({ user_status: "active" });
         const inactiveCount = await User.countDocuments({ user_status: "inactive" });
@@ -31,20 +36,35 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
-        console.log({
-            totaluserIncome: totaluserIncome.length > 0 ? totaluserIncome[0] : {}
-        });
-
-
-        // const AdminPaidAmount = await AdminPayment.aggregate([
-        //     {
-        //         $group: {
-        //             _id: "$paymentType",
-        //             totalAmount: { $sum: "$amount" }
-        //         }
-        //     }
-        // ]);
-
+        const AdminPaidAmount = await AdminPayment.aggregate([
+            {
+                $group: {
+                    _id: "$paymentType",
+                    totalAmount: { $sum: "$payment_key" },
+                    previousDay: {
+                        $sum: {
+                            $cond: [{ $gte: ["$payment_date", previousDate] }, "$payment_key", 0]
+                        }
+                    },
+                    today: {
+                        $sum: {
+                            $cond: [{ $gte: ["$payment_date", startOfDay] }, "$payment_key", 0]
+                        }
+                    },
+                    weekly: {
+                        $sum: {
+                            $cond: [{ $gte: ["$payment_date", startOfWeeks] }, "$payment_key", 0]
+                        }
+                    },
+                    monthly: {
+                        $sum: {
+                            $cond: [{ $gte: ["$payment_date", startOfMonths] }, "$payment_key", 0]
+                        }
+                    },
+                    overall: { $sum: "$payment_key" }  // Total sum
+                }
+            }
+        ]);
         const totalAmount = await Payment.aggregate([
             {
                 $group: {
@@ -53,7 +73,22 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-
+        const totalPaymentAddAmount = await AdminPayment.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: "$payment_Add" },
+                },
+            },
+        ]);
+        const totalGSTAmount = await Payment.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalGSTAmount: { $sum: "$GST_Number" } // Summing up all GST_Number values
+                }
+            }
+        ]);
         const todayIncome = await Payment.aggregate([
             {
                 $match: {
@@ -67,7 +102,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-
         const yesterdayIncome = await Payment.aggregate([
             {
                 $match: {
@@ -81,7 +115,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-
         const weekIncome = await Payment.aggregate([
             {
                 $match: {
@@ -95,7 +128,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-
         const monthIncome = await Payment.aggregate([
             {
                 $match: {
@@ -110,8 +142,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             },
         ]);
 
-        // const pendingCoursesCount = await Course.countDocuments({});
-
         res.status(200).json({
             success: true,
             registered: registeredCount,
@@ -119,6 +149,9 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             inactive: inactiveCount,
             enrolled: enrolledCount,
             totalusercount: totalusercount,
+            AdminPaidAmount: AdminPaidAmount,
+            totalPaymentAddAmount: totalPaymentAddAmount.length > 0 ? totalPaymentAddAmount[0].total : {},
+            totalGSTAmount: totalGSTAmount.length > 0 ? totalGSTAmount[0].totalGSTAmount : {},
             totaluserIncome: totaluserIncome.length > 0 ? totaluserIncome[0] : {},
             totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
             todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,
