@@ -55,3 +55,5 @@
 2025-03-05 22:55:18 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
 2025-03-05 22:55:18 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
 2025-03-05 22:57:04 [ERROR]: Error fetching users: read ECONNRESET
+2025-03-06 20:43:07 [ERROR]: Payment validation failed: GST_Number: Path `GST_Number` is required.
+2025-03-06 20:46:44 [ERROR]: Payment validation failed: GST_Number: Path `GST_Number` is required.

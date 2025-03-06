@@ -64,12 +64,13 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 
 
 
+
 exports.RefralCodeGet = catchAsync(async (req, res) => {
-    const userId = req.User?.id || req.query?.id;
+    const userId = req.User?.id;
 
-    console.log("userId", userId);
-    let { page = 1, limit = 10, paymentDate, name } = req.query;
+    let { page = 1, limit = 10, paymentDate, name="" } = req.query;
 
+    console.log("req.query",req.query)
     // Convert page and limit to numbers and handle invalid values
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
@@ -119,7 +120,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             .skip((page - 1) * limit)
             .limit(limit);
 
-        console.log("Test Referrals with Course Data:", testReferrals);
 
         // Get total referral count (for pagination metadata)
         const totalReferrals = await User.countDocuments(referralQuery);
@@ -132,7 +132,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             ]
         });
 
-        console.log("Referral Codes:", referralCodes);
 
         // Combine user data with referral codes
         let referralUsersWithCode = testReferrals.map(referralUser => {
@@ -143,7 +142,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             };
         });
 
-        console.log("Referral Users with Code and Course Data:", referralUsersWithCode);
 
         // If `name` is provided, filter the `referralUsersWithCode` array by name
         if (name) {
@@ -152,7 +150,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             );
         }
 
-        console.log("Filtered Referral Users by Name:", referralUsersWithCode);
 
         // Send the response
         return res.status(200).json({
@@ -174,10 +171,8 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         });
     }
 });
-
 exports.RefralCodeGetId = catchAsync(async (req, res) => {
     const userId = req.query?.id;
-    console.log("userId", userId);
     let { page = 1, limit = 10, paymentDate, name } = req.query;
 
     // Convert page and limit to numbers and handle invalid values
@@ -229,7 +224,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             .skip((page - 1) * limit)
             .limit(limit);
 
-        console.log("Test Referrals with Course Data:", testReferrals);
 
         // Get total referral count (for pagination metadata)
         const totalReferrals = await User.countDocuments(referralQuery);
@@ -242,7 +236,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             ]
         });
 
-        console.log("Referral Codes:", referralCodes);
 
         // Combine user data with referral codes
         let referralUsersWithCode = testReferrals.map(referralUser => {
@@ -253,7 +246,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             };
         });
 
-        console.log("Referral Users with Code and Course Data:", referralUsersWithCode);
 
         // If `name` is provided, filter the `referralUsersWithCode` array by name
         if (name) {
@@ -262,7 +254,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             );
         }
 
-        console.log("Filtered Referral Users by Name:", referralUsersWithCode);
 
         // Send the response
         return res.status(200).json({

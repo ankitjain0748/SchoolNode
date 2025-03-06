@@ -11,7 +11,6 @@ const paymentSchema = new mongoose.Schema({
   },
   GST_Number: {
     type: Number,
-    required: true,
   },
    CourseId: {
       type: mongoose.Schema.Types.ObjectId,

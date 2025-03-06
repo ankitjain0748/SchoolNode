@@ -51,6 +51,9 @@ exports.createOrder = catchAsync(async (req, res) => {
   }
 });
 
+// 
+
+
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
     const UserId = req.User._id;
@@ -73,8 +76,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       CourseId,
       payment_method
     });
-
-
 
     const record = await payment.save();
     const coursedata = await Course.findOne({ _id: CourseId });
@@ -113,9 +114,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     });
 
     if (payment_status === "success") {
-
-
-      const { referred_by, referred_first, referred_second } = user;
+      const { referred_by, referred_first, referred_second, referred_user_pay_daily } = user;
 
       // Helper function to update referred users
       const updateReferredUser = async (referredUserId, userKey, amountKey, discountPrice, newUserDiscountPrice) => {
@@ -143,11 +142,46 @@ exports.paymentAdd = catchAsync(async (req, res) => {
             { new: true }
           );
         }
+      };
+      
+      const updateReferredUserPayDaily = async (userId, coursedata) => {
+        const user = await User.findById(userId).populate("CourseId");
+      
+        // Ensure that we're accumulating all referred user's daily pay
+        let totalReferredUserPayDaily = 0;
+        
+        // Add current user's referred pay daily (if available)
+        totalReferredUserPayDaily += (user.referred_user_pay_daily || 0);
+      
+        // Add the direct, first, and second referred user's daily pay from the course data
+        totalReferredUserPayDaily += (coursedata.directuser || 0) + (coursedata?.referred_first || 0) + (coursedata?.referred_second || 0);
+        
+        // Update the referred_user_pay_daily for the current user
+        await User.findByIdAndUpdate(
+          userId,
+          { $set: { referred_user_pay_daily: totalReferredUserPayDaily } },
+          { new: true }
+        );
+      
+        return totalReferredUserPayDaily;
+      };
+      
+      // Main logic
+      let totalReferredUserPayDaily = await updateReferredUserPayDaily(UserId, coursedata);
+      
+      
+      if (referred_by) {
+        totalReferredUserPayDaily = await updateReferredUserPayDaily(referred_by, coursedata);
       }
-      // Update referred users based on discount price comparison
-      await updateReferredUser(referred_by, "directuser", "referred_user_pay", coursedata.discountPrice, coursedata?.directuser || 0);
-      await updateReferredUser(referred_first, "firstuser", "first_user_pay", coursedata.discountPrice, coursedata?.referred_first || 0);
-      await updateReferredUser(referred_second, "seconduser", "second_user_pay", coursedata.discountPrice, coursedata?.referred_second || 0);
+      
+      if (referred_first) {
+        totalReferredUserPayDaily = await updateReferredUserPayDaily(referred_first, coursedata);
+      }
+      
+      if (referred_second) {
+        totalReferredUserPayDaily = await updateReferredUserPayDaily(referred_second, coursedata);
+      }
+      
 
       // Update the new user's course and status
       const data = await User.findByIdAndUpdate(
@@ -178,6 +212,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     });
   }
 });
+
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
   try {
