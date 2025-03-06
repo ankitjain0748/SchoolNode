@@ -1230,7 +1230,7 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
 
 
 
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('29 0 * * *', async () => {
   try {
     console.log('Running daily payment reset job...');
     const currentDate = moment();
@@ -1244,10 +1244,12 @@ cron.schedule('0 0 * * *', async () => {
       let updates = {};
 
       if (user.lastPaymentDay !== currentDay) {
+        updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0);
         updates.referred_user_pay_daily = 0;
         updates.payment_key_daily = 0;
         updates.lastPaymentDay = currentDay;
       }
+      
 
       if (user.lastPaymentWeek !== currentWeek) {
         updates.referred_user_pay_weekly = 0;
