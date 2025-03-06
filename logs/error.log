@@ -57,3 +57,9 @@
 2025-03-05 22:57:04 [ERROR]: Error fetching users: read ECONNRESET
 2025-03-06 20:43:07 [ERROR]: Payment validation failed: GST_Number: Path `GST_Number` is required.
 2025-03-06 20:46:44 [ERROR]: Payment validation failed: GST_Number: Path `GST_Number` is required.
+2025-03-06 23:41:00 [ERROR]: Cannot access 'Refral' before initialization
+2025-03-06 23:41:00 [ERROR]: Cannot access 'Refral' before initialization
+2025-03-06 23:47:31 [ERROR]: Can't use $or
+2025-03-06 23:47:31 [ERROR]: Can't use $or
+2025-03-06 23:49:32 [ERROR]: Can't use $or
+2025-03-06 23:49:32 [ERROR]: Can't use $or
