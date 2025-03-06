@@ -1230,7 +1230,7 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
 
 
 
-cron.schedule('29 0 * * *', async () => {
+cron.schedule('30 0 * * *', async () => {
   try {
     console.log('Running daily payment reset job...');
     const currentDate = moment();
@@ -1244,20 +1244,22 @@ cron.schedule('29 0 * * *', async () => {
       let updates = {};
 
       if (user.lastPaymentDay !== currentDay) {
-        updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0);
+        updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0)  + (user.referred_user_pay) ;
         updates.referred_user_pay_daily = 0;
         updates.payment_key_daily = 0;
+        updates.referred_user_pay = 0;
         updates.lastPaymentDay = currentDay;
       }
-      
 
       if (user.lastPaymentWeek !== currentWeek) {
         updates.referred_user_pay_weekly = 0;
         updates.lastPaymentWeek = currentWeek;
       }
-
       if (user.lastPaymentMonth !== currentMonth) {
         updates.referred_user_pay_monthly = 0;
+        updates.periouse_passive_income = (user.second_user_pay || 0) + (user.first_user_pay);
+        user.second_user_pay = 0 ;
+        user.first_user_pay = 0 ;
         updates.lastPaymentMonth = currentMonth;
       }
 

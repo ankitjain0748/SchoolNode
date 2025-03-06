@@ -77,57 +77,83 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       payment_method
     });
 
+
+
     const record = await payment.save();
     const coursedata = await Course.findOne({ _id: CourseId });
     if (!coursedata) {
       return res.status(404).json({ status: false, message: "Course not found" });
     }
     const user = await User.findById(UserId);
+
     if (!user) {
       return res.status(404).json({ status: false, message: "User not found" });
     }
 
+    const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
+    const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
+
+    if (user) {
+      await sendEmail({
+        email: user.email,
+        name: user.name,
+        payment: record,
+        cousreData: coursedata.title,
+        message: "Your booking request was successful!",
+        subject: subject,
+        emailTemplate: Purchase,
+      });
+    }
+    await sendEmail({
+      email: "sainibhim133@gmail.com",
+      name: "Admin",
+      datauser: user,
+      payment: record,
+      cousreData: coursedata.title,
+      message: "Your booking request was successful!",
+      subject: subject1,
+      emailTemplate: AdminPurchase,
+    });
+
     if (payment_status === "success") {
+
+
       const { referred_by, referred_first, referred_second } = user;
-      const dailyPayField = `referred_user_pay_daily`;
 
-      let totalDailyPay = 0;
-
+      // Helper function to update referred users
       const updateReferredUser = async (referredUserId, userKey, amountKey, discountPrice, newUserDiscountPrice) => {
         if (referredUserId) {
-          const referredUser = await User.findById(referredUserId);
-          let applicableDiscountPrice = discountPrice ? newUserDiscountPrice : 0;
-
+          const referredUser = await User.findById(referredUserId).populate("CourseId");
           if (referredUser?.CourseId?.discountPrice < discountPrice) {
-            if (userKey === "directuser") applicableDiscountPrice = coursedata?.directuser || 0;
-            else if (userKey === "firstuser") applicableDiscountPrice = coursedata?.firstuser || 0;
-            else if (userKey === "seconduser") applicableDiscountPrice = coursedata?.seconduser || 0;
+            let applicableDiscountPrice;
+            if (userKey === "directuser") {
+              applicableDiscountPrice = Math.min(referredUser?.CourseId?.directuser || 0);
+            } else if (userKey === "firstuser") {
+              applicableDiscountPrice = Math.min(referredUser?.CourseId?.firstuser || 0);
+            } else if (userKey === "seconduser") {
+              applicableDiscountPrice = Math.min(referredUser?.CourseId?.seconduser || 0);
+            }
+            await User.findByIdAndUpdate(
+              referredUserId,
+              { $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } },
+              { new: true }
+            );
           }
-
-          totalDailyPay += applicableDiscountPrice;
-
+        } else {
           await User.findByIdAndUpdate(
             referredUserId,
-            {
-              $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice }
-            },
+            { $inc: { [userKey]: 1, [amountKey]: discountPrice ? newUserDiscountPrice : null } },
             { new: true }
           );
         }
-      };
-
+      }
+      // Update referred users based on discount price comparison
       await updateReferredUser(referred_by, "directuser", "referred_user_pay", coursedata.discountPrice, coursedata?.directuser || 0);
       await updateReferredUser(referred_first, "firstuser", "first_user_pay", coursedata.discountPrice, coursedata?.referred_first || 0);
       await updateReferredUser(referred_second, "seconduser", "second_user_pay", coursedata.discountPrice, coursedata?.referred_second || 0);
 
-      // Add the total to referred_user_pay_daily, or set if not present
-      await User.findByIdAndUpdate(
-        UserId,
-        { $inc: { [dailyPayField]: totalDailyPay } },
-        { new: true }
-      );
-
-      await User.findByIdAndUpdate(
+      // Update the new user's course and status
+      const data = await User.findByIdAndUpdate(
         UserId,
         { $set: { CourseId: CourseId, user_status: "Enrolled", ref_date: new Date() } },
         { new: true }
@@ -136,6 +162,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       return res.status(200).json({
         status: "success",
         message: "Payment verified and saved successfully",
+        data,
       });
     }
 
