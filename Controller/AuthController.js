@@ -96,7 +96,7 @@ exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]
 
 exports.OTP = catchAsync(async (req, res) => {
   try {
-    const { email, password, name, phone_number, referred_by, Email_verify } = req.body;
+    const { email, password, name, phone_number, referred_by, Email_verify , referral_code } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
@@ -153,14 +153,12 @@ exports.OTP = catchAsync(async (req, res) => {
       referred_first: referrers ? referrers._id : null,
       referred_second: referrerdata ? referrerdata._id : null,
       OTP: otp,
-      Email_verify: Email_verify
+      Email_verify: Email_verify,
+      referral_code:referral_code,
     };
 
     // Send OTP email
     await TempUser.create(tempUser);
-
-
-
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT, 10),
@@ -233,7 +231,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       referred_by: tempUser.referred_by,
       referred_first: tempUser.referred_first,
       referred_second: tempUser.referred_second,
-      Email_verify: tempUser?.Email_verify
+      Email_verify: tempUser?.Email_verify,
     });
     if (tempUser.referred_by) {
       await User.findByIdAndUpdate(tempUser.referred_by, {
@@ -1230,7 +1228,7 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
 
 
 
-cron.schedule('30 0 * * *', async () => {
+cron.schedule('30 9 * * *', async () => {
   try {
     console.log('Running daily payment reset job...');
     const currentDate = moment();
@@ -1250,14 +1248,13 @@ cron.schedule('30 0 * * *', async () => {
         updates.referred_user_pay = 0;
         updates.lastPaymentDay = currentDay;
       }
-
       if (user.lastPaymentWeek !== currentWeek) {
         updates.referred_user_pay_weekly = 0;
         updates.lastPaymentWeek = currentWeek;
       }
       if (user.lastPaymentMonth !== currentMonth) {
         updates.referred_user_pay_monthly = 0;
-        updates.periouse_passive_income = (user.second_user_pay || 0) + (user.first_user_pay);
+        updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
         user.second_user_pay = 0 ;
         user.first_user_pay = 0 ;
         updates.lastPaymentMonth = currentMonth;

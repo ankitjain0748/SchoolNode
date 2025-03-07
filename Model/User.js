@@ -77,7 +77,7 @@ const userSchema = mongoose.Schema({
     lastPaymentDay: String,
     paymentWidthrawal: Number,
     lastTodayIncome: Number,
-    periouse_passive_income : Number,
+    pervious_passive_income_month : Number,
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",

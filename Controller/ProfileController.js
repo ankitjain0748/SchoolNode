@@ -154,8 +154,7 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
             };
         }
 
-        // Debugging: Log query object to verify
-        console.log("Query Object:", query);
+       
 
         // Fetch payments from the database with pagination and sorting
         const AdminPayments = await AdminPay.find(query)

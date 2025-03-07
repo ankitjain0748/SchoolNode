@@ -122,9 +122,13 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
       // Helper function to update referred users
       const updateReferredUser = async (referredUserId, userKey, amountKey, discountPrice, newUserDiscountPrice) => {
+        console.log("discountPrice, newUserDiscountPrice" , referredUserId,userKey ,amountKey ,discountPrice, newUserDiscountPrice  )
         if (referredUserId) {
           const referredUser = await User.findById(referredUserId).populate("CourseId");
-          if (referredUser?.CourseId?.discountPrice < discountPrice) {
+          if (referredUser?.CourseId?.discountPrice >= discountPrice) {
+            console.log("referredUser", referredUser.CourseId?.discountPrice )
+            console.log("discountPrice", discountPrice)
+            console.log("helllo")
             let applicableDiscountPrice;
             if (userKey === "directuser") {
               applicableDiscountPrice = Math.min(referredUser?.CourseId?.directuser || 0);
@@ -138,13 +142,28 @@ exports.paymentAdd = catchAsync(async (req, res) => {
               { $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } },
               { new: true }
             );
+          }else{
+            console.log("helllo22")
+            if (referredUserId) {
+              console.log("Updating referred user:", referredUserId);
+              const record = await User.findByIdAndUpdate(
+                referredUserId,
+                {
+                  $inc: {
+                    [userKey]: 1,
+                    ...(discountPrice ? { [amountKey]: newUserDiscountPrice } : {}),
+                  },
+                },
+                { new: true }
+              );
+              console.log("record", record);
+            } else {
+              console.log("No referred user ID found");
+            }
           }
         } else {
-          await User.findByIdAndUpdate(
-            referredUserId,
-            { $inc: { [userKey]: 1, [amountKey]: discountPrice ? newUserDiscountPrice : null } },
-            { new: true }
-          );
+          console.log("No referred user ID found");
+         
         }
       }
       // Update referred users based on discount price comparison
@@ -158,6 +177,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         { $set: { CourseId: CourseId, user_status: "Enrolled", ref_date: new Date() } },
         { new: true }
       );
+
 
       return res.status(200).json({
         status: "success",
