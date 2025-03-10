@@ -125,7 +125,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         console.log("discountPrice, newUserDiscountPrice" , referredUserId,userKey ,amountKey ,discountPrice, newUserDiscountPrice  )
         if (referredUserId) {
           const referredUser = await User.findById(referredUserId).populate("CourseId");
-          if (referredUser?.CourseId?.discountPrice >= discountPrice) {
+          if (referredUser?.CourseId?.discountPrice <= discountPrice) {
             console.log("referredUser", referredUser.CourseId?.discountPrice )
             console.log("discountPrice", discountPrice)
             console.log("helllo")
