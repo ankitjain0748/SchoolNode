@@ -63,7 +63,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       logger.warn("Missing required fields");
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
-
     const status = payment_status === "failed" ? "failed" : "success";
     const payment = new Payment({
       order_id,
@@ -77,8 +76,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       payment_method
     });
 
-
-
     const record = await payment.save();
     const coursedata = await Course.findOne({ _id: CourseId });
     if (!coursedata) {
@@ -90,33 +87,33 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       return res.status(404).json({ status: false, message: "User not found" });
     }
 
-    const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
-    const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
-
-    if (user) {
-      await sendEmail({
-        email: user.email,
-        name: user.name,
-        payment: record,
-        cousreData: coursedata.title,
-        message: "Your booking request was successful!",
-        subject: subject,
-        emailTemplate: Purchase,
-      });
-    }
-    await sendEmail({
-      email: "sainibhim133@gmail.com",
-      name: "Admin",
-      datauser: user,
-      payment: record,
-      cousreData: coursedata.title,
-      message: "Your booking request was successful!",
-      subject: subject1,
-      emailTemplate: AdminPurchase,
-    });
 
     if (payment_status === "success") {
 
+      const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
+      const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
+
+      if (user) {
+        await sendEmail({
+          email: user.email,
+          name: user.name,
+          payment: record,
+          cousreData: coursedata.title,
+          message: "Your booking request was successful!",
+          subject: subject,
+          emailTemplate: Purchase,
+        });
+      }
+      await sendEmail({
+        email: "sainibhim133@gmail.com",
+        name: "Admin",
+        datauser: user,
+        payment: record,
+        cousreData: coursedata.title,
+        message: "Your booking request was successful!",
+        subject: subject1,
+        emailTemplate: AdminPurchase,
+      });
 
       const { referred_by, referred_first, referred_second } = user;
 
@@ -150,7 +147,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
               { new: true }
             );
           }
-        } 
+        }
       }
       // Update referred users based on discount price comparison
       await updateReferredUser(referred_by, "directuser", "referred_user_pay", coursedata.discountPrice, coursedata?.directuser || 0);
@@ -175,9 +172,10 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     if (payment_status === "failed") {
       return res.status(200).json({
         status: "failed",
-        message: "Payment failed and saved successfully",
+        message: "Payment failed, please try again",
       });
     }
+
   } catch (error) {
     logger.error(error);
     res.status(500).json({

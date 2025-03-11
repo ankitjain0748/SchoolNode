@@ -101,6 +101,8 @@ exports.OTP = catchAsync(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
 
+   
+
     // Check referral code and get referrer details
     let referrer = null;
     if (referred_by) {
@@ -142,6 +144,33 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
+    const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
+
+    console.log("existingUser:", existingUser); // चेक करें कि यूजर मिल रहा है या नहीं
+    console.log("Input Email:", email);         // इनपुट ईमेल चेक करें
+    console.log("Input Phone Number:", phone_number); // इनपुट फोन नंबर चेक करें
+    
+    if (existingUser) {
+      const errors = {};
+    
+      if (existingUser.email === email) {
+        errors.email = "Email is already in use!";
+      }
+    
+      if (existingUser.phone_number.toString() === phone_number.toString()) {
+        errors.phone_number = "Phone number is already in use!";
+      }
+    
+      if (Object.keys(errors).length > 0) {
+        return res.status(400).json({
+          status: false,
+          message: errors?.email || errors?.phone_number,
+          errors,
+        });
+      }
+    }
+    
+    
 
     // Save the user data and OTP in a temporary object
     const tempUser = {
