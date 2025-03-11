@@ -122,13 +122,9 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
       // Helper function to update referred users
       const updateReferredUser = async (referredUserId, userKey, amountKey, discountPrice, newUserDiscountPrice) => {
-        console.log("discountPrice, newUserDiscountPrice" , referredUserId,userKey ,amountKey ,discountPrice, newUserDiscountPrice  )
         if (referredUserId) {
           const referredUser = await User.findById(referredUserId).populate("CourseId");
           if (referredUser?.CourseId?.discountPrice <= discountPrice) {
-            console.log("referredUser", referredUser.CourseId?.discountPrice )
-            console.log("discountPrice", discountPrice)
-            console.log("helllo")
             let applicableDiscountPrice;
             if (userKey === "directuser") {
               applicableDiscountPrice = Math.min(referredUser?.CourseId?.directuser || 0);
@@ -142,29 +138,19 @@ exports.paymentAdd = catchAsync(async (req, res) => {
               { $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } },
               { new: true }
             );
-          }else{
-            console.log("helllo22")
-            if (referredUserId) {
-              console.log("Updating referred user:", referredUserId);
-              const record = await User.findByIdAndUpdate(
-                referredUserId,
-                {
-                  $inc: {
-                    [userKey]: 1,
-                    ...(discountPrice ? { [amountKey]: newUserDiscountPrice } : {}),
-                  },
+          } else {
+            const record = await User.findByIdAndUpdate(
+              referredUserId,
+              {
+                $inc: {
+                  [userKey]: 1,
+                  ...(discountPrice ? { [amountKey]: newUserDiscountPrice } : {}),
                 },
-                { new: true }
-              );
-              console.log("record", record);
-            } else {
-              console.log("No referred user ID found");
-            }
+              },
+              { new: true }
+            );
           }
-        } else {
-          console.log("No referred user ID found");
-         
-        }
+        } 
       }
       // Update referred users based on discount price comparison
       await updateReferredUser(referred_by, "directuser", "referred_user_pay", coursedata.discountPrice, coursedata?.directuser || 0);
@@ -291,45 +277,45 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 //           );
 //         }
 //       };
-      
+
 //       const updateReferredUserPayDaily = async (userId, coursedata) => {
 //         const user = await User.findById(userId).populate("CourseId");
-      
+
 //         // Ensure that we're accumulating all referred user's daily pay
 //         let totalReferredUserPayDaily = 0;
-        
+
 //         // Add current user's referred pay daily (if available)
 //         totalReferredUserPayDaily += (user.referred_user_pay_daily || 0);
-      
+
 //         // Add the direct, first, and second referred user's daily pay from the course data
 //         totalReferredUserPayDaily += (coursedata.directuser || 0) + (coursedata?.referred_first || 0) + (coursedata?.referred_second || 0);
-        
+
 //         // Update the referred_user_pay_daily for the current user
 //         await User.findByIdAndUpdate(
 //           userId,
 //           { $set: { referred_user_pay_daily: totalReferredUserPayDaily } },
 //           { new: true }
 //         );
-      
+
 //         return totalReferredUserPayDaily;
 //       };
-      
+
 //       // Main logic
 //       let totalReferredUserPayDaily = await updateReferredUserPayDaily(UserId, coursedata);
-      
-      
+
+
 //       if (referred_by) {
 //         totalReferredUserPayDaily = await updateReferredUserPayDaily(referred_by, coursedata);
 //       }
-      
+
 //       if (referred_first) {
 //         totalReferredUserPayDaily = await updateReferredUserPayDaily(referred_first, coursedata);
 //       }
-      
+
 //       if (referred_second) {
 //         totalReferredUserPayDaily = await updateReferredUserPayDaily(referred_second, coursedata);
 //       }
-      
+
 
 //       // Update the new user's course and status
 //       const data = await User.findByIdAndUpdate(
@@ -381,7 +367,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
       filter.userId = { $in: userIds }; // Filter by user IDs
 
     }
-    
+
     if (selectoption) {
       query.payment_status = selectoption;
     }
@@ -427,7 +413,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;
   try {
-    const UserPayments = await Payment.find({ UserId}).populate("UserId").populate("CourseId");
+    const UserPayments = await Payment.find({ UserId }).populate("UserId").populate("CourseId");
     if (!UserPayments || UserPayments.length === 0) {
       return res.status(204).json({
         status: false,
@@ -471,7 +457,7 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
 
     }
 
-       
+
     if (selectoption) {
       filter.page = selectoption;
     }

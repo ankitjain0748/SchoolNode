@@ -1262,7 +1262,6 @@ cron.schedule('30 9 * * *', async () => {
 
       if (Object.keys(updates).length > 0) {
         await User.findByIdAndUpdate(user._id, updates, { new: true });
-        console.log(`Reset stats for user: ${user._id}`);
       }
     }
 

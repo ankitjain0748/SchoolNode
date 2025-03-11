@@ -70,8 +70,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
     let { page = 1, limit = 10, paymentDate, name="" } = req.query;
 
-    console.log("req.query",req.query)
-    // Convert page and limit to numbers and handle invalid values
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
 
