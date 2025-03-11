@@ -63,10 +63,15 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       logger.warn("Missing required fields");
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
+    let referredType = "self"; // Default for direct purchase
+    if (user.referred_by) referredType = "direct";
+    else if (user.referred_first) referredType = "first";
+    else if (user.referred_second) referredType = "second";
     const status = payment_status === "failed" ? "failed" : "success";
     const payment = new Payment({
       order_id,
       currency,
+      referred_user_type: referredType, 
       payment_id,
       amount,
       payment_status,

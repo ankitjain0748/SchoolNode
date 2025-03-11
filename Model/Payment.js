@@ -17,6 +17,10 @@ const paymentSchema = new mongoose.Schema({
       ref: "Course",
       required: [true, "Course ID is required."],
   },
+  referred_user_type :{
+    type: String,
+    default: 'direct',
+  },
   UserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
