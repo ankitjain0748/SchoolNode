@@ -1,0 +1,5 @@
+2025-03-12 00:36:00 [ERROR]: Cast to ObjectId failed for value "[object Object]" (type string) at path "_id" for model "Course"
+2025-03-12 00:36:23 [ERROR]: Cast to ObjectId failed for value "[object Object]" (type string) at path "_id" for model "Course"
+2025-03-12 01:05:17 [ERROR]: Error fetching users: bankDetails is not defined
+2025-03-12 01:13:25 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
+2025-03-12 01:13:49 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')

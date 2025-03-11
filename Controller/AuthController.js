@@ -534,7 +534,6 @@ exports.profile = catchAsync(async (req, res, next) => {
     const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
     const selectoption = req.query.selectedoption ? String(req.query.selectedoption).trim() : ""; // Assuming you'll use this later
-
     const search = req.query.search ? String(req.query.search).trim() : "";
     let query = { role: "user", isDeleted: false };
 
@@ -554,23 +553,29 @@ exports.profile = catchAsync(async (req, res, next) => {
 
     // Fetch bank and profile details in parallel for all users
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
-    const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
+const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
+
+    console.log("profileDetails" ,profileDetails);
+    console.log("bankDetails" ,bankDetails)
+    console.log("User IDs:", users.map(user => user._id));
+
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
       // Bank detail safely fetch karein
-      const bankDetail = bankDetails.find(bank => bank?.userId === user?._id);
 
-      // Profile detail safely fetch karein
-      const profileDetail = profileDetails.find(profile => profile?.userId === user?._id);
+      const bankDetail = bankDetails.find(bank => String(bank?.userId) === String(user?._id));
+const profileDetail = profileDetails.find(profile => String(profile?.userId) === String(user?._id));
 
+console.log("profileDetails" ,profileDetail);
+   console.log("bankDetails" ,bankDetail)
       return {
         ...user.toObject(),
-        bank_details: bankDetail || null,
-        ProfileDetails: profileDetail || null
+        bank_details: bankDetail ,
+        ProfileDetails: profileDetail 
       };
     });
 
-
+console.log("usersWithBankDetails" ,usersWithBankDetails)
 
     // Total users and pagination details
     const totalUsers = await User.countDocuments(query);

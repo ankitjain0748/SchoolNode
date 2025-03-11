@@ -56,6 +56,10 @@ const paymentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
 },
+reffer_direct_user_pay: { type: Number, default: 0 },
+reffer_first_user_pay: { type: Number, default: 0 },
+reffer_second_user_pay: { type: Number, default: 0 },
+
 });
 
 const Payment = mongoose.model('Payment', paymentSchema);
