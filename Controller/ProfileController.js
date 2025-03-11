@@ -28,9 +28,6 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     try {
         const existingProfile = await Profile.findOne({ userId });
         if (existingProfile) {
-            existingProfile.firstname = firstname || existingProfile.firstname;
-            existingProfile.lastname = lastname || existingProfile.lastname;
-            existingProfile.username = username || existingProfile.username;
             existingProfile.phone_number = phone_number || existingProfile.phone_number;
             existingProfile.designation = designation || existingProfile.designation;
             existingProfile.bio = bio || existingProfile.bio;
@@ -41,6 +38,10 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             existingProfile.bsemail = bsemail || existingProfile.bsemail;
             const updatedProfile = await existingProfile.save();
 
+            // Update the User table with the combined username
+            await User.findByIdAndUpdate(userId, {
+                username: `${firstname} ${lastname}`.trim(),
+            });
             res.json({
                 status: true,
                 message: "Profile has been successfully updated!",
@@ -64,6 +65,11 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 
             const savedProfile = await newProfile.save();
 
+            // Update the User table with the new username
+            await User.findByIdAndUpdate(userId, {
+                username: `${firstname} ${lastname}`.trim(),
+            });
+
             res.json({
                 status: true,
                 message: "Profile has been successfully created!",
@@ -79,6 +85,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {

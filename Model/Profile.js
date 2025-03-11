@@ -1,20 +1,11 @@
 const mongoose = require("mongoose");
 
 const Profile = mongoose.Schema({
-    firstname: {
-        type: String,
-    },
     bsemail :String ,
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "User ID is required."],
-    },
-    lastname: {
-        type: String,
-    },
-    username: {
-        type: String,
     },
     email :String,
     phone_number: {
