@@ -5,3 +5,5 @@
 2025-03-12 01:13:49 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
 2025-03-12 21:23:29 [ERROR]: Cannot access 'user' before initialization
 2025-03-12 21:25:37 [ERROR]: Cannot access 'user' before initialization
+2025-03-12 21:56:37 [ERROR]: Cannot access 'record' before initialization
+2025-03-12 21:59:45 [ERROR]: referralAmount is not defined

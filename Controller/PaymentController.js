@@ -139,7 +139,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
                 $set: {
                   referredData: {
                     userId: referredUserId, // Store userId inside referredData
-                    [`reffer_${userKey}_pay`]: referralAmount, // Store referral amount dynamically
+                    [`reffer_${userKey}_pay`]: applicableDiscountPrice, // Store referral amount dynamically
                   },
                 },
               }
@@ -152,13 +152,13 @@ exports.paymentAdd = catchAsync(async (req, res) => {
                 $set: {
                   referredData: {
                     userId: referredUserId,
-                    [`reffer_${userKey}_pay`]: referralAmount,
+                    [`reffer_${userKey}_pay`]: newUserDiscountPrice,
                   },
                 },
               }
             );
 
-            const record = await User.findByIdAndUpdate(
+             await User.findByIdAndUpdate(
               referredUserId,
               {
                 $inc: {
