@@ -3,3 +3,5 @@
 2025-03-12 01:05:17 [ERROR]: Error fetching users: bankDetails is not defined
 2025-03-12 01:13:25 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
 2025-03-12 01:13:49 [ERROR]: Error fetching users: Cannot read properties of undefined (reading 'toString')
+2025-03-12 21:23:29 [ERROR]: Cannot access 'user' before initialization
+2025-03-12 21:25:37 [ERROR]: Cannot access 'user' before initialization

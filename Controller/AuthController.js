@@ -146,10 +146,6 @@ exports.OTP = catchAsync(async (req, res) => {
     }
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
 
-    console.log("existingUser:", existingUser); // चेक करें कि यूजर मिल रहा है या नहीं
-    console.log("Input Email:", email);         // इनपुट ईमेल चेक करें
-    console.log("Input Phone Number:", phone_number); // इनपुट फोन नंबर चेक करें
-
     if (existingUser) {
       const errors = {};
 
@@ -555,10 +551,7 @@ exports.profile = catchAsync(async (req, res, next) => {
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
     const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
 
-    console.log("profileDetails", profileDetails);
-    console.log("bankDetails", bankDetails)
-    console.log("User IDs:", users.map(user => user._id));
-
+    
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
       // Bank detail safely fetch karein
@@ -566,8 +559,6 @@ exports.profile = catchAsync(async (req, res, next) => {
       const bankDetail = bankDetails.find(bank => String(bank?.userId) === String(user?._id));
       const profileDetail = profileDetails.find(profile => String(profile?.userId) === String(user?._id));
 
-      console.log("profileDetails", profileDetail);
-      console.log("bankDetails", bankDetail)
       return {
         ...user.toObject(),
         bank_details: bankDetail,
@@ -575,7 +566,6 @@ exports.profile = catchAsync(async (req, res, next) => {
       };
     });
 
-    console.log("usersWithBankDetails", usersWithBankDetails)
 
     // Total users and pagination details
     const totalUsers = await User.countDocuments(query);

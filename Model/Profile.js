@@ -11,6 +11,8 @@ const Profile = mongoose.Schema({
     phone_number: {
         type: Number,
     },
+    firstname :String ,
+    lastname :String ,
     policy:String,
     term:String,
     designation: {

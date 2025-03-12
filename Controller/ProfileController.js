@@ -28,6 +28,9 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     try {
         const existingProfile = await Profile.findOne({ userId });
         if (existingProfile) {
+            existingProfile.firstname = firstname || existingProfile.firstname;
+            existingProfile.lastname = lastname || existingProfile.lastname;
+
             existingProfile.phone_number = phone_number || existingProfile.phone_number;
             existingProfile.designation = designation || existingProfile.designation;
             existingProfile.bio = bio || existingProfile.bio;
@@ -39,7 +42,8 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             const updatedProfile = await existingProfile.save();
             // Update the User table with the combined username
             await User.findByIdAndUpdate(userId, {
-                username: `${firstname} ${lastname}`.trim(),
+                
+name: `${firstname} ${lastname}`.trim(),
             });
             res.json({
                 status: true,
@@ -61,7 +65,8 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 
             const savedProfile = await newProfile.save();
             await User.findByIdAndUpdate(userId, {
-                username: `${firstname} ${lastname}`.trim(),
+                
+name: `${firstname} ${lastname}`.trim(),
             });
             res.json({
                 status: true,

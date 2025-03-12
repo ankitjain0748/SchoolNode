@@ -58,6 +58,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
   try {
     const UserId = req.User._id;
     const { order_id, payment_id, amount, currency, payment_status, CourseId, payment_method } = req.body;
+    const user = await User.findById(UserId);
 
     if (!order_id || !payment_id || !amount || !CourseId) {
       logger.warn("Missing required fields");
@@ -86,7 +87,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     if (!coursedata) {
       return res.status(404).json({ status: false, message: "Course not found" });
     }
-    const user = await User.findById(UserId);
     if (!user) {
       return res.status(404).json({ status: false, message: "User not found" });
     }
