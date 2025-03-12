@@ -37,7 +37,6 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             existingProfile.profileImage = profileImage || existingProfile.profileImage;
             existingProfile.bsemail = bsemail || existingProfile.bsemail;
             const updatedProfile = await existingProfile.save();
-
             // Update the User table with the combined username
             await User.findByIdAndUpdate(userId, {
                 username: `${firstname} ${lastname}`.trim(),
@@ -48,11 +47,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
                 data: updatedProfile,
             });
         } else {
-            // Create a new profile if one doesn't exist
             const newProfile = new Profile({
-                firstname,
-                lastname,
-                username,
                 phone_number,
                 designation,
                 bio,
@@ -60,16 +55,14 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
                 userId,
                 address,
                 bsemail,
-                policy, term
+                policy,
+                term
             });
 
             const savedProfile = await newProfile.save();
-
-            // Update the User table with the new username
             await User.findByIdAndUpdate(userId, {
                 username: `${firstname} ${lastname}`.trim(),
             });
-
             res.json({
                 status: true,
                 message: "Profile has been successfully created!",
@@ -91,18 +84,16 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
         const user = req?.body?.id;
-
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
-        // Convert to plain object
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
-        const review = await Review.findOne({userId: userId})
+        const review = await Review.findOne({ userId: userId })
         const BankData = await Bank.findOne({ userId: userId });
         const payment = await Payment.findOne({ UserId: userId });
         const AdminPayments = await AdminPay.find({ userId: userId });
         const Transactions = await Transaction.find({ user: user });
 
-       
+
         // Fetch referral data
 
         const referralData = await User.find({
@@ -127,7 +118,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             payment: payment,
             Transactions: Transactions,
             AdminPayments: AdminPayments,
-            review:review,
+            review: review,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
@@ -161,7 +152,7 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
             };
         }
 
-       
+
 
         // Fetch payments from the database with pagination and sorting
         const AdminPayments = await AdminPay.find(query)

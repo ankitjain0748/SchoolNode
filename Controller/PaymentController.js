@@ -140,17 +140,31 @@ exports.paymentAdd = catchAsync(async (req, res) => {
               { $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } },
               { new: true }
             );
-            await Payment.updateOne({ _id: record._id }, {
-              $set: {
-                [`reffer_${userKey}_pay`]: referralAmount,
+            await Payment.updateOne(
+              { _id: record._id },
+              {
+                $set: {
+                  referredData: {
+                    userId: record?.UserId, // Store userId inside referredData
+                    [`reffer_${userKey}_pay`]: referralAmount, // Store referral amount dynamically
+                  },
+                },
               }
-            });
+            );
+            
           } else {
-            await Payment.updateOne({ _id: record._id }, {
-              $set: {
-                [`reffer_${userKey}_pay`]: referralAmount,
+            await Payment.updateOne(
+              { _id: record._id },
+              {
+                $set: {
+                  referredData: {
+                    userId: record?.UserId, 
+                    [`reffer_${userKey}_pay`]: referralAmount,
+                  },
+                },
               }
-            });
+            );
+            
             const record = await User.findByIdAndUpdate(
               referredUserId,
               {

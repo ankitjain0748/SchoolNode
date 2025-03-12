@@ -67,11 +67,14 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         ]);
         const totalAmount = await Payment.aggregate([
             {
+                $match: { payment_status: "success" } 
+            },
+            {
                 $group: {
                     _id: null,
-                    total: { $sum: "$amount" },
-                },
-            },
+                    total: { $sum: "$amount" }, // Sirf successful payments ka sum karega
+                }
+            }
         ]);
         const totalPaymentAddAmount = await AdminPayment.aggregate([
             {
@@ -148,9 +151,9 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             inactive: inactiveCount,
             enrolled: enrolledCount,
             totalusercount: totalusercount,
-            AdminPaidAmount: AdminPaidAmount.length > 0 ? AdminPaidAmount[0] :{},
-            totalPaymentAddAmount: totalPaymentAddAmount.length > 0 ? totalPaymentAddAmount[0].total : 0,
-            totalGSTAmount: totalGSTAmount.length > 0 ? totalGSTAmount[0].totalGSTAmount : 0,
+            AdminPaidAmount: AdminPaidAmount,
+            totalPaymentAddAmount: totalPaymentAddAmount.length > 0 ? totalPaymentAddAmount[0].total : {},
+            totalGSTAmount: totalGSTAmount.length > 0 ? totalGSTAmount[0].totalGSTAmount : {},
             totaluserIncome: totaluserIncome.length > 0 ? totaluserIncome[0] : {},
             totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
             todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,

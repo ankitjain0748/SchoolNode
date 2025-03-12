@@ -12,6 +12,12 @@ const paymentSchema = new mongoose.Schema({
   GST_Number: {
     type: Number,
   },
+  referredData: {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    reffer_directuser_pay: { type: Number, default: 0 },
+    reffer_firstuser_pay: { type: Number, default: 0 },
+    reffer_seconduser_pay: { type: Number, default: 0 }
+  },
    CourseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
