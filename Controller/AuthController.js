@@ -96,12 +96,12 @@ exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]
 
 exports.OTP = catchAsync(async (req, res) => {
   try {
-    const { email, password, name, phone_number, referred_by, Email_verify , referral_code } = req.body;
+    const { email, password, name, phone_number, referred_by, Email_verify, referral_code } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
 
-   
+
 
     // Check referral code and get referrer details
     let referrer = null;
@@ -149,18 +149,18 @@ exports.OTP = catchAsync(async (req, res) => {
     console.log("existingUser:", existingUser); // चेक करें कि यूजर मिल रहा है या नहीं
     console.log("Input Email:", email);         // इनपुट ईमेल चेक करें
     console.log("Input Phone Number:", phone_number); // इनपुट फोन नंबर चेक करें
-    
+
     if (existingUser) {
       const errors = {};
-    
+
       if (existingUser.email === email) {
         errors.email = "Email is already in use!";
       }
-    
+
       if (existingUser.phone_number.toString() === phone_number.toString()) {
         errors.phone_number = "Phone number is already in use!";
       }
-    
+
       if (Object.keys(errors).length > 0) {
         return res.status(400).json({
           status: false,
@@ -169,8 +169,8 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
-    
-    
+
+
 
     // Save the user data and OTP in a temporary object
     const tempUser = {
@@ -183,7 +183,7 @@ exports.OTP = catchAsync(async (req, res) => {
       referred_second: referrerdata ? referrerdata._id : null,
       OTP: otp,
       Email_verify: Email_verify,
-      referral_code:referral_code,
+      referral_code: referral_code,
     };
 
     // Send OTP email
@@ -553,10 +553,10 @@ exports.profile = catchAsync(async (req, res, next) => {
 
     // Fetch bank and profile details in parallel for all users
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
-const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
+    const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
 
-    console.log("profileDetails" ,profileDetails);
-    console.log("bankDetails" ,bankDetails)
+    console.log("profileDetails", profileDetails);
+    console.log("bankDetails", bankDetails)
     console.log("User IDs:", users.map(user => user._id));
 
     // Map the users with their bank and profile details
@@ -564,18 +564,18 @@ const profileDetails = await ProfileData.find({ userId: { $in: users.map(user =>
       // Bank detail safely fetch karein
 
       const bankDetail = bankDetails.find(bank => String(bank?.userId) === String(user?._id));
-const profileDetail = profileDetails.find(profile => String(profile?.userId) === String(user?._id));
+      const profileDetail = profileDetails.find(profile => String(profile?.userId) === String(user?._id));
 
-console.log("profileDetails" ,profileDetail);
-   console.log("bankDetails" ,bankDetail)
+      console.log("profileDetails", profileDetail);
+      console.log("bankDetails", bankDetail)
       return {
         ...user.toObject(),
-        bank_details: bankDetail ,
-        ProfileDetails: profileDetail 
+        bank_details: bankDetail,
+        ProfileDetails: profileDetail
       };
     });
 
-console.log("usersWithBankDetails" ,usersWithBankDetails)
+    console.log("usersWithBankDetails", usersWithBankDetails)
 
     // Total users and pagination details
     const totalUsers = await User.countDocuments(query);
@@ -735,64 +735,64 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.forgotlinkrecord = catchAsync( async (req, res) => {
-    try {
-      const { email } = req.body;
-      if (!email) {
-        return validationErrorResponse(res, { email: 'Email is required' });
-      }
-      const record = await User.findOne({ email: email });
-      if (!record) {
-        return errorResponse(res, "No user found with this email", 404);
-      }
-      const token = await signEmail(record._id);
-      const resetLink = `www.stackearn.com/new-password/${token}`;
-      const customerUser = record.name;
-      let transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,
-        port: process.env.MAIL_PORT,
-        secure: false,
-        auth: {
-          user: process.env.user,
-          pass: process.env.password,
-        },
-      });
-      const emailHtml = VerifyMail(customerUser, resetLink);
-      await transporter.sendMail({
-        from: process.env.user,
-        to: record.email,
-        subject: "Forgot Your Password",
-        html: emailHtml,
-      });
-      return successResponse(res, "Email has been sent to your registered email");
-    } catch (error) {
-      logger.error("Error deleting user record:", error);
-
-      return errorResponse(res, "Failed to send email");
+exports.forgotlinkrecord = catchAsync(async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return validationErrorResponse(res, { email: 'Email is required' });
     }
+    const record = await User.findOne({ email: email });
+    if (!record) {
+      return errorResponse(res, "No user found with this email", 404);
+    }
+    const token = await signEmail(record._id);
+    const resetLink = `www.stackearn.com/new-password/${token}`;
+    const customerUser = record.name;
+    let transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: process.env.MAIL_PORT,
+      secure: false,
+      auth: {
+        user: process.env.user,
+        pass: process.env.password,
+      },
+    });
+    const emailHtml = VerifyMail(customerUser, resetLink);
+    await transporter.sendMail({
+      from: process.env.user,
+      to: record.email,
+      subject: "Forgot Your Password",
+      html: emailHtml,
+    });
+    return successResponse(res, "Email has been sent to your registered email");
+  } catch (error) {
+    logger.error("Error deleting user record:", error);
+
+    return errorResponse(res, "Failed to send email");
   }
+}
 );
 
 exports.forgotpassword = catchAsync(async (req, res) => {
-    try {
-      const { token, newPassword } = req.body;
-      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      const user = await User.findById(decoded.id);
-      if (!user) {
-        return errorResponse(res, "User not found", 404);
-      }
-      user.password = await bcrypt.hash(newPassword, 12);
-      await user.save();
-      return successResponse(res, "Password has been successfully reset");
-    } catch (error) {
-      if (error.name === 'TokenExpiredError') {
-        return errorResponse(res, "Token has expired. Please generate a new token.", 401);
-      }
-      logger.error("Error deleting user record:", error);
-
-      return errorResponse(res, "Failed to reset password");
+  try {
+    const { token, newPassword } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return errorResponse(res, "User not found", 404);
     }
+    user.password = await bcrypt.hash(newPassword, 12);
+    await user.save();
+    return successResponse(res, "Password has been successfully reset");
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return errorResponse(res, "Token has expired. Please generate a new token.", 401);
+    }
+    logger.error("Error deleting user record:", error);
+
+    return errorResponse(res, "Failed to reset password");
   }
+}
 );
 
 exports.profilegettoken = catchAsync(async (req, res, next) => {
@@ -1014,7 +1014,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
         lastTodayIncome: updatedLastTodayIncome,
         lastPaymentMonth: currentMonth,
         lastPaymentWeek: currentWeek,
-        payment_key:payment_key,
+        payment_key: payment_key,
         lastPaymentDay: currentDay,
         payment_key_daily: updatedPaymentKey,
       },
@@ -1129,14 +1129,14 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
           user.referred_second ? User.findById(user.referred_second).select("-password") : null,
           Bank.findOne({ userId: user._id }),
         ]);
-        
+
         const [referredByBankDetails, referredByProfileDetails, referredFirstBankDetails, referredSecondBankDetails] = await Promise.all([
           referredBy ? Bank.findOne({ userId: referredBy._id }) : null,
           referredBy ? ProfileData.findOne({ userId: referredBy._id }) : null,
           referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
           referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
         ]);
-        
+
         return {
           ...user.toObject(),
           referred_by_details: referredBy,
@@ -1276,7 +1276,7 @@ cron.schedule('30 9 * * *', async () => {
       let updates = {};
 
       if (user.lastPaymentDay !== currentDay) {
-        updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0)  + (user.referred_user_pay) ;
+        updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
         updates.referred_user_pay_daily = 0;
         updates.payment_key_daily = 0;
         updates.referred_user_pay = 0;
@@ -1289,8 +1289,8 @@ cron.schedule('30 9 * * *', async () => {
       if (user.lastPaymentMonth !== currentMonth) {
         updates.referred_user_pay_monthly = 0;
         updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
-        user.second_user_pay = 0 ;
-        user.first_user_pay = 0 ;
+        user.second_user_pay = 0;
+        user.first_user_pay = 0;
         updates.lastPaymentMonth = currentMonth;
       }
 

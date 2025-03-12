@@ -71,7 +71,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     const payment = new Payment({
       order_id,
       currency,
-      referred_user_type: referredType, 
+      referred_user_type: referredType,
       payment_id,
       amount,
       payment_status,
@@ -87,17 +87,13 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       return res.status(404).json({ status: false, message: "Course not found" });
     }
     const user = await User.findById(UserId);
-
     if (!user) {
       return res.status(404).json({ status: false, message: "User not found" });
     }
 
-
     if (payment_status === "success") {
-
       const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
       const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
-
       if (user) {
         await sendEmail({
           email: user.email,
@@ -119,10 +115,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         subject: subject1,
         emailTemplate: AdminPurchase,
       });
-
       const { referred_by, referred_first, referred_second } = user;
-
-      // Helper function to update referred users
       const updateReferredUser = async (referredUserId, userKey, amountKey, discountPrice, newUserDiscountPrice) => {
         if (referredUserId) {
           const referredUser = await User.findById(referredUserId).populate("CourseId");
@@ -145,26 +138,26 @@ exports.paymentAdd = catchAsync(async (req, res) => {
               {
                 $set: {
                   referredData: {
-                    userId: record?.UserId, // Store userId inside referredData
+                    userId: referredUserId, // Store userId inside referredData
                     [`reffer_${userKey}_pay`]: referralAmount, // Store referral amount dynamically
                   },
                 },
               }
             );
-            
+
           } else {
             await Payment.updateOne(
               { _id: record._id },
               {
                 $set: {
                   referredData: {
-                    userId: record?.UserId, 
+                    userId: referredUserId,
                     [`reffer_${userKey}_pay`]: referralAmount,
                   },
                 },
               }
             );
-            
+
             const record = await User.findByIdAndUpdate(
               referredUserId,
               {
