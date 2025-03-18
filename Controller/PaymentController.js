@@ -158,7 +158,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
               }
             );
 
-             await User.findByIdAndUpdate(
+            await User.findByIdAndUpdate(
               referredUserId,
               {
                 $inc: {
