@@ -47,7 +47,7 @@ const userSchema = mongoose.Schema({
     phone_number: {
         type: Number,
         required: [true, "Phone number is required."],
-        default: 0
+        default: "0000000000"
     },
     role: {
         type: String,
