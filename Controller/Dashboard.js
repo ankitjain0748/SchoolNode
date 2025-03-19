@@ -6,6 +6,8 @@ const moment = require("moment");
 const bcrypt = require("bcrypt");
 const SocialSection = require("../Model/Social");
 const ProfileData = require("../Model/Profile");
+const Loggers = require("../utill/Loggers");
+const jwt = require("jsonwebtoken");
 
 const signToken = async (id) => {
     const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -177,28 +179,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
     }
 });
 
-exports.getCount = catchAsync(async (req, res) => {
-    try {
-        const userCount = await User.countDocuments();
-        const bookingCount = await Booking.countDocuments();
-        const RecentCount = await Enquiry.countDocuments();
-        const EnquiryData = await Enquiry.find({}).limit(3);
-        return res.status(200).json({
-            status: true,
-            message: " Data retrieved successfully",
-            userCount: userCount,
-            bookingCount: bookingCount,
-            EnquiryCount: RecentCount,
-            EnquiryData: EnquiryData
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "An error occurred while fetching the user count.",
-            error: error.message,
-        });
-    }
-});
 
 exports.adminlogin = catchAsync(async (req, res, next) => {
     try {
@@ -245,7 +225,7 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
             token,
         });
     } catch (error) {
-        logger.error("Error fetching booking:", error);
+        Loggers.error("Error fetching booking:", error);
         return res.status(500).json({
             error,
             message: "An unknown error occurred. Please try later.",

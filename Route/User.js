@@ -1,6 +1,6 @@
 const { login, profile, verifyToken, updateUserStatus, resetpassword, UserListIdDelete, UserUpdate, forgotlinkrecord, forgotpassword, profilegettoken, userfilter, VerifyUser, UserIdDelete, paymentdata, OTP, VerifyOtp, UserPriceUpdate, getUsersWithTodayRefDate,  UserListIds } = require("../Controller/AuthController");
 const { BankAddOrEdit } = require("../Controller/BankController");
-const { AdminDashboard  , getCount , profileadmin , adminlogin} = require("../Controller/Dashboard");
+const { AdminDashboard   , profileadmin , adminlogin} = require("../Controller/Dashboard");
 const { ProfileData, ProfileDataId, profileAddOrUpdate ,ProfileAdminPayeData } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
 const userRoute = require("express").Router();
@@ -28,7 +28,6 @@ userRoute.post("/delete", verifyToken, UserListIdDelete)
 
 userRoute.post("/update", verifyToken, UserUpdate)
 
-userRoute.get("/all", getCount)
 
 userRoute.get("/profile-token", verifyToken, profilegettoken)
 

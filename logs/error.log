@@ -7,3 +7,8 @@
 2025-03-12 21:25:37 [ERROR]: Cannot access 'user' before initialization
 2025-03-12 21:56:37 [ERROR]: Cannot access 'record' before initialization
 2025-03-12 21:59:45 [ERROR]: referralAmount is not defined
+2025-03-19 20:51:27 [ERROR]: Error fetching booking: jwt is not defined
+2025-03-19 20:51:35 [ERROR]: Error fetching booking: jwt is not defined
+2025-03-19 20:53:10 [ERROR]: Error fetching booking: jwt is not defined
+2025-03-19 20:53:16 [ERROR]: Error fetching booking: jwt is not defined
+2025-03-19 20:53:32 [ERROR]: Error fetching booking: jwt is not defined
