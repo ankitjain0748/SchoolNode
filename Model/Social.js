@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const socialSectionSchema = new mongoose.Schema(
+const socialSectionSchema =  mongoose.Schema(
     {
         website: {
             type: String,
