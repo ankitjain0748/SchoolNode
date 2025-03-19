@@ -18,12 +18,12 @@ const paymentSchema = new mongoose.Schema({
     reffer_firstuser_pay: { type: Number, default: 0 },
     reffer_seconduser_pay: { type: Number, default: 0 }
   },
-   CourseId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-      required: [true, "Course ID is required."],
+  CourseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course",
+    required: [true, "Course ID is required."],
   },
-  referred_user_type :{
+  referred_user_type: {
     type: String,
     default: 'direct',
   },
@@ -31,14 +31,14 @@ const paymentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: [true, "User ID is required."],
-},
+  },
   amount: {
     type: Number,
     required: true,
   },
   currency: {
     type: String,
-    default :"INR"
+    default: "INR"
   },
   status: {
     type: String,
@@ -61,14 +61,14 @@ const paymentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  receipt :String,
+  receipt: String,
   created_at: {
     type: Date,
     default: Date.now
-},
-reffer_direct_user_pay: { type: Number, default: 0 },
-reffer_first_user_pay: { type: Number, default: 0 },
-reffer_second_user_pay: { type: Number, default: 0 },
+  },
+  reffer_direct_user_pay: { type: Number, default: 0 },
+  reffer_first_user_pay: { type: Number, default: 0 },
+  reffer_second_user_pay: { type: Number, default: 0 },
 
 });
 

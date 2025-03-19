@@ -1321,14 +1321,6 @@ cron.schedule('0 0 * * *', async () => {
       subject: subject,
       emailTemplate: CronEmail,
     });
-    await sendEmail({
-      email: "sainibhim133@gmail.com",
-      name: "Admin",
-      message: "The daily payment reset job has been successfully completed at midnight.",
-      subject: subject,
-      emailTemplate: CronEmail,
-    });
-
   } catch (error) {
     console.error('Error running payment reset job:', error);
   }
