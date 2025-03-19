@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
     });
 });
 
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
     try {
         console.log('Running daily payment reset job...');
         const currentDate = moment();
@@ -87,6 +87,13 @@ cron.schedule('0 0 * * *', async () => {
         const subject = "✅ Daily Cron Job Completed";
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
+            name: "Admin",
+            message: "The daily payment reset job has been successfully completed at midnight.",
+            subject: subject,
+            emailTemplate: CronEmail,
+        });
+        await sendEmail({
+            email: "sainibhim133@gmail.com",
             name: "Admin",
             message: "The daily payment reset job has been successfully completed at midnight.",
             subject: subject,
