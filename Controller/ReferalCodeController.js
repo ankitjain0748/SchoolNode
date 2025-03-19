@@ -160,9 +160,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
 
 exports.RefralCodeGetId = catchAsync(async (req, res) => {
-    // const userId = req.User?.id;
     const userId = req.query?.id;
-
     let { page = 1, limit = 10, paymentDate, name = "" } = req.query;
 
     page = parseInt(page, 10);
@@ -238,15 +236,25 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
             let applicableDiscountPrice = referredUserCoursePrice;
 
-            if (referredUserCoursePrice < newUserCoursePrice) {
+            if (referredUserCoursePrice >= newUserCoursePrice) {
                 applicableDiscountPrice = newUserCoursePrice;
+            }
+
+            let paymentType = "None";
+            if (referralUser.referred_by?.toString() === userId.toString()) {
+                paymentType = "Direct Payment";
+            } else if (referralUser.referred_first?.toString() === userId.toString()) {
+                paymentType = "Second Level Payment";
+            } else if (referralUser.referred_second?.toString() === userId.toString()) {
+                paymentType = "Third Level Payment";
             }
 
             return {
                 ...referralUser.toObject(),
                 paymentDetails: paymentData.length > 0 ? paymentData : null,
                 referral_code: referralCode ? referralCode.referral_code : null,
-                applicableDiscountPrice
+                applicableDiscountPrice,
+                paymentType
             };
         });
 
@@ -269,6 +277,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 // exports.RefralCodeGetId = catchAsync(async (req, res) => {
 //     const userId = req.query?.id;
