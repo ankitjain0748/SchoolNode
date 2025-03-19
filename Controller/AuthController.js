@@ -1308,7 +1308,6 @@ cron.schedule('0 0 * * *', async () => {
       }
 
       if (Object.keys(updates).length > 0) {
-        console.log("Updating user:", user._id, "with values:", updates)
         await User.findByIdAndUpdate(user._id, updates, { new: true });
       }
     }
@@ -1329,11 +1328,7 @@ cron.schedule('0 0 * * *', async () => {
       subject: subject,
       emailTemplate: CronEmail,
     });
-    console.log("users6")
 
-    console.log(
-      "user", users
-    )
   } catch (error) {
     console.error('Error running payment reset job:', error);
   }

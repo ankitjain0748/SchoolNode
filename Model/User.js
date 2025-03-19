@@ -4,18 +4,15 @@ const userSchema = mongoose.Schema({
     name: {
         type: String,
         required: [true, "Name is required."],
-        default: ""  
     },
     password: {
         type: String,
-        required: [true, "Password is required."],
-        default: ""
+        required: [true, "Password is required."]
     },
     email: {
         type: String,
         required: [true, "Email is required."],
         unique: true,
-        default: ""
     },
     referral_code: {
         type: String,
@@ -28,10 +25,12 @@ const userSchema = mongoose.Schema({
     referred_first: {
         type: String,
         default: ""
+
     },
     referred_second: {
         type: String,
         default: ""
+
     },
     passive_income: {
         type: Number,
@@ -48,6 +47,7 @@ const userSchema = mongoose.Schema({
     phone_number: {
         type: Number,
         required: [true, "Phone number is required."],
+        default: 0
     },
     role: {
         type: String,
@@ -65,7 +65,7 @@ const userSchema = mongoose.Schema({
     },
     isDeleted: {
         type: Boolean,
-        default: false
+        default: false,
     },
     created_at: {
         type: Date,
@@ -77,7 +77,7 @@ const userSchema = mongoose.Schema({
     },
     Email_verify: {
         type: String,
-        default: ""
+        deafult: false
     },
     payment_Add: {
         type: Number,
@@ -130,11 +130,14 @@ const userSchema = mongoose.Schema({
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
-        default: null
     },
     payment_data: {
         type: Number,
         default: 0
+    },
+    payment_key: {
+        type: String,
+        default: ""
     },
     referred_user_pay: {
         type: Number,
@@ -170,7 +173,7 @@ const userSchema = mongoose.Schema({
     },
     OTP: {
         type: Number,
-        default: 0
+        default: null
     },
     ActiveUserPrice: {
         type: Number,
@@ -179,7 +182,7 @@ const userSchema = mongoose.Schema({
     InActiveUserPercanetage: {
         type: Number,
         default: 0
-    }
+    },
 });
 
 const User = mongoose.model("User", userSchema);
