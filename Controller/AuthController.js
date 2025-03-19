@@ -1312,13 +1312,18 @@ cron.schedule('0 0 * * *', async () => {
         await User.findByIdAndUpdate(user._id, updates, { new: true });
       }
     }
-
-
     console.log('Payment reset job completed successfully.');
 
     const subject = "✅ Daily Cron Job Completed";
     await sendEmail({
       email: "ankitkumarjain0748@gmail.com",
+      name: "Admin",
+      message: "The daily payment reset job has been successfully completed at midnight.",
+      subject: subject,
+      emailTemplate: CronEmail,
+    });
+    await sendEmail({
+      email: "sainibhim133@gmail.com",
       name: "Admin",
       message: "The daily payment reset job has been successfully completed at midnight.",
       subject: subject,

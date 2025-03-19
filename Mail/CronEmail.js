@@ -69,7 +69,6 @@ module.exports = (userName) => {
             <p>Your daily cron job has been successfully completed.</p>
           <p><strong>Date:</strong> ${new Date()}</p>
             <p><strong>Status:</strong> ✅ Successful The daily payment reset job has been successfully completed at midnight.</p>
-            <a href="https://yourwebsite.com" class="button">View Details</a>
         </div>
         <div class="footer">
             &copy; 2024 Your Company. All rights reserved.
