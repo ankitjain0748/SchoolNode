@@ -10,8 +10,6 @@ const { validationErrorResponse, errorResponse, successResponse } = require("../
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
-const Transaction = require("../Model/Transcation");
-const Course = require("../Model/Course");
 const cron = require('node-cron');
 const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
@@ -22,6 +20,8 @@ const sendEmail = require("../utill/Emailer");
 const Payout = require("../Mail/Payout");
 const Payment = require("../Model/Payment");
 const VerifyMail = require("../Mail/VerifyMail");
+const moment = require('moment');
+const CronEmail = require("../Mail/CronEmail");
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -100,9 +100,6 @@ exports.OTP = catchAsync(async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
-
-
-
     // Check referral code and get referrer details
     let referrer = null;
     if (referred_by) {
@@ -165,9 +162,6 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
-
-
-
     // Save the user data and OTP in a temporary object
     const tempUser = {
       email,
@@ -920,8 +914,7 @@ exports.getCount = catchAsync(async (req, res) => {
   }
 });
 
-const moment = require('moment');
-const CronEmail = require("../Mail/CronEmail");
+
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
