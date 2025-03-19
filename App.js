@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
     });
 });
 
-cron.schedule('*/10 * * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Running daily payment reset job...');
         const currentDate = moment();

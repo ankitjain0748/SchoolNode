@@ -12,3 +12,4 @@
 2025-03-19 20:53:10 [ERROR]: Error fetching booking: jwt is not defined
 2025-03-19 20:53:16 [ERROR]: Error fetching booking: jwt is not defined
 2025-03-19 20:53:32 [ERROR]: Error fetching booking: jwt is not defined
+2025-03-20 00:15:39 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net

@@ -181,6 +181,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         }
 
         let paymentFilter = { UserId: userId, status: "success" };
+        console.log("paymentFilter" ,paymentFilter)
         if (paymentDate) {
             paymentFilter.createdAt = {
                 $gte: new Date(paymentDate + "T00:00:00.000Z"),
@@ -189,6 +190,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         }
 
         const payments = await Payment.find(paymentFilter).sort({ createdAt: -1 });
+        console.log("payments" ,payments)
 
         let referralQuery = {
             $and: [
@@ -201,6 +203,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
                 }
             ]
         };
+        console.log("referralQuery" ,referralQuery)
 
         if (name) {
             referralQuery.$and.push({ name: { $regex: new RegExp(name, "i") } });
@@ -211,9 +214,13 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             .skip((page - 1) * limit)
             .limit(limit);
 
+            console.log("testReferrals" ,testReferrals)
+
         const totalReferrals = await User.countDocuments(referralQuery);
+        console.log("totalReferrals" ,totalReferrals)
 
         const referralUserIds = testReferrals.map(user => user._id);
+        console.log("referralUserIds" ,referralUserIds)
 
         const paymentReferralData = await Payment.find({
             UserId: { $in: referralUserIds },
