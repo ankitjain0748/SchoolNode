@@ -3,6 +3,16 @@ const AdminPayment = require("../Model/Adminpay");
 const catchAsync = require("../utill/catchAsync");
 const Payment = require("../Model/Payment");
 const moment = require("moment");
+const bcrypt = require("bcrypt");
+const SocialSection = require("../Model/Social");
+const ProfileData = require("../Model/Profile");
+
+const signToken = async (id) => {
+    const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
+        expiresIn: "14400m",
+    });
+    return token;
+};
 
 exports.AdminDashboard = catchAsync(async (req, res) => {
     try {
@@ -67,7 +77,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         ]);
         const totalAmount = await Payment.aggregate([
             {
-                $match: { payment_status: "success" } 
+                $match: { payment_status: "success" }
             },
             {
                 $group: {
@@ -152,9 +162,9 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             enrolled: enrolledCount,
             totalusercount: totalusercount,
             AdminPaidAmount: AdminPaidAmount,
-            totalPaymentAddAmount: totalPaymentAddAmount.length > 0 ? totalPaymentAddAmount[0].total :0,
-            totalGSTAmount: totalGSTAmount.length > 0 ? totalGSTAmount[0].totalGSTAmount :0,
-            totaluserIncome: totaluserIncome.length > 0 ? totaluserIncome[0] :0,
+            totalPaymentAddAmount: totalPaymentAddAmount.length > 0 ? totalPaymentAddAmount[0].total : 0,
+            totalGSTAmount: totalGSTAmount.length > 0 ? totalGSTAmount[0].totalGSTAmount : 0,
+            totaluserIncome: totaluserIncome.length > 0 ? totaluserIncome[0] : 0,
             totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
             todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,
             yesterdayIncome: yesterdayIncome.length > 0 ? yesterdayIncome[0].total : 0,
@@ -164,5 +174,146 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
     } catch (error) {
         console.log("error", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+});
+
+exports.getCount = catchAsync(async (req, res) => {
+    try {
+        const userCount = await User.countDocuments();
+        const bookingCount = await Booking.countDocuments();
+        const RecentCount = await Enquiry.countDocuments();
+        const EnquiryData = await Enquiry.find({}).limit(3);
+        return res.status(200).json({
+            status: true,
+            message: " Data retrieved successfully",
+            userCount: userCount,
+            bookingCount: bookingCount,
+            EnquiryCount: RecentCount,
+            EnquiryData: EnquiryData
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "An error occurred while fetching the user count.",
+            error: error.message,
+        });
+    }
+});
+
+exports.adminlogin = catchAsync(async (req, res, next) => {
+    try {
+        const { email, password, role } = req.body;
+
+        // Check if email and password are provided
+        if (!email || !password) {
+            return res.status(401).json({
+                status: false,
+                message: "Email and password are required!",
+            });
+        }
+
+        // Find the user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({
+                status: false,
+                message: "Invalid Email or password",
+            });
+        }
+
+        // Validate password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({
+                status: false,
+                message: "Incorrect password. Please try again.",
+            });
+        }
+
+        if (user.role !== role) {
+            return res.status(403).json({
+                status: false,
+                message: "Access denied. Only admins can log in.",
+            });
+        }
+
+        // Generate a token for the user
+        const token = await signToken(user._id);
+        res.json({
+            status: true,
+            message: "Login Successfully!",
+            token,
+        });
+    } catch (error) {
+        logger.error("Error fetching booking:", error);
+        return res.status(500).json({
+            error,
+            message: "An unknown error occurred. Please try later.",
+        });
+    }
+});
+
+
+exports.profileadmin = catchAsync(async (req, res, next) => {
+    try {
+        const adminUser = await User.findOne({ role: "admin", isDeleted: false }).select("-password");
+        const SocialAdmin = await SocialSection.findOne({ userId: adminUser?._id });
+        const ProfileAdmin = await ProfileData.findOne({ userId: adminUser?._id });
+
+        if (!adminUser) {
+            return res.status(404).json({
+                status: false,
+                message: "Admin user not found.",
+            });
+        }
+        const users = await User.find({ role: "user", user_status: { $ne: "registered" }, isDeleted: false });
+
+        const userCount = await User.countDocuments();
+        let activeCount = 0;
+        let inactiveCount = 0;
+
+        for (const user of users) {
+            const { referred_user_pay, second_user_pay, first_user_pay } = user;
+            const totalPayment = referred_user_pay || 0;
+            const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
+            const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
+            const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
+
+            await User.findByIdAndUpdate(
+                user._id,
+                {
+                    $set: { user_status: userStatus },
+                    $inc: { passive_income: validPercentageValue },
+                },
+                { new: true }
+            );
+
+            // Update counters
+            if (userStatus === 'active') {
+                activeCount++;
+            } else {
+                inactiveCount++;
+            }
+        }
+
+        res.status(200).json({
+            status: true,
+            message: "Users retrieved and updated successfully with enquiry counts updated",
+            data: {
+                adminUser,
+                userCount,
+                activeCount,
+                inactiveCount,
+            },
+            ProfileAdmin: ProfileAdmin,
+            SocialAdmin: SocialAdmin
+        });
+    } catch (error) {
+        logger.error("Error fetching users:", error);
+        return res.status(500).json({
+            status: false,
+            message: "An error occurred while fetching and updating users.",
+            error: error.message || "Internal Server Error",
+        });
     }
 });

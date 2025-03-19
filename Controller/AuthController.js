@@ -10,9 +10,6 @@ const { validationErrorResponse, errorResponse, successResponse } = require("../
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
-const Transaction = require("../Model/Transcation");
-const Course = require("../Model/Course");
-const cron = require('node-cron');
 const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
 const SocialSection = require("../Model/Social");
@@ -20,9 +17,8 @@ const RegisterEmail = require("../Mail/RegisterEmail");
 const AdminEmail = require("../Mail/AdminRegister");
 const sendEmail = require("../utill/Emailer");
 const Payout = require("../Mail/Payout");
-const Payment = require("../Model/Payment");
 const VerifyMail = require("../Mail/VerifyMail");
-
+const moment = require('moment');
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer")) {
@@ -84,14 +80,11 @@ const signEmail = async (id) => {
   });
   return token;
 };
-
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
 }
 
 exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return emailRegex.test(email); };
-
-
 // Function to generate OTP
 
 exports.OTP = catchAsync(async (req, res) => {
@@ -100,9 +93,6 @@ exports.OTP = catchAsync(async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
-
-
-
     // Check referral code and get referrer details
     let referrer = null;
     if (referred_by) {
@@ -165,9 +155,6 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
-
-
-
     // Save the user data and OTP in a temporary object
     const tempUser = {
       email,
@@ -408,59 +395,6 @@ exports.signup = catchAsync(async (req, res) => {
   }
 });
 
-exports.adminlogin = catchAsync(async (req, res, next) => {
-  try {
-    const { email, password, role } = req.body;
-
-    // Check if email and password are provided
-    if (!email || !password) {
-      return res.status(401).json({
-        status: false,
-        message: "Email and password are required!",
-      });
-    }
-
-    // Find the user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({
-        status: false,
-        message: "Invalid Email or password",
-      });
-    }
-
-    // Validate password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({
-        status: false,
-        message: "Incorrect password. Please try again.",
-      });
-    }
-
-    if (user.role !== role) {
-      return res.status(403).json({
-        status: false,
-        message: "Access denied. Only admins can log in.",
-      });
-    }
-
-    // Generate a token for the user
-    const token = await signToken(user._id);
-    res.json({
-      status: true,
-      message: "Login Successfully!",
-      token,
-    });
-  } catch (error) {
-    logger.error("Error fetching booking:", error);
-    return res.status(500).json({
-      error,
-      message: "An unknown error occurred. Please try later.",
-    });
-  }
-});
-
 exports.login = catchAsync(async (req, res, next) => {
   try {
     const { email, password, role } = req.body;
@@ -551,7 +485,7 @@ exports.profile = catchAsync(async (req, res, next) => {
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
     const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
 
-    
+
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
       // Bank detail safely fetch karein
@@ -847,27 +781,27 @@ exports.userfilter = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-exports.VerifyUser = async (req, res) => {
-  try {
-    const { token } = req.body;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return errorResponse(res, "User not found", 404);
+exports.VerifyUser = catchAsync(
+  async (req, res) => {
+    try {
+      const { token } = req.body;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        return errorResponse(res, "User not found", 404);
+      }
+      user.verified = true;
+      await user.save();
+      return successResponse(res, "Password has been successfully reset");
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        return errorResponse(res, "Token has expired. Please contact support.", 401);
+      }
+      logger.error("Error deleting user record:", error);
+      return errorResponse(res, "Failed to verify account");
     }
-    user.verified = true;
-    await user.save();
-    return successResponse(res, "Password has been successfully reset");
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return errorResponse(res, "Token has expired. Please contact support.", 401);
-    }
-    logger.error("Error deleting user record:", error);
-    return errorResponse(res, "Failed to verify account");
   }
-};
-
+);
 
 exports.UserIdDelete = catchAsync(async (req, res, next) => {
   try {
@@ -894,33 +828,6 @@ exports.UserIdDelete = catchAsync(async (req, res, next) => {
     });
   }
 });
-// dashboardApi
-
-exports.getCount = catchAsync(async (req, res) => {
-  try {
-    const userCount = await User.countDocuments();
-    const bookingCount = await Booking.countDocuments();
-    const RecentCount = await Enquiry.countDocuments();
-    const EnquiryData = await Enquiry.find({}).limit(3);
-    return res.status(200).json({
-      status: true,
-      message: " Data retrieved successfully",
-      userCount: userCount,
-      bookingCount: bookingCount,
-      EnquiryCount: RecentCount,
-      packages: packages,
-      EnquiryData: EnquiryData
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: false,
-      message: "An error occurred while fetching the user count.",
-      error: error.message,
-    });
-  }
-});
-
-const moment = require('moment');
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
@@ -1161,71 +1068,6 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
   }
 });
 
-
-exports.profileadmin = catchAsync(async (req, res, next) => {
-  try {
-    const adminUser = await User.findOne({ role: "admin", isDeleted: false }).select("-password");
-    const SocialAdmin = await SocialSection.findOne({ userId: adminUser?._id });
-    const ProfileAdmin = await ProfileData.findOne({ userId: adminUser?._id });
-
-    if (!adminUser) {
-      return res.status(404).json({
-        status: false,
-        message: "Admin user not found.",
-      });
-    }
-    const users = await User.find({ role: "user", user_status: { $ne: "registered" }, isDeleted: false });
-
-    const userCount = await User.countDocuments();
-    let activeCount = 0;
-    let inactiveCount = 0;
-
-    for (const user of users) {
-      const { referred_user_pay, second_user_pay, first_user_pay } = user;
-      const totalPayment = referred_user_pay || 0;
-      const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
-      const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
-      const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
-
-      await User.findByIdAndUpdate(
-        user._id,
-        {
-          $set: { user_status: userStatus },
-          $inc: { passive_income: validPercentageValue },
-        },
-        { new: true }
-      );
-
-      // Update counters
-      if (userStatus === 'active') {
-        activeCount++;
-      } else {
-        inactiveCount++;
-      }
-    }
-
-    res.status(200).json({
-      status: true,
-      message: "Users retrieved and updated successfully with enquiry counts updated",
-      data: {
-        adminUser,
-        userCount,
-        activeCount,
-        inactiveCount,
-      },
-      ProfileAdmin: ProfileAdmin,
-      SocialAdmin: SocialAdmin
-    });
-  } catch (error) {
-    logger.error("Error fetching users:", error);
-    return res.status(500).json({
-      status: false,
-      message: "An error occurred while fetching and updating users.",
-      error: error.message || "Internal Server Error",
-    });
-  }
-});
-
 exports.UserListIds = catchAsync(async (req, res, next) => {
   try {
     const userId = req.User._id;
@@ -1246,53 +1088,3 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
-
-
-
-
-cron.schedule('30 9 * * *', async () => {
-  try {
-    console.log('Running daily payment reset job...');
-    const currentDate = moment();
-    const currentMonth = currentDate.format('YYYY-MM');
-    const currentWeek = currentDate.format('YYYY-WW');
-    const currentDay = currentDate.format('YYYY-MM-DD');
-
-    const users = await User.find();
-
-    for (let user of users) {
-      let updates = {};
-
-      if (user.lastPaymentDay !== currentDay) {
-        updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
-        updates.referred_user_pay_daily = 0;
-        updates.payment_key_daily = 0;
-        updates.referred_user_pay = 0;
-        updates.lastPaymentDay = currentDay;
-      }
-      if (user.lastPaymentWeek !== currentWeek) {
-        updates.referred_user_pay_weekly = 0;
-        updates.lastPaymentWeek = currentWeek;
-      }
-      if (user.lastPaymentMonth !== currentMonth) {
-        updates.referred_user_pay_monthly = 0;
-        updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
-        user.second_user_pay = 0;
-        user.first_user_pay = 0;
-        updates.lastPaymentMonth = currentMonth;
-      }
-
-      if (Object.keys(updates).length > 0) {
-        await User.findByIdAndUpdate(user._id, updates, { new: true });
-      }
-    }
-
-    console.log('Payment reset job completed successfully.');
-  } catch (error) {
-    console.error('Error running payment reset job:', error);
-  }
-});
-
-console.log('Cron job scheduled for daily resets!');

@@ -16,17 +16,26 @@ const userSchema = mongoose.Schema({
     },
     referral_code: {
         type: String,
+        default: ""
     },
     referred_by: {
-        type: String
+        type: String,
+        default: ""
     },
     referred_first: {
-        type: String
+        type: String,
+        default: ""
+
     },
     referred_second: {
-        type: String
+        type: String,
+        default: ""
+
     },
-    passive_income: Number,
+    passive_income: {
+        type: Number,
+        default: 0
+    },
     country_code: {
         type: String,
         default: "IN"
@@ -38,6 +47,7 @@ const userSchema = mongoose.Schema({
     phone_number: {
         type: Number,
         required: [true, "Phone number is required."],
+        default: 0
     },
     role: {
         type: String,
@@ -49,7 +59,10 @@ const userSchema = mongoose.Schema({
         default: "registered",
         enum: ["registered", "active", "inactive", "enrolled"]
     },
-    payment_key :String,
+    payment_key: {
+        type: String,
+        default: ""
+    },
     isDeleted: {
         type: Boolean,
         default: false,
@@ -64,37 +77,112 @@ const userSchema = mongoose.Schema({
     },
     Email_verify: {
         type: String,
-        // deafult: false
+        deafult: false
     },
-    payment_Add: Number,
-    referred_user_pay_overall: Number,
-    referred_user_pay_monthly: Number,
-    referred_user_pay_weekly: Number,
-    referred_user_pay_daily: Number,
-    payment_key_daily: Number,
-    lastPaymentMonth: String,
-    lastPaymentWeek: String,
-    lastPaymentDay: String,
-    paymentWidthrawal: Number,
-    lastTodayIncome: Number,
-    pervious_passive_income_month : Number,
+    payment_Add: {
+        type: Number,
+        default: 0
+    },
+    referred_user_pay_overall: {
+        type: Number,
+        default: 0
+    },
+    referred_user_pay_monthly: {
+        type: Number,
+        default: 0
+    },
+    referred_user_pay_weekly: {
+        type: Number,
+        default: 0
+    },
+    referred_user_pay_daily: {
+        type: Number,
+        default: 0
+    },
+    payment_key_daily: {
+        type: Number,
+        default: 0
+    },
+    lastPaymentMonth: {
+        type: String,
+        default: ""
+    },
+    lastPaymentWeek: {
+        type: String,
+        default: ""
+    },
+    lastPaymentDay: {
+        type: String,
+        default: ""
+    },
+    paymentWidthrawal: {
+        type: Number,
+        default: 0
+    },
+    lastTodayIncome: {
+        type: Number,
+        default: 0
+    },
+    pervious_passive_income_month: {
+        type: Number,
+        default: 0
+    },
     CourseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
     },
-    payment_data: Number,
-    payment_key: String,
-    referred_user_pay: Number,
-    first_user_pay: Number,
-    second_user_pay: Number,
-    widthrawal_reason: String,
-    success_reasons: String,
-    transactionId: String,
-    payment_reason: String,
-    paymentMethod: String,
-    OTP: Number,
-    ActiveUserPrice: Number,
-    InActiveUserPercanetage: Number,
+    payment_data: {
+        type: Number,
+        default: 0
+    },
+    payment_key: {
+        type: String,
+        default: ""
+    },
+    referred_user_pay: {
+        type: Number,
+        default: 0
+    },
+    first_user_pay: {
+        type: Number,
+        default: 0
+    },
+    second_user_pay: {
+        type: Number,
+        default: 0
+    },
+    widthrawal_reason: {
+        type: String,
+        default: ""
+    },
+    success_reasons: {
+        type: String,
+        default: ""
+    },
+    transactionId: {
+        type: String,
+        default: ""
+    },
+    payment_reason: {
+        type: String,
+        default: ""
+    },
+    paymentMethod: {
+        type: String,
+        default: ""
+    },
+    OTP: {
+        type: Number,
+        default: null
+    },
+    ActiveUserPrice: {
+        type: Number,
+        default: 0
+    },
+    InActiveUserPercanetage: {
+        type: Number,
+        default: 0
+    },
 });
 
 const User = mongoose.model("User", userSchema);
