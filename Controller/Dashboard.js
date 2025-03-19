@@ -31,10 +31,10 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const startOfWeeks = moment().startOf('week').toDate();
         const startOfMonths = moment().startOf('month').toDate();
         const previousDate = moment().subtract(1, 'days').toDate()
-        const registeredCount = await User.countDocuments({ user_status: "registered" });
-        const activeCount = await User.countDocuments({ user_status: "active" });
-        const inactiveCount = await User.countDocuments({ user_status: "inactive" });
-        const enrolledCount = await User.countDocuments({ user_status: "enrolled" });
+        const registeredCount = await User.countDocuments({ user_status: "registered" , role: "user" });
+        const activeCount = await User.countDocuments({ user_status: "active"  , role: "user" });
+        const inactiveCount = await User.countDocuments({ user_status: "inactive" , role: "user" });
+        const enrolledCount = await User.countDocuments({ user_status: "enrolled" , role: "user" });
         const totalusercount = await User.countDocuments({});
         const totaluserIncome = await User.aggregate([
             {
