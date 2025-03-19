@@ -551,7 +551,7 @@ exports.profile = catchAsync(async (req, res, next) => {
     const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
     const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
 
-    
+
     // Map the users with their bank and profile details
     const usersWithBankDetails = users.map(user => {
       // Bank detail safely fetch karein
@@ -921,6 +921,7 @@ exports.getCount = catchAsync(async (req, res) => {
 });
 
 const moment = require('moment');
+const CronEmail = require("../Mail/CronEmail");
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
@@ -1250,17 +1251,36 @@ exports.UserListIds = catchAsync(async (req, res, next) => {
 
 
 
+// cron.schedule('*/1 * * * *', async () => {
+//   try {
+//     console.log('Running daily payment reset job...');
+
+//     console.log("users5")
+
+//     const subject = "✅ Daily Cron Job Completed";
+//     await sendEmail({
+//       email: "ankitkumarjain0748@gmail.com",
+//       name: "Admin",
+//       message: "The daily payment reset job has been successfully completed at midnight.",
+//       subject: subject,
+//       emailTemplate: CronEmail,
+//     });
+//     console.log("users6")
 
 
-cron.schedule('30 9 * * *', async () => {
+//   } catch (error) {
+//     console.error('Error running payment reset job:', error);
+//   }
+// });
+
+cron.schedule('0 0 * * *', async () => {
   try {
     console.log('Running daily payment reset job...');
     const currentDate = moment();
     const currentMonth = currentDate.format('YYYY-MM');
     const currentWeek = currentDate.format('YYYY-WW');
     const currentDay = currentDate.format('YYYY-MM-DD');
-
-    const users = await User.find();
+    const users = await User.find({ role: "user" });
 
     for (let user of users) {
       let updates = {};
@@ -1272,10 +1292,13 @@ cron.schedule('30 9 * * *', async () => {
         updates.referred_user_pay = 0;
         updates.lastPaymentDay = currentDay;
       }
+
       if (user.lastPaymentWeek !== currentWeek) {
         updates.referred_user_pay_weekly = 0;
         updates.lastPaymentWeek = currentWeek;
       }
+
+
       if (user.lastPaymentMonth !== currentMonth) {
         updates.referred_user_pay_monthly = 0;
         updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
@@ -1285,14 +1308,37 @@ cron.schedule('30 9 * * *', async () => {
       }
 
       if (Object.keys(updates).length > 0) {
+        console.log("Updating user:", user._id, "with values:", updates)
         await User.findByIdAndUpdate(user._id, updates, { new: true });
       }
     }
 
+
     console.log('Payment reset job completed successfully.');
+
+    const subject = "✅ Daily Cron Job Completed";
+    await sendEmail({
+      email: "ankitkumarjain0748@gmail.com",
+      name: "Admin",
+      message: "The daily payment reset job has been successfully completed at midnight.",
+      subject: subject,
+      emailTemplate: CronEmail,
+    });
+    console.log("users6")
+
+    console.log(
+      "user", users
+    )
   } catch (error) {
     console.error('Error running payment reset job:', error);
   }
 });
 
-console.log('Cron job scheduled for daily resets!');
+
+
+// 0 0 * * *	12:00 AM (midnight)
+// 10 4 * * *	4:10 AM daily
+// 30 9 * * *	9:30 AM daily
+// 0 18 * * *	6:00 PM daily
+// 0 */6 * * *	हर 6 घंटे में
+// */10 * * * *	हर 10 मिनट में
