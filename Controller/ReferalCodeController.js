@@ -161,25 +161,19 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
 exports.RefralCodeGetId = catchAsync(async (req, res) => {
     const userId = req.query?.id;
-
     let { page = 1, limit = 10, paymentDate, name = "" } = req.query;
-
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
-
     if (isNaN(page) || page < 1) page = 1;
     if (isNaN(limit) || limit < 1) limit = 10;
-
     if (!userId) {
         return res.status(400).json({ msg: "User ID is missing", status: false });
     }
-
     try {
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ msg: "User not found", status: false });
         }
-
         let paymentFilter = { UserId: userId, status: "success" };
         console.log("paymentFilter" ,paymentFilter)
         if (paymentDate) {
@@ -237,11 +231,28 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
         const referralUsersWithPayment = testReferrals.map(referralUser => {
             console.log("referralUsersWithPayment" ,referralUsersWithPayment)
-            const referralCode = referralCodes.find(code => 
-                code.userId.toString() === referralUser.referred_by?.toString() ||
-                code.userId.toString() === referralUser.referred_first?.toString() ||
-                code.userId.toString() === referralUser.referred_second?.toString()
-            );
+            // const referralCode = referralCodes.find(code => 
+            //     code.userId.toString() === referralUser.referred_by?.toString() ||
+            //     code.userId.toString() === referralUser.referred_first?.toString() ||
+            //     code.userId.toString() === referralUser.referred_second?.toString()
+            // );
+
+            const referralCode = referralCodes.find(code => {
+                const userIdString = code.userId?.toString();
+                return (
+                    userIdString === referralUser.referred_by?.toString() ||
+                    userIdString === referralUser.referred_first?.toString() ||
+                    userIdString === referralUser.referred_second?.toString()
+                );
+                console.log("Checking Referral Match:", {
+                    userIdString: code.userId?.toString(),
+                    referred_by: referralUser.referred_by?.toString(),
+                    referred_first: referralUser.referred_first?.toString(),
+                    referred_second: referralUser.referred_second?.toString(),
+                });
+                
+            });
+            
             const paymentData = paymentReferralData.filter(pay => pay.UserId.toString() === referralUser._id.toString());
            console.log("paymentData" ,paymentData)
             return {
