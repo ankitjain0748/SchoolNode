@@ -239,18 +239,18 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
             const referralCode = referralCodes.find(code => {
                 const userIdString = code.userId?.toString();
-                return (
-                    userIdString === referralUser.referred_by?.toString() ||
-                    userIdString === referralUser.referred_first?.toString() ||
-                    userIdString === referralUser.referred_second?.toString()
-                );
                 console.log("Checking Referral Match:", {
                     userIdString: code.userId?.toString(),
                     referred_by: referralUser.referred_by?.toString(),
                     referred_first: referralUser.referred_first?.toString(),
                     referred_second: referralUser.referred_second?.toString(),
                 });
-                
+                return (
+                    userIdString === referralUser.referred_by?.toString() ||
+                    userIdString === referralUser.referred_first?.toString() ||
+                    userIdString === referralUser.referred_second?.toString()
+                );
+               
             });
             
             const paymentData = paymentReferralData.filter(pay => pay.UserId.toString() === referralUser._id.toString());
