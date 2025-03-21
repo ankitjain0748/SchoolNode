@@ -158,10 +158,8 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
     }
 });
 
-
 exports.RefralCodeGetId = catchAsync(async (req, res) => {
     const userId = req.query?.id;
-
     let { page = 1, limit = 10, paymentDate, name = "" } = req.query;
 
     page = parseInt(page, 10);
@@ -180,8 +178,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             return res.status(404).json({ msg: "User not found", status: false });
         }
 
-        let paymentFilter = { UserId: userId, status: "success" };
-        console.log("paymentFilter" ,paymentFilter)
+        let paymentFilter = { UserId: userId , status :"success" };
         if (paymentDate) {
             paymentFilter.createdAt = {
                 $gte: new Date(paymentDate + "T00:00:00.000Z"),
@@ -190,41 +187,33 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         }
 
         const payments = await Payment.find(paymentFilter).sort({ createdAt: -1 });
-        console.log("payments" ,payments)
 
         let referralQuery = {
-            $and: [
-                {
-                    $or: [
-                        { referred_by: userId },
-                        { referred_first: userId },
-                        { referred_second: userId }
-                    ]
-                }
+            $or: [
+                { referred_by: userId },
+                { referred_first: userId },
+                { referred_second: userId }
             ]
         };
-        console.log("referralQuery" ,referralQuery)
 
         if (name) {
-            referralQuery.$and.push({ name: { $regex: new RegExp(name, "i") } });
+            referralQuery.name = { $regex: new RegExp(name, "i") };
         }
+
 
         const testReferrals = await User.find(referralQuery)
             .populate("CourseId", "title discountPrice category courseImage")
             .skip((page - 1) * limit)
             .limit(limit);
 
-            console.log("testReferrals" ,testReferrals)
-
         const totalReferrals = await User.countDocuments(referralQuery);
-        console.log("totalReferrals" ,totalReferrals)
 
         const referralUserIds = testReferrals.map(user => user._id);
-        console.log("referralUserIds" ,referralUserIds)
+
 
         const paymentReferralData = await Payment.find({
             UserId: { $in: referralUserIds },
-            status: "success"
+            status :"success"
         });
 
         const referralCodes = await RefralModel.find({
@@ -235,19 +224,15 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             ]
         });
 
+
         const referralUsersWithPayment = testReferrals.map(referralUser => {
-            console.log("referralUsersWithPayment" ,referralUsersWithPayment)
-            const referralCode = referralCodes.find(code => 
-                code.userId.toString() === referralUser.referred_by?.toString() ||
-                code.userId.toString() === referralUser.referred_first?.toString() ||
-                code.userId.toString() === referralUser.referred_second?.toString()
-            );
+            const referralCode = referralCodes.find(code => code.userId.toString() === referralUser.referred_by?.toString());
             const paymentData = paymentReferralData.filter(pay => pay.UserId.toString() === referralUser._id.toString());
-           console.log("paymentData" ,paymentData)
             return {
                 ...referralUser.toObject(),
                 paymentDetails: paymentData.length > 0 ? paymentData : null,
                 referral_code: referralCode ? referralCode.referral_code : null,
+
             };
         });
 
@@ -270,7 +255,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 
 

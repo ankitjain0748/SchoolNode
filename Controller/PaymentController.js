@@ -56,23 +56,23 @@ exports.createOrder = catchAsync(async (req, res) => {
 
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
+
     const UserId = req.User._id;
+
     const { order_id, payment_id, amount, currency, payment_status, CourseId, payment_method } = req.body;
+
     const user = await User.findById(UserId);
 
     if (!order_id || !payment_id || !amount || !CourseId) {
       logger.warn("Missing required fields");
       return res.status(400).json({ status: false, message: "Missing required fields" });
     }
-    let referredType = "self"; // Default for direct purchase
-    if (user.referred_by) referredType = "direct";
-    else if (user.referred_first) referredType = "first";
-    else if (user.referred_second) referredType = "second";
+
     const status = payment_status === "failed" ? "failed" : "success";
+
     const payment = new Payment({
       order_id,
       currency,
-      referred_user_type: referredType,
       payment_id,
       amount,
       payment_status,
@@ -83,7 +83,9 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     });
 
     const record = await payment.save();
+
     const coursedata = await Course.findOne({ _id: CourseId });
+
     if (!coursedata) {
       return res.status(404).json({ status: false, message: "Course not found" });
     }
@@ -92,8 +94,10 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     }
 
     if (payment_status === "success") {
+
       const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
-      const subject1 = ` New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
+      const subject1 = `New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
+
       if (user) {
         await sendEmail({
           email: user.email,
@@ -105,6 +109,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           emailTemplate: Purchase,
         });
       }
+
       await sendEmail({
         email: "sainibhim133@gmail.com",
         name: "Admin",
@@ -115,74 +120,90 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         subject: subject1,
         emailTemplate: AdminPurchase,
       });
+
       const { referred_by, referred_first, referred_second } = user;
+
       const updateReferredUser = async (referredUserId, userKey, amountKey, discountPrice, newUserDiscountPrice) => {
-        if (referredUserId) {
-          const referredUser = await User.findById(referredUserId).populate("CourseId");
-          if (referredUser?.CourseId?.discountPrice <= discountPrice) {
-            let applicableDiscountPrice;
-            if (userKey === "directuser") {
-              applicableDiscountPrice = Math.min(referredUser?.CourseId?.directuser || 0);
-            } else if (userKey === "firstuser") {
-              applicableDiscountPrice = Math.min(referredUser?.CourseId?.firstuser || 0);
-            } else if (userKey === "seconduser") {
-              applicableDiscountPrice = Math.min(referredUser?.CourseId?.seconduser || 0);
-            }
-            await User.findByIdAndUpdate(
-              referredUserId,
-              { $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } },
-              { new: true }
-            );
-            await Payment.updateOne(
-              { _id: record._id },
-              {
-                $set: {
-                  referredData: {
-                    userId: referredUserId, // Store userId inside referredData
-                    [`reffer_${userKey}_pay`]: applicableDiscountPrice, // Store referral amount dynamically
-                  },
-                },
-              }
-            );
+        if (!referredUserId) return;
 
-          } else {
-            await Payment.updateOne(
-              { _id: record._id },
-              {
-                $set: {
-                  referredData: {
-                    userId: referredUserId,
-                    [`reffer_${userKey}_pay`]: newUserDiscountPrice,
-                  },
-                },
-              }
-            );
+        const referredUser = await User.findById(referredUserId).populate("CourseId");
 
-            await User.findByIdAndUpdate(
-              referredUserId,
-              {
-                $inc: {
-                  [userKey]: 1,
-                  ...(discountPrice ? { [amountKey]: newUserDiscountPrice } : {}),
-                },
-              },
-              { new: true }
-            );
-          }
+        if (!referredUser?.CourseId) {
+          return;
         }
-      }
-      // Update referred users based on discount price comparison
+
+        let applicableDiscountPrice = 0;
+        if (userKey === "directuser") {
+          applicableDiscountPrice = referredUser?.CourseId?.directuser || 0;
+        } else if (userKey === "firstuser") {
+          applicableDiscountPrice = referredUser?.CourseId?.firstuser || 0;
+        } else if (userKey === "seconduser") {
+          applicableDiscountPrice = referredUser?.CourseId?.seconduser || 0;
+        }
+
+        if (referredUser?.CourseId?.discountPrice < discountPrice) {
+          const recordsss = await User.findByIdAndUpdate(
+            referredUserId,
+            {
+              $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+              $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } // ✅ Increment fields
+            },
+            { new: true }
+          );
+
+          const paaw = await Payment.findByIdAndUpdate(
+            payment._id,
+            {
+              $set: {
+                referred_user_type: userKey, // Stores which referral type the user is
+                [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+                  userId: referredUserId, // ✅ Storing referred user's ID
+                  userType: userKey,
+                  payAmount: applicableDiscountPrice,
+                }
+              },
+            },
+            { new: true }
+          );
+
+
+        } else {
+          const recordss = await User.findByIdAndUpdate(
+            referredUserId,
+            {
+              $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+              $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } // ✅ Increment fields
+            },
+            { new: true }
+          );
+          const paa = await Payment.findByIdAndUpdate(
+            payment._id,
+            {
+              $set: {
+                referred_user_type: userKey, // Stores which referral type the user is
+                [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+                  userId: referredUserId, // ✅ Storing referred user's ID
+                  userType: userKey,
+                  payAmount: applicableDiscountPrice,
+                }
+              },
+            },
+            { new: true }
+          );
+
+        }
+      };
+
+
       await updateReferredUser(referred_by, "directuser", "referred_user_pay", coursedata.discountPrice, coursedata?.directuser || 0);
       await updateReferredUser(referred_first, "firstuser", "first_user_pay", coursedata.discountPrice, coursedata?.referred_first || 0);
       await updateReferredUser(referred_second, "seconduser", "second_user_pay", coursedata.discountPrice, coursedata?.referred_second || 0);
 
-      // Update the new user's course and status
       const data = await User.findByIdAndUpdate(
         UserId,
         { $set: { CourseId: CourseId, user_status: "Enrolled", ref_date: new Date() } },
         { new: true }
       );
-
 
       return res.status(200).json({
         status: "success",
@@ -192,6 +213,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     }
 
     if (payment_status === "failed") {
+      console.log("Payment failed");
       return res.status(200).json({
         status: "failed",
         message: "Payment failed, please try again",
@@ -199,6 +221,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     }
 
   } catch (error) {
+    console.log("Error Occurred:", error);
     logger.error(error);
     res.status(500).json({
       status: false,
@@ -207,6 +230,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     });
   }
 });
+
 
 // exports.paymentAdd = catchAsync(async (req, res) => {
 //   try {
