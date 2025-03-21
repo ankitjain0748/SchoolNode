@@ -6,16 +6,10 @@ const { SocialAddOrEdit } = require("../Controller/SocialController");
 const userRoute = require("express").Router();
 
 userRoute.post("/signup", OTP)
-
 userRoute.post("/OTP", VerifyOtp)
-
-
 userRoute.post("/login", login)
-
 userRoute.post("/adminlogin", adminlogin)
-
 userRoute.get("/profile", profile)
-
 userRoute.post("/updated_status", updateUserStatus)
 
 userRoute.post("/forgot-password", forgotlinkrecord)

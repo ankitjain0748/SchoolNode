@@ -161,17 +161,13 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 exports.RefralCodeGetId = catchAsync(async (req, res) => {
     const userId = req.query?.id;
     let { page = 1, limit = 10, paymentDate, name = "" } = req.query;
-
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
-
     if (isNaN(page) || page < 1) page = 1;
     if (isNaN(limit) || limit < 1) limit = 10;
-
     if (!userId) {
         return res.status(400).json({ msg: "User ID is missing", status: false });
     }
-
     try {
         const user = await User.findById(userId);
         if (!user) {
