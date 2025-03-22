@@ -17,3 +17,8 @@
 2025-03-22 16:20:58 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
 2025-03-22 16:47:49 [ERROR]: Error fetching users: read ECONNRESET
 2025-03-22 17:18:16 [ERROR]: Error fetching users: read ECONNRESET
+2025-03-22 18:49:02 [ERROR]: read ECONNRESET
+2025-03-22 18:49:06 [ERROR]: Error fetching users: connection <monitor> to 159.41.242.95:27017 timed out
+2025-03-22 18:49:17 [ERROR]: connection <monitor> to 159.41.242.95:27017 timed out
+2025-03-22 18:49:17 [ERROR]: connection <monitor> to 159.41.242.95:27017 timed out
+2025-03-22 21:50:13 [ERROR]: conole is not defined
