@@ -326,6 +326,8 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       });
     }
 
+
+    
     if (payment_status === "failed") {
       console.log("Payment failed");
       return res.status(200).json({
