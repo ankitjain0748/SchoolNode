@@ -140,69 +140,195 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         } else if (userKey === "seconduser") {
           applicableDiscountPrice = referredUser?.CourseId?.seconduser || 0;
         }
+if(userKey === "directuser"){
+  if (referredUser?.CourseId?.discountPrice >= discountPrice) {
+    console.log("Hello")
+    console.log("discountPrice", discountPrice)
+    console.log("newUserDiscountPrice", newUserDiscountPrice)
+    console.log("applicableDiscountPrice", applicableDiscountPrice)
+    const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+    await User.findByIdAndUpdate(
+      referredUserId,
+      {
+        $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+        $inc: { [userKey]: 1, [amountKey]: finalDiscountPrice } // ✅ Increment fields
+      },
+      { new: true }
+    );
 
-        if (referredUser?.CourseId?.discountPrice >= discountPrice) {
-          console.log("Hello")
-          console.log("discountPrice", discountPrice)
-          console.log("newUserDiscountPrice", newUserDiscountPrice)
-          console.log("applicableDiscountPrice", applicableDiscountPrice)
-          const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
-          await User.findByIdAndUpdate(
-            referredUserId,
-            {
-              $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
-              $inc: { [userKey]: 1, [amountKey]: finalDiscountPrice } // ✅ Increment fields
-            },
-            { new: true }
-          );
-
-          await Payment.findByIdAndUpdate(
-            payment._id,
-            {
-              $set: {
-                referred_user_type: userKey, // Stores which referral type the user is
-                [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
-                  userId: referredUserId, // ✅ Storing referred user's ID
-                  userType: userKey,
-                  payAmount: finalDiscountPrice,
-                }
-              },
-            },
-            { new: true }
-          );
+    await Payment.findByIdAndUpdate(
+      payment._id,
+      {
+        $set: {
+          referred_user_type: userKey, // Stores which referral type the user is
+          [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+            userId: referredUserId, // ✅ Storing referred user's ID
+            userType: userKey,
+            payAmount: finalDiscountPrice,
+          }
+        },
+      },
+      { new: true }
+    );
 
 
-        } else {
-          const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+  } else {
+    const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
 
-          console.log("Hello11")
-          console.log("discountPrice", discountPrice)
-          console.log("newUserDiscountPrice", newUserDiscountPrice)
-          console.log("applicableDiscountPrice", applicableDiscountPrice)
-          await User.findByIdAndUpdate(
-            referredUserId,
-            {
-              $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
-              $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } // ✅ Increment fields
-            },
-            { new: true }
-          );
-          await Payment.findByIdAndUpdate(
-            payment._id,
-            {
-              $set: {
-                referred_user_type: userKey, // Stores which referral type the user is
-                [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
-                  userId: referredUserId, // ✅ Storing referred user's ID
-                  userType: userKey,
-                  payAmount: applicableDiscountPrice,
-                }
-              },
-            },
-            { new: true }
-          );
+    console.log("Hello11")
+    console.log("discountPrice", discountPrice)
+    console.log("newUserDiscountPrice", newUserDiscountPrice)
+    console.log("applicableDiscountPrice", applicableDiscountPrice)
+    await User.findByIdAndUpdate(
+      referredUserId,
+      {
+        $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+        $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } // ✅ Increment fields
+      },
+      { new: true }
+    );
+    await Payment.findByIdAndUpdate(
+      payment._id,
+      {
+        $set: {
+          referred_user_type: userKey, // Stores which referral type the user is
+          [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+            userId: referredUserId, // ✅ Storing referred user's ID
+            userType: userKey,
+            payAmount: applicableDiscountPrice,
+          }
+        },
+      },
+      { new: true }
+    );
 
-        }
+  }
+}else{
+  if (referredUser?.CourseId?.discountPrice <= discountPrice) {
+    console.log("Hello")
+    console.log("discountPrice", discountPrice)
+    console.log("newUserDiscountPrice", newUserDiscountPrice)
+    console.log("applicableDiscountPrice", applicableDiscountPrice)
+    const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+    await User.findByIdAndUpdate(
+      referredUserId,
+      {
+        $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+        $inc: { [userKey]: 1, [amountKey]: finalDiscountPrice } // ✅ Increment fields
+      },
+      { new: true }
+    );
+
+    await Payment.findByIdAndUpdate(
+      payment._id,
+      {
+        $set: {
+          referred_user_type: userKey, // Stores which referral type the user is
+          [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+            userId: referredUserId, // ✅ Storing referred user's ID
+            userType: userKey,
+            payAmount: finalDiscountPrice,
+          }
+        },
+      },
+      { new: true }
+    );
+
+
+  } else {
+    const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+
+    console.log("Hello11")
+    console.log("discountPrice", discountPrice)
+    console.log("newUserDiscountPrice", newUserDiscountPrice)
+    console.log("applicableDiscountPrice", applicableDiscountPrice)
+    await User.findByIdAndUpdate(
+      referredUserId,
+      {
+        $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+        $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } // ✅ Increment fields
+      },
+      { new: true }
+    );
+    await Payment.findByIdAndUpdate(
+      payment._id,
+      {
+        $set: {
+          referred_user_type: userKey, // Stores which referral type the user is
+          [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+            userId: referredUserId, // ✅ Storing referred user's ID
+            userType: userKey,
+            payAmount: applicableDiscountPrice,
+          }
+        },
+      },
+      { new: true }
+    );
+
+  }
+}
+        // if (referredUser?.CourseId?.discountPrice >= discountPrice) {
+        //   console.log("Hello")
+        //   console.log("discountPrice", discountPrice)
+        //   console.log("newUserDiscountPrice", newUserDiscountPrice)
+        //   console.log("applicableDiscountPrice", applicableDiscountPrice)
+        //   const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+        //   await User.findByIdAndUpdate(
+        //     referredUserId,
+        //     {
+        //       $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+        //       $inc: { [userKey]: 1, [amountKey]: finalDiscountPrice } // ✅ Increment fields
+        //     },
+        //     { new: true }
+        //   );
+
+        //   await Payment.findByIdAndUpdate(
+        //     payment._id,
+        //     {
+        //       $set: {
+        //         referred_user_type: userKey, // Stores which referral type the user is
+        //         [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+        //           userId: referredUserId, // ✅ Storing referred user's ID
+        //           userType: userKey,
+        //           payAmount: finalDiscountPrice,
+        //         }
+        //       },
+        //     },
+        //     { new: true }
+        //   );
+
+
+        // } else {
+        //   const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+
+        //   console.log("Hello11")
+        //   console.log("discountPrice", discountPrice)
+        //   console.log("newUserDiscountPrice", newUserDiscountPrice)
+        //   console.log("applicableDiscountPrice", applicableDiscountPrice)
+        //   await User.findByIdAndUpdate(
+        //     referredUserId,
+        //     {
+        //       $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
+        //       $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } // ✅ Increment fields
+        //     },
+        //     { new: true }
+        //   );
+        //   await Payment.findByIdAndUpdate(
+        //     payment._id,
+        //     {
+        //       $set: {
+        //         referred_user_type: userKey, // Stores which referral type the user is
+        //         [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
+        //           userId: referredUserId, // ✅ Storing referred user's ID
+        //           userType: userKey,
+        //           payAmount: applicableDiscountPrice,
+        //         }
+        //       },
+        //     },
+        //     { new: true }
+        //   );
+
+        // }
       };
 
 

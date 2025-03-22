@@ -18,7 +18,6 @@ const sendEmail = async (data) => {
 
     // Generate the email HTML content using the email template function
     const emailHtml = emailTemplate({ name, message, cousreData, payment, datauser ,support,BlogRecord  ,Webniarrecord ,dicount, ImageUrl ,BgImage ,SubContent});
-
     // Define the email options
     const mailOptions = {
         from: 'sainibhim133@gmail.com', // Sender email (match with Gmail account)
