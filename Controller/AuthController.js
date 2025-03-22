@@ -91,8 +91,19 @@ exports.OTP = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by, Email_verify, referral_code } = req.body;
 
+    // Check if email or phone number already exists in TempUser
+    const existingTempUser = await TempUser.findOne({ $or: [{ email }, { phone_number }] });
+
+    if (existingTempUser) {
+      return res.status(400).json({
+        status: false,
+        message: "Email or phone number is already in process!",
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
+
     // Check referral code and get referrer details
     let referrer = null;
     if (referred_by) {
@@ -104,10 +115,10 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
+
     let referrers = null;
     if (referrer?.referred_by) {
       try {
-        // Ensure referred_by is treated as an ObjectId
         const referrerObjectId = new mongoose.Types.ObjectId(referrer.referred_by);
         referrers = await User.findOne({ _id: referrerObjectId });
         if (!referrers) {
@@ -123,10 +134,11 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
+
     let referrerdata = null;
     if (referrers?.referred_by) {
       const referrerObjectId = new mongoose.Types.ObjectId(referrers.referred_by);
-      referrerdata = await User?.findOne({ _id: referrerObjectId });
+      referrerdata = await User.findOne({ _id: referrerObjectId });
       if (!referrerdata) {
         return res.status(400).json({
           status: false,
@@ -134,27 +146,17 @@ exports.OTP = catchAsync(async (req, res) => {
         });
       }
     }
+
+    // Check if email or phone number already exists in User collection
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
 
     if (existingUser) {
-      const errors = {};
-
-      if (existingUser.email === email) {
-        errors.email = "Email is already in use!";
-      }
-
-      if (existingUser.phone_number.toString() === phone_number.toString()) {
-        errors.phone_number = "Phone number is already in use!";
-      }
-
-      if (Object.keys(errors).length > 0) {
-        return res.status(400).json({
-          status: false,
-          message: errors?.email || errors?.phone_number,
-          errors,
-        });
-      }
+      return res.status(400).json({
+        status: false,
+        message: "Email or phone number is already in use!",
+      });
     }
+
     // Save the user data and OTP in a temporary object
     const tempUser = {
       email,
@@ -174,13 +176,13 @@ exports.OTP = catchAsync(async (req, res) => {
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT, 10),
-      secure: process.env.MAIL_PORT === '465', // true for 465, false for 587
+      secure: process.env.MAIL_PORT === '465',
       auth: {
         user: process.env.user,
         pass: process.env.password,
       },
       tls: {
-        rejectUnauthorized: false, // Ignore certificate errors (useful for self-signed certs)
+        rejectUnauthorized: false,
       },
     });
 
@@ -192,12 +194,10 @@ exports.OTP = catchAsync(async (req, res) => {
       html: emailHtml,
     });
 
-
     return res.status(201).json({
       status: true,
       message: "OTP has been sent to your email!",
     });
-    // Store tempUser in a temporary collection or in-memory store
 
   } catch (error) {
     return res.status(500).json({
@@ -206,6 +206,7 @@ exports.OTP = catchAsync(async (req, res) => {
     });
   }
 });
+
 
 // Exported function to verify OTP
 exports.VerifyOtp = catchAsync(async (req, res, next) => {

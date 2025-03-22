@@ -289,7 +289,7 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
             SocialAdmin: SocialAdmin
         });
     } catch (error) {
-        logger.error("Error fetching users:", error);
+        Loggers.error("Error fetching users:", error);
         return res.status(500).json({
             status: false,
             message: "An error occurred while fetching and updating users.",

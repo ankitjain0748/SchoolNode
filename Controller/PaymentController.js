@@ -141,17 +141,22 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           applicableDiscountPrice = referredUser?.CourseId?.seconduser || 0;
         }
 
-        if (referredUser?.CourseId?.discountPrice < discountPrice) {
-          const recordsss = await User.findByIdAndUpdate(
+        if (referredUser?.CourseId?.discountPrice >= discountPrice) {
+          console.log("Hello")
+          console.log("discountPrice", discountPrice)
+          console.log("newUserDiscountPrice", newUserDiscountPrice)
+          console.log("applicableDiscountPrice", applicableDiscountPrice)
+          const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+          await User.findByIdAndUpdate(
             referredUserId,
             {
               $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
-              $inc: { [userKey]: 1, [amountKey]: applicableDiscountPrice } // ✅ Increment fields
+              $inc: { [userKey]: 1, [amountKey]: finalDiscountPrice } // ✅ Increment fields
             },
             { new: true }
           );
 
-          const paaw = await Payment.findByIdAndUpdate(
+          await Payment.findByIdAndUpdate(
             payment._id,
             {
               $set: {
@@ -159,7 +164,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
                 [`referredData${userKey === "directuser" ? 1 : userKey === "firstuser" ? 2 : 3}`]: {
                   userId: referredUserId, // ✅ Storing referred user's ID
                   userType: userKey,
-                  payAmount: applicableDiscountPrice,
+                  payAmount: finalDiscountPrice,
                 }
               },
             },
@@ -168,7 +173,13 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 
         } else {
-          const recordss = await User.findByIdAndUpdate(
+          const finalDiscountPrice = newUserDiscountPrice === 0 ? applicableDiscountPrice : newUserDiscountPrice;
+
+          console.log("Hello11")
+          console.log("discountPrice", discountPrice)
+          console.log("newUserDiscountPrice", newUserDiscountPrice)
+          console.log("applicableDiscountPrice", applicableDiscountPrice)
+          await User.findByIdAndUpdate(
             referredUserId,
             {
               $set: { referred_user_type: userKey }, // ✅ Set referred_user_type correctly
@@ -176,7 +187,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
             },
             { new: true }
           );
-          const paa = await Payment.findByIdAndUpdate(
+          await Payment.findByIdAndUpdate(
             payment._id,
             {
               $set: {
