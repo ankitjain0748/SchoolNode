@@ -62,6 +62,9 @@ cron.schedule('0 0 * * *', async () => {
             let updates = {};
             if (user.lastPaymentDay !== currentDay) {
                 updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
+                updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
+                updates.referred_user_pay_monthly = (user.lastTodayIncome || 0) + (user.referred_user_pay_monthly || 0) + (user.referred_user_pay);
+                updates.referred_user_pay_weekly = (user.lastTodayIncome || 0) + (user.referred_user_pay_weekly || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_daily = 0;
                 updates.payment_key_daily = 0;
                 updates.referred_user_pay = 0;
