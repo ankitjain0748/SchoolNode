@@ -19,6 +19,7 @@ const sendEmail = require("../utill/Emailer");
 const Payout = require("../Mail/Payout");
 const VerifyMail = require("../Mail/VerifyMail");
 const moment = require('moment');
+const cron = require("node-cron");
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer")) {
@@ -85,26 +86,21 @@ function generateOTP() {
 }
 
 exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return emailRegex.test(email); };
-// Function to generate OTP
 
 exports.OTP = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by, Email_verify, referral_code } = req.body;
-
-    // Check if email or phone number already exists in TempUser
     const existingTempUser = await TempUser.findOne({ $or: [{ email }, { phone_number }] });
-
     if (existingTempUser) {
       return res.status(400).json({
         status: false,
         message: "Email or phone number is already in process!",
       });
     }
-
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 3 * 60 * 1000); 
 
-    // Check referral code and get referrer details
     let referrer = null;
     if (referred_by) {
       referrer = await User.findOne({ referral_code: referred_by });
@@ -147,17 +143,13 @@ exports.OTP = catchAsync(async (req, res) => {
       }
     }
 
-    // Check if email or phone number already exists in User collection
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
-
     if (existingUser) {
       return res.status(400).json({
         status: false,
         message: "Email or phone number is already in use!",
       });
     }
-
-    // Save the user data and OTP in a temporary object
     const tempUser = {
       email,
       password: hashedPassword,
@@ -168,10 +160,10 @@ exports.OTP = catchAsync(async (req, res) => {
       referred_second: referrerdata ? referrerdata._id : null,
       OTP: otp,
       Email_verify: Email_verify,
+      otpExpiry:otpExpiry,
       referral_code: referral_code,
     };
 
-    // Send OTP email
     await TempUser.create(tempUser);
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
@@ -207,8 +199,24 @@ exports.OTP = catchAsync(async (req, res) => {
   }
 });
 
+const deleteExpiredOTPs = async () => {
+  try {
+    const now = new Date();
+    const result = await TempUser.deleteMany({ otpExpiry: { $lt: now } });
+    console.log("result" , result)
+    if (result.deletedCount > 0) {
+      console.log(`Deleted ${result.deletedCount} expired OTP users.`);
+    }
+  } catch (error) {
+    console.error("Error deleting expired OTP users:", error);
+  }
+};
 
-// Exported function to verify OTP
+cron.schedule("*/3 * * * *", async () => {
+  console.log("Running OTP cleanup job...");
+  await deleteExpiredOTPs();
+});
+
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
     const { email, OTP } = req.body;
@@ -305,8 +313,6 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
 exports.signup = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by } = req.body;
-
-    // Check for existing user by email or phone number
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
     if (existingUser) {
       const errors = {};

@@ -83,7 +83,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             return res.status(404).json({ msg: "User not found", status: false });
         }
 
-        let paymentFilter = { UserId: userId , status :"success" };
+        let paymentFilter = { UserId: userId, status: "success" };
         if (paymentDate) {
             paymentFilter.createdAt = {
                 $gte: new Date(paymentDate + "T00:00:00.000Z"),
@@ -116,7 +116,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
         const paymentReferralData = await Payment.find({
             UserId: { $in: referralUserIds },
-            status :"success"
+            status: "success"
         });
 
         const referralCodes = await RefralModel.find({
@@ -174,7 +174,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             return res.status(404).json({ msg: "User not found", status: false });
         }
 
-        let paymentFilter = { UserId: userId , status :"success" };
+        let paymentFilter = { UserId: userId, status: "success" };
         if (paymentDate) {
             paymentFilter.createdAt = {
                 $gte: new Date(paymentDate + "T00:00:00.000Z"),
@@ -209,7 +209,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
         const paymentReferralData = await Payment.find({
             UserId: { $in: referralUserIds },
-            status :"success"
+            status: "success"
         });
 
         const referralCodes = await RefralModel.find({
