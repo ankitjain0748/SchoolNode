@@ -11,7 +11,6 @@ const tempUserSchema = new mongoose.Schema({
   OTP: { type: String, required: true },
   Email_verify: { type: String, default: "false" },
   referral_code: { type: String },
-  otpExpiry: { type: Date, required: true, expires: 180 }, // OTP will be auto-deleted after 3 minutes
 });
 
 const TempUser = mongoose.model("TempUser", tempUserSchema);

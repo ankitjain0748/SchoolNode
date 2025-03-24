@@ -101,8 +101,6 @@ exports.OTP = catchAsync(async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 1 * 60 * 1000); 
-
     let referrer = null;
     if (referred_by) {
       referrer = await User.findOne({ referral_code: referred_by });
@@ -170,7 +168,6 @@ exports.OTP = catchAsync(async (req, res) => {
       referred_second: referrerdata ? referrerdata._id : null,
       OTP: otp,
       Email_verify: Email_verify,
-      otpExpiry:otpExpiry,
       referral_code: referral_code,
     };
 
@@ -208,23 +205,63 @@ exports.OTP = catchAsync(async (req, res) => {
   }
 });
 
-const deleteExpiredOTPs = async () => {
-  try {
-    const now = new Date();
-    const result = await TempUser.deleteMany({ otpExpiry: { $lt: now } });
-    console.log("result" , result)
-    if (result.deletedCount > 0) {
-      console.log(`Deleted ${result.deletedCount} expired OTP users.`);
-    }
-  } catch (error) {
-    console.error("Error deleting expired OTP users:", error);
-  }
-};
 
-cron.schedule("*/1 * * * *", async () => {
-  console.log("Running OTP cleanup job...");
-  await deleteExpiredOTPs();
+exports.ReSendOtp = catchAsync(async (req, res) => {
+  try {
+    const { email } = req.body;
+    const existingTempUser = await TempUser.findOne({ email :email });
+console.log("existingTempUser" ,existingTempUser)
+    if (existingTempUser) {
+      const otp = generateOTP();
+      console.log("otp" ,otp)
+      const recros = await TempUser.findByIdAndUpdate(
+        existingTempUser._id,
+        { OTP: otp},
+        { new: true }
+      );
+      console.log("recros" ,recros)
+      let transporter = nodemailer.createTransport({
+        host: process.env.MAIL_HOST,
+        port: parseInt(process.env.MAIL_PORT, 10),
+        secure: process.env.MAIL_PORT === '465',
+        auth: {
+          user: process.env.user,
+          pass: process.env.password,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+
+      const emailHtml = VerifyAccount(otp, recros.name);
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "StackEarn - Verify your Account",
+        html: emailHtml,
+      });
+
+      return res.status(200).json({ // 200 OK, update successful
+        status: true,
+        message: "New OTP has been sent to your email!",
+      });
+    }
+
+
+
+    return res.status(201).json({
+      status: true,
+      message: "OTP Resend has been sent to your email!",
+    });
+  } catch (error) {
+    console.log("error" ,error)
+    return res.status(500).json({
+      error,
+      message: "Internal Server Error",
+    });
+  }
 });
+
 
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
