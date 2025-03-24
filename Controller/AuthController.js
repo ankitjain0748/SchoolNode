@@ -94,9 +94,17 @@ exports.OTP = catchAsync(async (req, res) => {
     const { email, password, name, phone_number, referred_by, Email_verify, referral_code } = req.body;
     const existingTempUser = await TempUser.findOne({ $or: [{ email }, { phone_number }] });
     if (existingTempUser) {
+      const errors = "Email or Phone number already Exist!!";
+      if (existingTempUser.email === email) {
+        errors = "Email is already Exist!";
+      }
+      if (existingTempUser.phone_number === phone_number) {
+        errors = "Phone number is already Exist!";
+      }
       return res.status(400).json({
         status: false,
-        message: "Email or phone number is already in process!",
+        message: errors,
+        errors,
       });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -145,12 +153,12 @@ exports.OTP = catchAsync(async (req, res) => {
 
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
     if (existingUser) {
-      const errors = {};
+      const errors = "Email or Phone number already Exist ";
       if (existingUser.email === email) {
-        errors = "Email is already in use!";
+        errors = "Email is already Exist!";
       }
       if (existingUser.phone_number === phone_number) {
-        errors = "Phone number is already in use!";
+        errors = "Phone number is already Exist!";
       }
       return res.status(400).json({
         status: false,
@@ -209,17 +217,17 @@ exports.OTP = catchAsync(async (req, res) => {
 exports.ReSendOtp = catchAsync(async (req, res) => {
   try {
     const { email } = req.body;
-    const existingTempUser = await TempUser.findOne({ email :email });
-console.log("existingTempUser" ,existingTempUser)
+    const existingTempUser = await TempUser.findOne({ email: email });
+    console.log("existingTempUser", existingTempUser)
     if (existingTempUser) {
       const otp = generateOTP();
-      console.log("otp" ,otp)
+      console.log("otp", otp)
       const recros = await TempUser.findByIdAndUpdate(
         existingTempUser._id,
-        { OTP: otp},
+        { OTP: otp },
         { new: true }
       );
-      console.log("recros" ,recros)
+      console.log("recros", recros)
       let transporter = nodemailer.createTransport({
         host: process.env.MAIL_HOST,
         port: parseInt(process.env.MAIL_PORT, 10),
@@ -254,7 +262,7 @@ console.log("existingTempUser" ,existingTempUser)
       message: "OTP Resend has been sent to your email!",
     });
   } catch (error) {
-    console.log("error" ,error)
+    console.log("error", error)
     return res.status(500).json({
       error,
       message: "Internal Server Error",
@@ -361,12 +369,12 @@ exports.signup = catchAsync(async (req, res) => {
     const { email, password, name, phone_number, referred_by } = req.body;
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
     if (existingUser) {
-      const errors = {};
+      const errors = "Email or Phone number already Exist!!";
       if (existingUser.email === email) {
-        errors = "Email is already in use!";
+        errors = "Email is already Exist!";
       }
       if (existingUser.phone_number === phone_number) {
-        errors = "Phone number is already in use!";
+        errors = "Phone number is already Exist!";
       }
       return res.status(400).json({
         status: false,
