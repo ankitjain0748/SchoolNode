@@ -9,7 +9,7 @@ const tempUserSchema = new mongoose.Schema({
   referred_first: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   referred_second: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   OTP: { type: String, required: true },
-  Email_verify: { type: Boolean, default: false },
+  Email_verify: { type: String, default: "false" },
   referral_code: { type: String },
   otpExpiry: { type: Date, required: true, expires: 180 }, // OTP will be auto-deleted after 3 minutes
 });

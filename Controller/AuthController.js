@@ -20,6 +20,8 @@ const Payout = require("../Mail/Payout");
 const VerifyMail = require("../Mail/VerifyMail");
 const moment = require('moment');
 const cron = require("node-cron");
+
+
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer")) {
@@ -99,7 +101,7 @@ exports.OTP = catchAsync(async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 3 * 60 * 1000); 
+    const otpExpiry = new Date(Date.now() + 1 * 60 * 1000); 
 
     let referrer = null;
     if (referred_by) {
@@ -190,7 +192,6 @@ exports.OTP = catchAsync(async (req, res) => {
       status: true,
       message: "OTP has been sent to your email!",
     });
-
   } catch (error) {
     return res.status(500).json({
       error,
@@ -212,7 +213,7 @@ const deleteExpiredOTPs = async () => {
   }
 };
 
-cron.schedule("*/3 * * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
   console.log("Running OTP cleanup job...");
   await deleteExpiredOTPs();
 });
