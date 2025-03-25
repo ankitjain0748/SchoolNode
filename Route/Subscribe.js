@@ -1,6 +1,6 @@
 const subscribeget = require("express").Router();
 
-const { SubscribePost, Subscribeget, EmailDataSubScribe, EmailDataContactGet, EmailDataprofile, WebniarEmail, promtionalEmail, OfferCourseEmail ,SubscriberDelete } = require("../Controller/SubScribeController");
+const { SubscribePost, Subscribeget, EmailDataSubScribe, EmailDataContactGet, EmailDataprofile, WebniarEmail, promtionalEmail, OfferCourseEmail ,SubscriberDelete } = require("../Controller/SubScribeAndEmailController");
 
 subscribeget.post("/subscribe-add", SubscribePost);
 

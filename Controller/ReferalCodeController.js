@@ -252,8 +252,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
     }
 });
 
-
-
 exports.RefralCodeDelete = catchAsync(async (req, res) => {
     try {
         const { Id } = req.params;

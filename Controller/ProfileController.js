@@ -8,7 +8,6 @@ const Payment = require("../Model/Payment");
 const AdminPay = require("../Model/Adminpay");
 const Transaction = require("../Model/Transcation");
 const Review = require("../Model/Review");
-const Refral = require("../Model/Referal");
 
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object
@@ -83,7 +82,6 @@ name: `${firstname} ${lastname}`.trim(),
         });
     }
 });
-
 
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {

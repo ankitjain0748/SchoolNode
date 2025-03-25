@@ -6,21 +6,30 @@ const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const VerifyAccount = require("../Mail/VerifyAccount")
-const { validationErrorResponse, errorResponse, successResponse } = require("../utill/ErrorHandling");
+const {  errorResponse, successResponse } = require("../utill/ErrorHandling");
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
 const Bank = require("../Model/Bank");
 const TempUser = require("../Model/TempUser");
-const SocialSection = require("../Model/Social");
 const RegisterEmail = require("../Mail/RegisterEmail");
 const AdminEmail = require("../Mail/AdminRegister");
 const sendEmail = require("../utill/Emailer");
 const Payout = require("../Mail/Payout");
-const VerifyMail = require("../Mail/VerifyMail");
 const moment = require('moment');
-const cron = require("node-cron");
 
+const signToken = async (id) => {
+  const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: "14400m",
+  });
+  return token;
+};
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+}
+
+exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return emailRegex.test(email); };
 
 exports.verifyToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
@@ -70,43 +79,25 @@ exports.verifyToken = async (req, res, next) => {
   }
 };
 
-const signToken = async (id) => {
-  const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: "14400m",
-  });
-  return token;
-};
-
-const signEmail = async (id) => {
-  const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: "120m",
-  });
-  return token;
-};
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
-}
-
-exports.isValidEmail = (email) => { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return emailRegex.test(email); };
-
 exports.OTP = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by, Email_verify, referral_code } = req.body;
     const existingTempUser = await TempUser.findOne({ $or: [{ email }, { phone_number }] });
-    if (existingTempUser) {
-      const errors = "Email or Phone number already Exist!!";
-      if (existingTempUser.email === email) {
-        errors = "Email is already Exist!";
-      }
-      if (existingTempUser.phone_number === phone_number) {
-        errors = "Phone number is already Exist!";
-      }
-      return res.status(400).json({
-        status: false,
-        message: errors,
-        errors,
-      });
-    }
+    // if (existingTempUser) {
+    //   const errors = "Email or Phone number already Exist!!";
+    //   if (existingTempUser.email === email) {
+    //     errors = "Email is already Exist!";
+    //   }
+    //   if (existingTempUser.phone_number === phone_number) {
+    //     errors = "Phone number is already Exist!";
+    //   }
+    //   return res.status(400).json({
+    //     status: false,
+    //     message: errors,
+    //     errors,
+    //   });
+    // }
+    
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
     let referrer = null;
@@ -213,7 +204,6 @@ exports.OTP = catchAsync(async (req, res) => {
   }
 });
 
-
 exports.ReSendOtp = catchAsync(async (req, res) => {
   try {
     const { email } = req.body;
@@ -269,7 +259,6 @@ exports.ReSendOtp = catchAsync(async (req, res) => {
     });
   }
 });
-
 
 exports.VerifyOtp = catchAsync(async (req, res, next) => {
   try {
@@ -368,20 +357,20 @@ exports.signup = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by } = req.body;
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
-    if (existingUser) {
-      const errors = "Email or Phone number already Exist!!";
-      if (existingUser.email === email) {
-        errors = "Email is already Exist!";
-      }
-      if (existingUser.phone_number === phone_number) {
-        errors = "Phone number is already Exist!";
-      }
-      return res.status(400).json({
-        status: false,
-        message: errors,
-        errors,
-      });
-    }
+    // if (existingUser) {
+    //   const errors = "Email or Phone number already Exist!!";
+    //   if (existingUser.email === email) {
+    //     errors = "Email is already Exist!";
+    //   }
+    //   if (existingUser.phone_number === phone_number) {
+    //     errors = "Phone number is already Exist!";
+    //   }
+    //   return res.status(400).json({
+    //     status: false,
+    //     message: errors,
+    //     errors,
+    //   });
+    // }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -519,267 +508,6 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.profile = catchAsync(async (req, res, next) => {
-  try {
-    const page = Math.max(parseInt(req.query.page) || 1, 1);
-    const limit = Math.max(parseInt(req.query.limit) || 50, 1);
-    const skip = (page - 1) * limit;
-    const selectoption = req.query.selectedoption ? String(req.query.selectedoption).trim() : ""; // Assuming you'll use this later
-    const search = req.query.search ? String(req.query.search).trim() : "";
-    let query = { role: "user", isDeleted: false };
-
-    if (search !== "") {
-      query.name = { $regex: new RegExp(search, "i") };
-    }
-    if (selectoption) {
-      query.user_status = selectoption; // Assuming 'valid' means verified
-    }
-
-    const users = await User.find(query)
-      .populate("CourseId")
-      .select("-password")
-      .sort({ created_at: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    // Fetch bank and profile details in parallel for all users
-    const bankDetails = await Bank.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
-    const profileDetails = await ProfileData.find({ userId: { $in: users.map(user => user._id) } }).select("-_id -userId");
-
-
-    // Map the users with their bank and profile details
-    const usersWithBankDetails = users.map(user => {
-      // Bank detail safely fetch karein
-
-      const bankDetail = bankDetails.find(bank => String(bank?.userId) === String(user?._id));
-      const profileDetail = profileDetails.find(profile => String(profile?.userId) === String(user?._id));
-
-      return {
-        ...user.toObject(),
-        bank_details: bankDetail,
-        ProfileDetails: profileDetail
-      };
-    });
-
-
-    // Total users and pagination details
-    const totalUsers = await User.countDocuments(query);
-    const totalPages = Math.ceil(totalUsers / limit);
-
-    // Return response
-    return res.status(200).json({
-      status: true,
-      message: "Users retrieved successfully with bank details",
-      data: {
-        users: usersWithBankDetails,
-        totalUsers,
-        totalPages,
-        currentPage: page,
-        perPage: limit,
-        nextPage: page < totalPages ? page + 1 : null,
-        previousPage: page > 1 ? page - 1 : null,
-      },
-    });
-  } catch (error) {
-    logger.error("Error fetching users:", error);
-
-    return res.status(500).json({
-      status: false,
-      message: "An error occurred while fetching users and updating bank details.",
-      error: error.message || "Internal Server Error", // Provide a fallback error message
-    });
-  }
-});
-
-exports.updateUserStatus = catchAsync(async (req, res) => {
-  try {
-    const { _id, user_status } = req.body;
-    if (!_id || !user_status) {
-      return res.status(400).json({
-        message: "User ID and status are required.",
-        status: false,
-      });
-    }
-    const user = await User.findById(_id);
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-        status: false,
-      });
-    }
-    const newStatus = user.user_status === "active" ? "inactive" : "active";
-    user.user_status = newStatus;
-    await user.save();
-
-    res.status(200).json({
-      message: `User status updated to ${user?.user_status}`,
-      status: true,
-      data: user,
-    });
-  } catch (error) {
-    logger.error("Error fetching booking:", error);
-
-    res.status(500).json({
-      message: "Internal Server Error",
-      status: false,
-    });
-  }
-});
-
-exports.resetpassword = catchAsync(async (req, res) => {
-  try {
-    const email = req?.User?._id;
-    const { newPassword } = req.body;
-    const user = await User.findById({ _id: email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-    user.password = hashedPassword;
-    await user.save();
-    res.json({ message: "Password has been reset successfully!" });
-  } catch (error) {
-    logger.error("Error fetching booking:", error);
-    res.status(500).json({ message: "Error resetting password", error });
-  }
-});
-
-exports.UserListIdDelete = catchAsync(async (req, res, next) => {
-  try {
-    const { Id } = req.body;
-    if (!Id) {
-      return res.status(400).json({
-        status: false,
-        message: "User ID is required.",
-      });
-    }
-
-    const record = await User.findOneAndUpdate(
-      { _id: Id, isDeleted: false },
-      { isDeleted: true },
-      { new: true }
-    );
-    if (!record) {
-      return res.status(404).json({
-        status: false,
-        message: "User not found or already deleted.",
-      });
-    }
-
-    res.status(200).json({
-      status: true,
-      data: record,
-      message: "User deleted successfully.",
-    });
-  } catch (error) {
-
-    logger.error("Error deleting user record:", error);
-    res.status(500).json({
-      status: false,
-      message: "Internal Server Error. Please try again later.",
-    });
-  }
-});
-
-exports.UserUpdate = catchAsync(async (req, res, next) => {
-  try {
-    const { Id, email, username, address, phone_number, city } = req.body;
-    if (!Id) {
-      return res.status(400).json({
-        status: false,
-        message: "User ID is required.",
-      });
-    }
-    const updatedRecord = await User.findByIdAndUpdate(
-      Id,
-      { email, username, address, phone_number, city },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedRecord) {
-      return res.status(404).json({
-        status: false,
-        message: "User not found!",
-      });
-    }
-    res.status(200).json({
-      status: true,
-      data: updatedRecord,
-      message: "User updated successfully.",
-    });
-  } catch (error) {
-    logger.error("Error deleting user record:", error);
-
-    res.status(500).json({
-      status: false,
-      message:
-        "An error occurred while updating the User. Please try again later.",
-      error: error.message,
-    });
-  }
-});
-
-exports.forgotlinkrecord = catchAsync(async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return validationErrorResponse(res, { email: 'Email is required' });
-    }
-    const record = await User.findOne({ email: email });
-    if (!record) {
-      return errorResponse(res, "No user found with this email", 404);
-    }
-    const token = await signEmail(record._id);
-    const resetLink = `www.stackearn.com/new-password/${token}`;
-    const customerUser = record.name;
-    let transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
-      secure: false,
-      auth: {
-        user: process.env.user,
-        pass: process.env.password,
-      },
-    });
-    const emailHtml = VerifyMail(customerUser, resetLink);
-    await transporter.sendMail({
-      from: process.env.user,
-      to: record.email,
-      subject: "Forgot Your Password",
-      html: emailHtml,
-    });
-    return successResponse(res, "Email has been sent to your registered email");
-  } catch (error) {
-    logger.error("Error deleting user record:", error);
-
-    return errorResponse(res, "Failed to send email");
-  }
-}
-);
-
-exports.forgotpassword = catchAsync(async (req, res) => {
-  try {
-    const { token, newPassword } = req.body;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return errorResponse(res, "User not found", 404);
-    }
-    user.password = await bcrypt.hash(newPassword, 12);
-    await user.save();
-    return successResponse(res, "Password has been successfully reset");
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return errorResponse(res, "Token has expired. Please generate a new token.", 401);
-    }
-    logger.error("Error deleting user record:", error);
-
-    return errorResponse(res, "Failed to reset password");
-  }
-}
-);
-
 exports.profilegettoken = catchAsync(async (req, res, next) => {
   try {
     // Ensure req.User is populated properly from middleware
@@ -842,8 +570,8 @@ exports.userfilter = catchAsync(async (req, res, next) => {
     });
   }
 });
-exports.VerifyUser = catchAsync(
-  async (req, res) => {
+
+exports.VerifyUser = catchAsync( async (req, res) => {
     try {
       const { token } = req.body;
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -864,195 +592,7 @@ exports.VerifyUser = catchAsync(
   }
 );
 
-exports.UserIdDelete = catchAsync(async (req, res, next) => {
-  try {
-    const { Id } = req.body;
-    if (!Id) {
-      return res.status(400).json({
-        status: false,
-        message: 'User ID is required.',
-      });
-    }
-    await User.findByIdAndDelete(Id);
 
-    res.status(200).json({
-      status: true,
-      data: record,
-      message: 'User and associated images deleted successfully.',
-    });
-  } catch (error) {
-
-    logger.error(error)
-    res.status(500).json({
-      status: false,
-      message: 'Internal Server Error. Please try again later.',
-    });
-  }
-});
-
-exports.paymentdata = catchAsync(async (req, res) => {
-  try {
-    const {
-      Id, data_payment, success_reasons, payment_type, paymentMethod,
-      payment_reason, transactionId, payment_data, payment_income,
-      referred_user_pay, payment_key, page, withdrawal_reason,
-      paymentWidthrawal, payment_Add
-    } = req.body;
-
-    if (!Id) {
-      return res.status(400).json({
-        status: false,
-        message: "User ID is required."
-      });
-    }
-
-    const currentDate = moment();
-    const currentMonth = currentDate.format('YYYY-MM');
-    const currentWeek = currentDate.format('YYYY-WW');
-    const currentDay = currentDate.format('YYYY-MM-DD');
-
-    const user = await User.findById(Id);
-    if (!user) {
-      return res.status(404).json({
-        status: false,
-        message: "User not found!"
-      });
-    }
-
-    // Initialize or reset values
-    let updatedReferredUserPayOverall = user.referred_user_pay_overall || 0;
-    let updatedReferredUserPayMonthly = user.referred_user_pay_monthly || 0;
-    let updatedReferredUserPayWeekly = user.referred_user_pay_weekly || 0;
-    let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
-    let updatedPaymentKey = user.payment_key_daily || 0;
-    let updatedLastTodayIncome = user.lastTodayIncome - payment_key || 0;
-
-    // Reset values when period changes
-    if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
-    if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
-
-    if (user.lastPaymentDay !== currentDay) {
-      updatedLastTodayIncome = updatedReferredUserPayDaily; // Save today's income to lastTodayIncome
-      updatedReferredUserPayDaily = 0;
-      updatedPaymentKey = 0;
-    }
-
-    // Add current payments
-    const referralAmount = Number(payment_Add) || 0;
-    updatedReferredUserPayOverall += referralAmount;
-    updatedReferredUserPayMonthly += referralAmount;
-    updatedReferredUserPayWeekly += referralAmount;
-    updatedReferredUserPayDaily += referralAmount;
-    updatedPaymentKey += Number(paymentWidthrawal) || 0;
-
-    const newPayment = new Adminpayment({
-      userId: Id, paymentMethod, payment_type, success_reasons,
-      paymentWidthrawal, payment_reason, withdrawal_reason, payment_key,
-      transactionId, payment_data, payment_income, data_payment, page,
-      referred_user_pay, payment_Add
-    });
-
-    const paymentRecord = await newPayment.save();
-    if (!paymentRecord) {
-      return res.status(400).json({
-        status: false,
-        message: "Failed to save payment data."
-      });
-    }
-
-    // Update user payment data
-    const updatedUser = await User.findByIdAndUpdate(
-      Id,
-      {
-        payment_Add, payment_data, referred_user_pay,
-        referred_user_pay_overall: updatedReferredUserPayOverall,
-        referred_user_pay_monthly: updatedReferredUserPayMonthly,
-        referred_user_pay_weekly: updatedReferredUserPayWeekly,
-        referred_user_pay_daily: updatedReferredUserPayDaily,
-        lastTodayIncome: updatedLastTodayIncome,
-        lastPaymentMonth: currentMonth,
-        lastPaymentWeek: currentWeek,
-        payment_key: payment_key,
-        lastPaymentDay: currentDay,
-        payment_key_daily: updatedPaymentKey,
-      },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({
-        status: false,
-        message: "User not found for update!"
-      });
-    }
-
-    res.status(200).json({
-      status: true,
-      message: "Payment data saved and user updated successfully.",
-      paymentRecord,
-      updatedUser
-    });
-
-    // Send email notification on successful payout
-    if (page === "payout") {
-      const subject1 = "🎉 Your Payout Has Been Successfully Received!";
-      await sendEmail({
-        email: updatedUser.email,
-        name: updatedUser.name,
-        Webniarrecord: paymentRecord,
-        subject: subject1,
-        emailTemplate: Payout,
-      });
-    }
-  } catch (error) {
-    console.error("Error saving payment data and updating user:", error);
-    res.status(500).json({
-      status: false,
-      message: "An error occurred while processing the payment. Please try again later.",
-      error: error.message
-    });
-  }
-});
-
-// Let me know if you want me to make any adjustments or add more features! 🚀
-exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
-  try {
-    const UserId = req?.User?._id
-    const { price, percentage } = req.body;
-    if (!UserId) {
-      return res.status(400).json({
-        status: false,
-        message: "User ID is required.",
-      });
-    }
-    const updatedRecord = await User.findByIdAndUpdate(
-      UserId,
-      { ActiveUserPrice: price, InActiveUserPercanetage: percentage, },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedRecord) {
-      return res.status(404).json({
-        status: false,
-        message: "User not found!",
-      });
-    }
-    res.status(200).json({
-      status: true,
-      data: updatedRecord,
-      message: "User updated successfully.",
-    });
-  } catch (error) {
-    logger.error("Error deleting user record:", error);
-
-    res.status(500).json({
-      status: false,
-      message:
-        "An error occurred while updating the User. Please try again later.",
-      error: error.message,
-    });
-  }
-});
 
 exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
   try {
