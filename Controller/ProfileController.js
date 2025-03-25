@@ -29,7 +29,6 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
         if (existingProfile) {
             existingProfile.firstname = firstname || existingProfile.firstname;
             existingProfile.lastname = lastname || existingProfile.lastname;
-
             existingProfile.phone_number = phone_number || existingProfile.phone_number;
             existingProfile.designation = designation || existingProfile.designation;
             existingProfile.bio = bio || existingProfile.bio;

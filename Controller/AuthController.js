@@ -83,6 +83,10 @@ exports.OTP = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by, Email_verify, referral_code } = req.body;
     const existingTempUser = await TempUser.findOne({ $or: [{ email }, { phone_number }] });
+
+    if (existingTempUser) {
+      await TempUser.deleteOne({ _id: existingTempUser._id });
+    }
     // if (existingTempUser) {
     //   const errors = "Email or Phone number already Exist!!";
     //   if (existingTempUser.email === email) {
@@ -208,16 +212,13 @@ exports.ReSendOtp = catchAsync(async (req, res) => {
   try {
     const { email } = req.body;
     const existingTempUser = await TempUser.findOne({ email: email });
-    console.log("existingTempUser", existingTempUser)
     if (existingTempUser) {
       const otp = generateOTP();
-      console.log("otp", otp)
       const recros = await TempUser.findByIdAndUpdate(
         existingTempUser._id,
         { OTP: otp },
         { new: true }
       );
-      console.log("recros", recros)
       let transporter = nodemailer.createTransport({
         host: process.env.MAIL_HOST,
         port: parseInt(process.env.MAIL_PORT, 10),

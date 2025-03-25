@@ -22,3 +22,6 @@
 2025-03-22 18:49:17 [ERROR]: connection <monitor> to 159.41.242.95:27017 timed out
 2025-03-22 18:49:17 [ERROR]: connection <monitor> to 159.41.242.95:27017 timed out
 2025-03-22 21:50:13 [ERROR]: conole is not defined
+2025-03-25 23:09:22 [ERROR]: Cast to ObjectId failed for value "{ _id: undefined }" (type Object) at path "_id" for model "Profile"
+2025-03-25 23:12:03 [ERROR]: Profile ID is missing or invalid
+2025-03-25 23:14:30 [ERROR]: Profile not found for this User ID

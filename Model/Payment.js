@@ -4,6 +4,13 @@ const paymentSchema = new mongoose.Schema({
   order_id: { type: String, required: true },
   payment_id: { type: String, required: true },
   GST_Number: { type: Number },
+  sameAsBilling :Boolean,
+  saveInfo :Boolean,
+  remember :Boolean,
+  home_address: String ,
+  zip :String , 
+  state :String ,
+  country :String ,
   referredData1: {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     userType: { type: String, enum: ["directuser"], default: null },

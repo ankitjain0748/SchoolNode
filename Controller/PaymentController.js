@@ -9,7 +9,8 @@ const User = require("../Model/User");
 const Transaction = require("../Model/Transcation");
 const sendEmail = require("../utill/Emailer");
 const Purchase = require("../Mail/Purchase")
-const AdminPurchase = require("../Mail/AdminPurchase")
+const AdminPurchase = require("../Mail/AdminPurchase");
+const ProfileData = require("../Model/Profile");
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -51,17 +52,52 @@ exports.createOrder = catchAsync(async (req, res) => {
   }
 });
 
-// 
 
 
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
 
     const UserId = req.User._id;
-
-    const { order_id, payment_id, amount, currency, payment_status, CourseId, payment_method } = req.body;
-
+    const { order_id, payment_id, amount, currency, payment_status, CourseId, payment_method,
+      firstname, lastname, address, home_address, remember, saveInfo, sameAsBilling, phone_number, state, country, zip } = req.body;
     const user = await User.findById(UserId);
+
+    const updatedRecord = await User.findByIdAndUpdate(
+      UserId,
+      {
+        name: `${firstname} ${lastname}`.trim(),
+      },
+      { new: true, runValidators: true }
+    );
+
+    // Step 1: Check if profile exists
+    const existingProfile = await ProfileData.findOne({ userId: UserId });
+
+
+    if (existingProfile) {
+      const updatedProfile = await ProfileData.findByIdAndUpdate(
+        existingProfile._id,
+        {
+          address: address,
+          phone_number: phone_number,
+          firstname :firstname ,
+          lastname :lastname
+        },
+        { new: true, runValidators: true }
+      );
+    } else {
+      // Step 3: Save a new profile if not found
+      const newProfile = new ProfileData({
+        userId: UserId,
+        address: address,
+        phone_number: phone_number,
+        firstname :firstname ,
+        lastname :lastname
+      });
+
+      await newProfile.save();
+    }
+
 
     if (!order_id || !payment_id || !amount || !CourseId) {
       logger.warn("Missing required fields");
@@ -75,6 +111,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       currency,
       payment_id,
       amount,
+      state, country, zip, home_address, remember, saveInfo, sameAsBilling,
       payment_status,
       UserId,
       status,
