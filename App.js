@@ -45,7 +45,7 @@ app.use("/gallery", GalleryRoute)
 const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
 app.get("/", (req, res) => {
     res.json({
-        msg: 'Hello Data maanage ',
+        msg: 'Hello StackEarn Website',
         status: 200,
     });
 });
