@@ -108,8 +108,7 @@ exports.UserIdDelete = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: true,
-      data: record,
-      message: 'User and associated images deleted successfully.',
+      message: 'User deleted successfully.',
     });
   } catch (error) {
 

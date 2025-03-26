@@ -25,3 +25,5 @@
 2025-03-25 23:09:22 [ERROR]: Cast to ObjectId failed for value "{ _id: undefined }" (type Object) at path "_id" for model "Profile"
 2025-03-25 23:12:03 [ERROR]: Profile ID is missing or invalid
 2025-03-25 23:14:30 [ERROR]: Profile not found for this User ID
+2025-03-26 21:11:57 [ERROR]: record is not defined
+2025-03-26 21:12:19 [ERROR]: record is not defined
