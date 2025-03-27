@@ -84,6 +84,7 @@ exports.OTP = catchAsync(async (req, res) => {
     const { email, password, name, phone_number, referred_by, Email_verify, referral_code } = req.body;
     const existingTempUser = await TempUser.findOne({ $or: [{ email }, { phone_number }] });
 
+    console.log("existingTempUser" , existingTempUser)
     if (existingTempUser) {
       await TempUser.deleteOne({ _id: existingTempUser._id });
     }
@@ -147,14 +148,17 @@ exports.OTP = catchAsync(async (req, res) => {
     }
 
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
+    console.log("existingUser" ,existingUser);
     if (existingUser) {
-      const errors = "Email or Phone number already Exist ";
+      let errors = "Email or Phone number already Exist ";
       if (existingUser.email === email) {
         errors = "Email is already Exist!";
       }
       if (existingUser.phone_number === phone_number) {
         errors = "Phone number is already Exist!";
       }
+    
+      console.log("errors" , errors)
       return res.status(400).json({
         status: false,
         message: errors,
@@ -174,7 +178,7 @@ exports.OTP = catchAsync(async (req, res) => {
       referral_code: referral_code,
     };
 
-    await TempUser.create(tempUser);
+ const record =    await TempUser.create(tempUser);
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT, 10),
@@ -187,7 +191,7 @@ exports.OTP = catchAsync(async (req, res) => {
         rejectUnauthorized: false,
       },
     });
-
+console.log("record" ,record)
     const emailHtml = VerifyAccount(otp, name);
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
