@@ -62,26 +62,16 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       firstname, lastname, address, home_address, remember, saveInfo, sameAsBilling, phone_number, state, country, zip } = req.body;
     const user = await User.findById(UserId);
 
-    const updatedRecord = await User.findByIdAndUpdate(
-      UserId,
-      {
-        name: `${firstname} ${lastname}`.trim(),
-      },
-      { new: true, runValidators: true }
-    );
-
     // Step 1: Check if profile exists
-    const existingProfile = await ProfileData.findOne({ userId: UserId });
 
+    const fullAddress = `${address}, ${state}, ${country} - ${zip}`;
 
-    if (existingProfile) {
+    if (user) {
       const updatedProfile = await ProfileData.findByIdAndUpdate(
-        existingProfile._id,
+        user._id,
         {
-          address: address,
           phone_number: phone_number,
-          firstname :firstname ,
-          lastname :lastname
+          address: fullAddress,
         },
         { new: true, runValidators: true }
       );
@@ -89,15 +79,12 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       // Step 3: Save a new profile if not found
       const newProfile = new ProfileData({
         userId: UserId,
-        address: address,
         phone_number: phone_number,
-        firstname :firstname ,
-        lastname :lastname
+        address: fullAddress,
       });
 
       await newProfile.save();
     }
-
 
     if (!order_id || !payment_id || !amount || !CourseId) {
       logger.warn("Missing required fields");
@@ -411,8 +398,11 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     const payment = await Payment.find(query)
       .populate("UserId")
       .populate("CourseId")
+      .sort({ created_at: -1 }) // 👈 Sort by latest first
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
+
 
     if (!payment || payment.length === 0) {
       return res.status(204).json({

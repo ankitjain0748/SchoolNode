@@ -138,6 +138,9 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             };
         });
 
+        const AdminUser = await User.findOne({
+role : "admin"
+        });
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
             status: true,
@@ -147,6 +150,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             totalReferrals,
             data: referralUsersWithPayment,
             user,
+            AdminUser : AdminUser,
             payment: payments.length > 0 ? payments[0] : null,
         });
     } catch (error) {
@@ -160,7 +164,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
 exports.RefralCodeGetId = catchAsync(async (req, res) => {
     const userId = req.query?.id;
-    let { page = 1, limit = 10, paymentDate, name = "" } = req.query;
+    let { page = 1, limit = 10, payment_date, name = "" } = req.query;
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
     if (isNaN(page) || page < 1) page = 1;
@@ -173,17 +177,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         if (!user) {
             return res.status(404).json({ msg: "User not found", status: false });
         }
-
-        let paymentFilter = { UserId: userId, status: "success" };
-        if (paymentDate) {
-            paymentFilter.createdAt = {
-                $gte: new Date(paymentDate + "T00:00:00.000Z"),
-                $lt: new Date(paymentDate + "T23:59:59.999Z"),
-            };
-        }
-
-        const payments = await Payment.find(paymentFilter).sort({ createdAt: -1 });
-
         let referralQuery = {
             $or: [
                 { referred_by: userId },
@@ -209,8 +202,10 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
         const paymentReferralData = await Payment.find({
             UserId: { $in: referralUserIds },
-            status: "success"
+            status: "success",
         });
+
+        console.log("paymentReferralData" ,paymentReferralData)
 
         const referralCodes = await RefralModel.find({
             $or: [
@@ -232,6 +227,8 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             };
         });
 
+        console.log("referralUsersWithPayment", referralUsersWithPayment)
+
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
             status: true,
@@ -241,7 +238,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             totalReferrals,
             data: referralUsersWithPayment,
             user,
-            payment: payments.length > 0 ? payments[0] : null,
         });
     } catch (error) {
         console.error("Error fetching referral data:", error);

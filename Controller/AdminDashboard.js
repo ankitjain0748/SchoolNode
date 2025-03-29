@@ -109,6 +109,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             {
                 $match: {
                     payment_date: { $gte: today, $lt: tomorrow },
+                    payment_status: "success" // ✅ Only successful payments
                 },
             },
             {
@@ -118,10 +119,13 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
+        
         const yesterdayIncome = await Payment.aggregate([
             {
                 $match: {
                     payment_date: { $gte: yesterday, $lt: today },
+                    payment_status: "success" // ✅ Only successful payments
+
                 },
             },
             {
@@ -135,6 +139,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             {
                 $match: {
                     payment_date: { $gte: startOfWeek, $lte: tomorrow },
+                    payment_status: "success" // ✅ Only successful payments
+
                 },
             },
             {
@@ -148,6 +154,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             {
                 $match: {
                     payment_date: { $gte: startOfMonth, $lte: tomorrow },
+                    payment_status: "success" // ✅ Only successful payments
+
                 },
             },
             {

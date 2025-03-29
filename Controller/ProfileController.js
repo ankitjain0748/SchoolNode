@@ -8,6 +8,8 @@ const Payment = require("../Model/Payment");
 const AdminPay = require("../Model/Adminpay");
 const Transaction = require("../Model/Transcation");
 const Review = require("../Model/Review");
+const mongoose = require('mongoose');
+
 
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object
@@ -40,8 +42,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             const updatedProfile = await existingProfile.save();
             // Update the User table with the combined username
             await User.findByIdAndUpdate(userId, {
-                
-name: `${firstname} ${lastname}`.trim(),
+                name: `${firstname} ${lastname}`.trim(),
             });
             res.json({
                 status: true,
@@ -63,8 +64,7 @@ name: `${firstname} ${lastname}`.trim(),
 
             const savedProfile = await newProfile.save();
             await User.findByIdAndUpdate(userId, {
-                
-name: `${firstname} ${lastname}`.trim(),
+                name: `${firstname} ${lastname}`.trim(),
             });
             res.json({
                 status: true,
@@ -89,7 +89,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
-        const review = await Review.findOne({ userId: userId })
+        const reviews = await Review.find({ userId: new mongoose.Types.ObjectId(userId) });
         const BankData = await Bank.findOne({ userId: userId });
         const payment = await Payment.findOne({ UserId: userId });
         const AdminPayments = await AdminPay.find({ userId: userId });
@@ -120,7 +120,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             payment: payment,
             Transactions: Transactions,
             AdminPayments: AdminPayments,
-            review: review,
+            review: reviews,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {

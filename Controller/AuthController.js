@@ -147,12 +147,13 @@ exports.OTP = catchAsync(async (req, res) => {
     }
 
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
+    console.log("existingUser" ,existingUser)
     if (existingUser) {
       let errors = "Email or Phone number already Exist ";
       if (existingUser.email === email) {
         errors = "Email is already Exist!";
       }
-      if (existingUser.phone_number === phone_number) {
+      else{
         errors = "Phone number is already Exist!";
       }
       return res.status(400).json({
@@ -266,7 +267,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
     if (!email || !OTP) {
       return res.status(401).json({
         status: false,
-        message: "Email and OTP are required!",
+        message: "OTP are required!",
       });
     }
 
@@ -275,7 +276,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
     if (!tempUser) {
       return res.status(401).json({
         status: false,
-        message: "Invalid Email or OTP",
+        message: "Invalid OTP",
       });
     }
 
