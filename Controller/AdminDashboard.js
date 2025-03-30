@@ -364,7 +364,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
   
       const newPayment = new AdminPayment({
         userId: Id, paymentMethod, payment_type, success_reasons,
-        paymentWidthrawal, payment_reason, withdrawal_reason, payment_key,
+        paymentWidthrawal, withdrawal_reason, payment_key,
         transactionId, payment_data, payment_income, data_payment, page,
         referred_user_pay, payment_Add
       });
