@@ -18,7 +18,6 @@ userRoute.post("/profile-data", ProfileData)
 userRoute.post("/profile_id", verifyToken, ProfileDataId)
 userRoute.get('/referrals', getUsersWithTodayRefDate);
 userRoute.get("/userlist",verifyToken , UserListIds)
-
 // Bank And Soiclas profileAddOrUpdate controlerr 
 userRoute.post("/user-social", verifyToken, SocialAddOrEdit)
 userRoute.post("/bank-data", verifyToken, BankAddOrEdit)

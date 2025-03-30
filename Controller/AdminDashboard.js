@@ -262,8 +262,8 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
         let inactiveCount = 0;
 
         for (const user of users) {
-            const { referred_user_pay, second_user_pay, first_user_pay } = user;
-            const totalPayment = referred_user_pay || 0;
+            const { referred_user_pay, second_user_pay, first_user_pay ,referred_user_pay_monthly } = user;
+            const totalPayment = referred_user_pay_monthly || 0;
             const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
             const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;

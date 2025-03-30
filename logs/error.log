@@ -38,3 +38,9 @@
 2025-03-29 23:59:26 [ERROR]: Cast to ObjectId failed for value "{ userId: '67e731729f72769128ad851a' }" (type Object) at path "_id" for model "Review"
 2025-03-30 00:02:27 [ERROR]: review is not defined
 2025-03-30 00:02:27 [ERROR]: review is not defined
+2025-03-30 10:54:46 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-30 10:54:56 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-30 10:54:56 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-30 10:55:06 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-30 10:55:07 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-03-30 10:55:14 [ERROR]: Error fetching booking: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
