@@ -311,7 +311,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
     try {
       const {
         Id, data_payment, success_reasons, payment_type, paymentMethod,
-        payment_reason, transactionId, payment_data, payment_income,
+         transactionId, payment_data, payment_income,
         referred_user_pay, payment_key, page, withdrawal_reason,
         paymentWidthrawal, payment_Add
       } = req.body;

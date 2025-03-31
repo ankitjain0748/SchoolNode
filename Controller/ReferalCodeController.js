@@ -139,7 +139,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         });
 
         const AdminUser = await User.findOne({
-role : "admin"
+            role: "admin"
         });
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
@@ -150,7 +150,7 @@ role : "admin"
             totalReferrals,
             data: referralUsersWithPayment,
             user,
-            AdminUser : AdminUser,
+            AdminUser: AdminUser,
             payment: payments.length > 0 ? payments[0] : null,
         });
     } catch (error) {
@@ -205,7 +205,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             status: "success",
         });
 
-        console.log("paymentReferralData" ,paymentReferralData)
 
         const referralCodes = await RefralModel.find({
             $or: [
@@ -226,9 +225,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
             };
         });
-
-        console.log("referralUsersWithPayment", referralUsersWithPayment)
-
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
             status: true,

@@ -147,7 +147,6 @@ exports.OTP = catchAsync(async (req, res) => {
     }
 
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
-    console.log("existingUser" ,existingUser)
     if (existingUser) {
       let errors = "Email or Phone number already Exist ";
       if (existingUser.email === email) {
