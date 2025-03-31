@@ -9,6 +9,7 @@ const ProfileData = require("../Model/Profile");
 const Loggers = require("../utill/Loggers");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utill/Emailer");
+const Payout = require("../Mail/Payout")
 
 const signToken = async (id) => {
     const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -315,7 +316,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
         referred_user_pay, payment_key, page, withdrawal_reason,
         paymentWidthrawal, payment_Add
       } = req.body;
-  
+  console.log("req.body" ,req.body)
       if (!Id) {
         return res.status(400).json({
           status: false,
@@ -343,16 +344,19 @@ exports.paymentdata = catchAsync(async (req, res) => {
       let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
       let updatedPaymentKey = user.payment_key_daily || 0;
       let updatedLastTodayIncome = user.lastTodayIncome - payment_key || 0;
-  
       // Reset values when period changes
       if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
       if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
   
-      if (user.lastPaymentDay !== currentDay) {
-        updatedLastTodayIncome = updatedReferredUserPayDaily; // Save today's income to lastTodayIncome
-        updatedReferredUserPayDaily = 0;
-        updatedPaymentKey = 0;
-      }
+      console.log("user.lastPaymentDay " , user.lastPaymentDay)
+    //   if (user.lastPaymentDay !== currentDay) {
+    //     updatedLastTodayIncome = updatedReferredUserPayDaily; // Save today's income to lastTodayIncome
+    //     updatedReferredUserPayDaily = 0;
+    //     updatedPaymentKey = 0;
+    //   }
+      console.log("currentDay " , currentDay)
+
+      console.log("updatedLastTodayIncome", updatedLastTodayIncome)
   
       // Add current payments
       const referralAmount = Number(payment_Add) || 0;
@@ -395,6 +399,8 @@ exports.paymentdata = catchAsync(async (req, res) => {
         },
         { new: true, runValidators: true }
       );
+
+      console.log("updatedUser", updatedUser)
   
       if (!updatedUser) {
         return res.status(404).json({

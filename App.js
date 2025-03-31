@@ -50,16 +50,17 @@ app.get("/", (req, res) => {
     });
 });
 
+
+// 🟢 DAILY CRON JOB (Runs every day at midnight)
 cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Running daily payment reset job...');
-        const currentDate = moment();
-        const currentMonth = currentDate.format('YYYY-MM');
-        const currentWeek = currentDate.format('YYYY-WW');
-        const currentDay = currentDate.format('YYYY-MM-DD');
+        const currentDay = moment().format('YYYY-MM-DD');
         const users = await User.find({ role: "user" });
+
         for (let user of users) {
             let updates = {};
+
             if (user.lastPaymentDay !== currentDay) {
                 updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
@@ -71,40 +72,98 @@ cron.schedule('0 0 * * *', async () => {
                 updates.lastPaymentDay = currentDay;
             }
 
+            if (Object.keys(updates).length > 0) {
+                await User.findByIdAndUpdate(user._id, updates, { new: true });
+            }
+        }
+
+        console.log('✅ Daily payment reset job completed.');
+        await sendEmail({
+            email: "ankitkumarjain0748@gmail.com",
+            name: "Admin",
+            message: "The daily payment reset job has been successfully completed at midnight.",
+            subject: "✅ Daily Cron Job Completed",
+            emailTemplate: CronEmail,
+        });
+
+    } catch (error) {
+        console.error('❌ Error in daily payment reset job:', error);
+    }
+});
+
+// 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
+cron.schedule('0 0 * * 0', async () => {
+    try {
+        console.log('Running weekly payment reset job...');
+        const currentWeek = moment().format('YYYY-WW');
+        const users = await User.find({ role: "user" });
+
+        for (let user of users) {
+            let updates = {};
             if (user.lastPaymentWeek !== currentWeek) {
                 updates.referred_user_pay_weekly = 0;
                 updates.lastPaymentWeek = currentWeek;
-            }
-            if (user.lastPaymentMonth !== currentMonth) {
-                updates.referred_user_pay_monthly = 0;
-                updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
-                user.second_user_pay = 0;
-                user.first_user_pay = 0;
-                updates.lastPaymentMonth = currentMonth;
             }
             if (Object.keys(updates).length > 0) {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
         }
-        console.log('Payment reset job completed successfully.');
-        const subject = "✅ Daily Cron Job Completed";
+
+        console.log('✅ Weekly payment reset job completed.');
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
             name: "Admin",
-            message: "The daily payment reset job has been successfully completed at midnight.",
-            subject: subject,
+            message: "The weekly payment reset job has been successfully completed at midnight.",
+            subject: "✅ Weekly Cron Job Completed",
             emailTemplate: CronEmail,
         });
-        await sendEmail({
-            email: "sainibhim133@gmail.com",
-            name: "Admin",
-            message: "The daily payment reset job has been successfully completed at midnight.",
-            subject: subject,
-            emailTemplate: CronEmail,
-        });
+
     } catch (error) {
-        console.error('Error running payment reset job:', error);
+        console.error('❌ Error in weekly payment reset job:', error);
     }
 });
+
+// 🔴 MONTHLY CRON JOB (Runs at midnight on the last day of the month)
+cron.schedule('0 0 28-31 * *', async () => {
+    const today = moment();
+    if (today.date() !== today.endOf('month').date()) {
+        return; // Only run on the last day of the month
+    }
+
+    try {
+        console.log('Running monthly payment reset job...');
+        const currentMonth = moment().format('YYYY-MM');
+        const users = await User.find({ role: "user" });
+
+        for (let user of users) {
+            let updates = {};
+            if (user.lastPaymentMonth !== currentMonth) {
+                updates.referred_user_pay_monthly = 0;
+                updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
+                updates.lastPaymentMonth = currentMonth;
+                updates.second_user_pay = 0;
+                updates.first_user_pay = 0;
+            }
+            if (Object.keys(updates).length > 0) {
+                await User.findByIdAndUpdate(user._id, updates, { new: true });
+            }
+        }
+
+        console.log('✅ Monthly payment reset job completed.');
+        await sendEmail({
+            email: "ankitkumarjain0748@gmail.com",
+            name: "Admin",
+            message: "The monthly payment reset job has been successfully completed.",
+            subject: "✅ Monthly Cron Job Completed",
+            emailTemplate: CronEmail,
+        });
+
+    } catch (error) {
+        console.error('❌ Error in monthly payment reset job:', error);
+    }
+});
+
+console.log("✅ All cron jobs scheduled successfully!");
+
 
 app.listen(PORT, () => Loggers.http("Server is running at port : " + PORT));
