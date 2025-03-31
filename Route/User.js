@@ -46,5 +46,4 @@ userRoute.get("/adminprofile", profileadmin)
 userRoute.get("/user_admin_payment",ProfileAdminPayeData)
 userRoute.post("/payment", paymentdata);
 
-
 module.exports = userRoute;
