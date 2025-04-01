@@ -5,8 +5,15 @@ const mongoose = require('mongoose');
 const OnlineSchema = new mongoose.Schema({
   title :String ,
   video :String , 
-  content :String
-
+  content :String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 OnlineSchema.pre('save', function (next) {

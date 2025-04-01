@@ -132,7 +132,7 @@ exports.ReviewGet = catchAsync(async (req, res) => {
             },
             { $skip: skip },
             { $limit: limit }
-        ]);
+        ]).sort({created_at :-1});
         
         
 
@@ -159,7 +159,8 @@ exports.ReviewGet = catchAsync(async (req, res) => {
 
 exports.ReviewGetStatus = catchAsync(async (req, res) => {
     try {
-        const review = await Review.find({ status: "read" });
+        const review = await Review.find({ status: "read" }).sort({created_at
+ :-1        });
         res.json({
             status: true,
             message: "Review fetched Successfully",
@@ -301,7 +302,8 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
             });
         }
 
-        const reviews = await Review.find({ userId }).populate("userId");
+        const reviews = await Review.find({ userId }).populate("userId").sort({created_at
+:-1        });
         const profile = await ProfileData.findOne({ userId }).populate("userId");
         const userdata = await User.findOne({_id : userId });
         if (!reviews) {

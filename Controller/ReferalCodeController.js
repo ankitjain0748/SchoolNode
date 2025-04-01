@@ -125,7 +125,8 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
                 { userId: { $in: testReferrals.map(user => user.referred_first).filter(id => id !== null) } },
                 { userId: { $in: testReferrals.map(user => user.referred_second).filter(id => id !== null) } }
             ]
-        });
+
+        }).sort({created_at :-1});
 
         const referralUsersWithPayment = testReferrals.map(referralUser => {
             const referralCode = referralCodes.find(code => code.userId.toString() === referralUser.referred_by?.toString());
@@ -212,7 +213,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
                 { userId: { $in: testReferrals.map(user => user.referred_first).filter(id => id !== null) } },
                 { userId: { $in: testReferrals.map(user => user.referred_second).filter(id => id !== null) } }
             ]
-        });
+        }).sort({created_at :-1});
 
 
         const referralUsersWithPayment = testReferrals.map(referralUser => {

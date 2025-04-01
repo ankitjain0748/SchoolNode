@@ -398,11 +398,10 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     const payment = await Payment.find(query)
       .populate("UserId")
       .populate("CourseId")
-      .sort({ created_at: -1 }) // 👈 Sort by latest first
+      .sort({payment_date: -1 }) // 👈 Sort by latest first
       .skip(skip)
       .limit(limit)
       .lean();
-
 
     if (!payment || payment.length === 0) {
       return res.status(204).json({
@@ -445,7 +444,7 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
       });
     }
     const CourseIds = UserPayments.map((payment) => payment.CourseId);
-    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId");
+    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId").sort({createdAt :-1});
     res.status(200).json({
       status: true,
       message: "Courses retrieved successfully!",
@@ -628,7 +627,7 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
     const sortedCourseIds = Object.keys(courseSalesCount).sort((a, b) => courseSalesCount[b] - courseSalesCount[a]);
     const bestSellingCourseIds = sortedCourseIds.slice((page - 1) * limit, page * limit); // Pagination applied
 
-    const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId");
+    const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId").sort({createdAt : -1});
 
     // Include the purchase count for each best-selling course and sort by purchase count
     const bestSellingCoursesWithCount = bestSellingCourses.map((course) => ({

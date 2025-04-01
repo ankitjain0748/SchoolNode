@@ -616,7 +616,8 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
     const skip = (pageNumber - 1) * limitNumber;
 
     // Fetch users based on the query, with pagination
-    const users = await User.find(query).skip(skip).limit(limitNumber);
+    const users = await User.find(query).skip(skip).limit(limitNumber).sort({
+      created_at : -1});
 
     // Fetch additional user details
     const userDetails = await Promise.all(

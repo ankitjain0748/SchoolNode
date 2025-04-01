@@ -7,7 +7,15 @@ const OnlineSchema =  mongoose.Schema({
   webnair_date: String,
   webnair_time: String,
   webniar_end_time :String,
-  place: String
+  place: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 }, { timestamps: true }); 
 
 const Online = mongoose.model('webinar', OnlineSchema);

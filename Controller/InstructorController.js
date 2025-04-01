@@ -49,7 +49,8 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
     }
     const totalInstructor = await Instructor.countDocuments(query);
     const Instructorget = await Instructor.find(query)
-        .sort({ created_at: -1 })
+        .sort({ 
+            createdAt: -1 })
         .skip(skip)
         .limit(limit);
     const totalPages = Math.ceil(totalInstructor / limit);

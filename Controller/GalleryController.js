@@ -39,7 +39,7 @@ exports.getAllGallerys = catchAsync(async (req, res) => {
         }
         const totalUsers = await Gallery.countDocuments(query);
         const totalPages = Math.ceil(totalUsers / limit);
-        const Gallerys = await Gallery.find(query);
+        const Gallerys = await Gallery.find(query).sort({createdAt :-1 });
         res.status(200).json({
             status: true,
             data: Gallerys,

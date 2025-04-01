@@ -60,23 +60,17 @@ exports.ContactGet = catchAsync(async (req, res, next) => {
         let query = {};
         const search = req.query.search ? String(req.query.search).trim() : "";
         const selectoption = req.query.selectoption ? String(req.query.selectoption).trim() : ""; // Assuming you'll use this later
-
         if (search?.trim() !== "") {
             query.name = { $regex: search, $options: 'i' };
         }
-
         // Add filter based on selectoption if provided
         if (selectoption) {
             query.Email_verify = selectoption; // Assuming 'valid' means verified
         }
-
-
         const totalcontactmodal = await contactmodal.countDocuments(query);
         const contactget = await contactmodal.find(query).sort({ created_at: -1 })
             .skip(skip)
             .limit(limit);
-
-
         const totalPages = Math.ceil(totalcontactmodal / limit);
 
         res.status(200).json({
