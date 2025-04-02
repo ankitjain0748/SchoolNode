@@ -12,6 +12,8 @@ userRoute.post("/OTP", VerifyOtp)
 userRoute.post("/login", login)
 userRoute.post("/resendotp", ReSendOtp)
 userRoute.get("/profile-token", verifyToken, profilegettoken)
+// userRoute.get("/profile_Id", verifyToken, ProfileUserId)
+
 userRoute.post("/verifyaccount", VerifyUser)
 userRoute.post("/user-filter", userfilter);
 userRoute.post("/profile-data", ProfileData)

@@ -197,12 +197,30 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
         const BankData = await Bank.findOne({ userId: userId });
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ msg: "User not found", status: false });
+        }
+
+        let referralQuery = {
+            $or: [
+                { referred_by: userId },
+                { referred_first: userId },
+                { referred_second: userId },
+            ],
+        };
+
+
+        const totalReferrals = await User.countDocuments(referralQuery);
+        console.log("totalReferrals" ,totalReferrals)
+
 
         return res.status(200).json({
             status: true,
             user: UserData,
             profile: ProfileData,
             social: updatedSocials,
+            totalReferral: totalReferrals, 
             Bank: BankData,
             message: "Users retrieved successfully with enquiry counts updated",
         });
