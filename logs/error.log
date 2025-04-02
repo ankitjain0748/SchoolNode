@@ -44,3 +44,60 @@
 2025-03-30 10:55:06 [ERROR]: Error fetching users: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
 2025-03-30 10:55:07 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
 2025-03-30 10:55:14 [ERROR]: Error fetching booking: getaddrinfo ENOTFOUND cluster0-shard-00-00.g69we.mongodb.net
+2025-04-02 18:45:19 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:45:26 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:46:25 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:47:09 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:47:37 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:48:16 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:48:30 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:48:50 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:48:56 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:49:30 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:58:18 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:58:22 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:58:43 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:59:15 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 18:59:39 [ERROR]: Cannot populate path `userId` because it is not in your schema. Set the `strictPopulate` option to false to override.
+2025-04-02 19:01:21 [ERROR]: filter is not defined
+2025-04-02 19:01:22 [ERROR]: filter is not defined
+2025-04-02 19:01:22 [ERROR]: filter is not defined
+2025-04-02 19:01:22 [ERROR]: filter is not defined
+2025-04-02 19:01:22 [ERROR]: filter is not defined
+2025-04-02 19:01:24 [ERROR]: filter is not defined
+2025-04-02 19:01:24 [ERROR]: filter is not defined
+2025-04-02 19:01:24 [ERROR]: filter is not defined
+2025-04-02 19:01:24 [ERROR]: filter is not defined
+2025-04-02 19:01:29 [ERROR]: filter is not defined
+2025-04-02 19:01:31 [ERROR]: filter is not defined
+2025-04-02 19:01:31 [ERROR]: filter is not defined
+2025-04-02 19:01:31 [ERROR]: filter is not defined
+2025-04-02 19:01:31 [ERROR]: filter is not defined
+2025-04-02 19:01:33 [ERROR]: filter is not defined
+2025-04-02 19:01:33 [ERROR]: filter is not defined
+2025-04-02 19:01:34 [ERROR]: filter is not defined
+2025-04-02 19:01:34 [ERROR]: filter is not defined
+2025-04-02 19:01:34 [ERROR]: filter is not defined
+2025-04-02 19:01:34 [ERROR]: filter is not defined
+2025-04-02 19:01:36 [ERROR]: filter is not defined
+2025-04-02 19:01:36 [ERROR]: filter is not defined
+2025-04-02 19:01:38 [ERROR]: filter is not defined
+2025-04-02 19:01:38 [ERROR]: filter is not defined
+2025-04-02 19:01:39 [ERROR]: filter is not defined
+2025-04-02 19:01:39 [ERROR]: filter is not defined
+2025-04-02 19:01:39 [ERROR]: filter is not defined
+2025-04-02 19:01:39 [ERROR]: filter is not defined
+2025-04-02 19:01:39 [ERROR]: filter is not defined
+2025-04-02 19:01:40 [ERROR]: filter is not defined
+2025-04-02 19:01:40 [ERROR]: filter is not defined
+2025-04-02 19:01:40 [ERROR]: filter is not defined
+2025-04-02 19:01:41 [ERROR]: filter is not defined
+2025-04-02 19:01:41 [ERROR]: filter is not defined
+2025-04-02 19:02:05 [ERROR]: filter is not defined
+2025-04-02 19:02:05 [ERROR]: filter is not defined
+2025-04-02 19:02:06 [ERROR]: filter is not defined
+2025-04-02 19:02:06 [ERROR]: filter is not defined
+2025-04-02 19:02:06 [ERROR]: filter is not defined
+2025-04-02 20:09:47 [ERROR]: Cast to date failed for value "a" (type string) at path "payment_date" for model "Payment"
+2025-04-02 20:09:47 [ERROR]: Cast to date failed for value "an" (type string) at path "payment_date" for model "Payment"
+2025-04-02 20:09:47 [ERROR]: Cast to date failed for value "ank" (type string) at path "payment_date" for model "Payment"

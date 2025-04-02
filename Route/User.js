@@ -35,7 +35,7 @@ userRoute.post("/delete", verifyToken, UserListIdDelete)
 userRoute.post("/updated_status", updateUserStatus)
 userRoute.post("/update", verifyToken, UserUpdate)
 userRoute.get("/profile", profile)
-userRoute.post("/user-price", verifyToken, UserPriceUpdate);
+userRoute.post("/refral-active", verifyToken, UserPriceUpdate);
 
 
 //AdminDashboard aand prfoile

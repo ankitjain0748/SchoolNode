@@ -370,51 +370,84 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
   try {
+    console.log("Request query:", req.query);
+
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
-
-    const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
-    const search = req.query.search ? String(req.query.search).trim() : "";
+    const selectOption = req.query.selectedOption?.trim() || "";
+    const search = req.query.search?.trim() || "";
+    const username = req.query.username?.trim() || "";
+    const paymentDate = req.query.payment_date?.trim() || "";
 
     let query = {};
 
-    // Search by payment ID or user's name
-    if (search) {
-      // Correct filter for direct userId reference:
-      const users = await User.find({ name: { $regex: search, $options: "i" } }, '_id'); //get all user id match with search query
+    // Add search filter (using regex for partial matches)
+    if (username) {
+      const users = await User.find(
+        { name: { $regex: username, $options: "i" } },
+        "_id"
+      );
       const userIds = users.map(user => user._id);
-      filter.userId = { $in: userIds }; // Filter by user IDs
-
+      query.UserId = userIds;
     }
 
-    if (selectoption) {
-      query.payment_status = selectoption;
+    // Add username filter (exact match)
+    // if (username) {
+    //   const user = await User.findOne({ name: { $regex: `^${username}$`, $options: "i" } });
+    //   query.userId = user ? user._id : null; // Assign userId or null
+    // }
+    
+    // Add selected option filter
+    if (search) {
+      query.payment_id = search;
     }
 
+    if (selectOption) {
+      query.payment_status = selectOption;
+    }
+
+
+    // Add payment date filter (ensure proper formatting)
+    // if (paymentDate) {
+    //   query.payment_date = new Date(paymentDate); // Parse date correctly
+    // }
+
+    if (paymentDate) {
+      const startOfDay = new Date(paymentDate);
+      const endOfDay = new Date(paymentDate);
+      endOfDay.setUTCHours(23, 59, 59, 999); // End of the day
+      query.payment_date = { $gte: startOfDay, $lte: endOfDay }; // Match within the date range
+    }
+    
+    console.log(query)
+
+    // Fetch total count and pages
     const totalUsers = await Payment.countDocuments(query);
     const totalPages = Math.ceil(totalUsers / limit);
 
-    const payment = await Payment.find(query)
+    // Fetch payment data with pagination and sorting
+    const payments = await Payment.find(query)
       .populate("UserId")
       .populate("CourseId")
-      .sort({payment_date: -1 }) // 👈 Sort by latest first
+      .sort({ payment_date: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
-    if (!payment || payment.length === 0) {
+    // Return appropriate responses
+    if (!payments || payments.length === 0) {
       return res.status(204).json({
         status: false,
-        message: "No Payment found for this user.",
+        message: "No Payment found.",
         payment: [],
       });
     }
 
     res.status(200).json({
       status: true,
-      message: "Payment retrieved successfully!",
-      payment: payment,
+      message: "Payments retrieved successfully!",
+      payments,
       totalUsers,
       totalPages,
       currentPage: page,
@@ -423,7 +456,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
       previousPage: page > 1 ? page - 1 : null,
     });
   } catch (err) {
-    logger.error(err);
+    console.error("Error:", err);
     return res.status(500).json({
       status: false,
       message: "An unknown error occurred. Please try again later.",
@@ -431,6 +464,11 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     });
   }
 });
+
+
+
+
+
 
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;
@@ -444,7 +482,7 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
       });
     }
     const CourseIds = UserPayments.map((payment) => payment.CourseId);
-    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId").sort({createdAt :-1});
+    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId").sort({ createdAt: -1 });
     res.status(200).json({
       status: true,
       message: "Courses retrieved successfully!",
@@ -627,7 +665,7 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
     const sortedCourseIds = Object.keys(courseSalesCount).sort((a, b) => courseSalesCount[b] - courseSalesCount[a]);
     const bestSellingCourseIds = sortedCourseIds.slice((page - 1) * limit, page * limit); // Pagination applied
 
-    const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId").sort({createdAt : -1});
+    const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId").sort({ createdAt: -1 });
 
     // Include the purchase count for each best-selling course and sort by purchase count
     const bestSellingCoursesWithCount = bestSellingCourses.map((course) => ({
