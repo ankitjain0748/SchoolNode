@@ -106,3 +106,9 @@
 2025-04-03 00:10:20 [ERROR]: Cannot access 'totalReferrals' before initialization
 2025-04-03 00:10:55 [ERROR]: name is not defined
 2025-04-03 00:11:37 [ERROR]: page is not defined
+2025-04-03 22:40:13 [ERROR]: Cast to ObjectId failed for value "{ userId: new ObjectId('67ece9bbda38867bacecab80') }" (type Object) at path "_id" for model "Profile"
+2025-04-03 23:32:42 [ERROR]: consoel is not defined
+2025-04-03 23:32:44 [ERROR]: consoel is not defined
+2025-04-03 23:33:10 [ERROR]: consoel is not defined
+2025-04-03 23:35:08 [ERROR]: consoel is not defined
+2025-04-03 23:35:10 [ERROR]: consoel is not defined

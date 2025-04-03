@@ -138,30 +138,32 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.query?.id; // Extract userId from query parameters
         const { page = 1, limit = 10, payment_date } = req.query; // Pagination and payment_date query
-
+console.log("req.query" ,req.query)
         // Initialize the query with userId
         const query = { userId: userId };
 
         // Add date filtering if payment_date is provided
         if (payment_date) {
-            const startDate = new Date(payment_date); // Start of the day
-            const endDate = new Date(payment_date);  // End of the day
-            endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
-
+            const startDate = new Date(payment_date);
+            startDate.setUTCHours(0, 0, 0, 0); // 🔹 दिन की शुरुआत (Midnight)
+            
+            const endDate = new Date(payment_date);
+            endDate.setUTCHours(23, 59, 59, 999); // 🔹 दिन का अंत (11:59:59 PM)
+            
             query.payment_date = {
-                $gte: startDate, // Greater than or equal to start of the day
-                $lte: endDate,   // Less than or equal to end of the day
+                $gte: startDate, // 🔹 पूरे दिन का डेटा लाएगा
+                $lte: endDate,
             };
         }
-
-
+        
+console.log("query" ,query)
 
         // Fetch payments from the database with pagination and sorting
         const AdminPayments = await AdminPay.find(query)
             .sort({ payment_date: -1 }) // Sort by payment_date in descending order
             .skip((page - 1) * limit) // Apply pagination: skip documents
-            .limit(parseInt(limit)); // Limit documents per page
-
+            .limit((limit)); // Limit documents per page
+console.log("AdminPayments" ,AdminPayments)
         // Count total documents matching the query
         const totalPayments = await AdminPay.countDocuments(query);
 

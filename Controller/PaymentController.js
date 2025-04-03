@@ -1,6 +1,8 @@
 const Payment = require("../Model/Payment");
 const AdminPays = require("../Model/Adminpay");
 const Course = require("../Model/Course");
+const mongoose = require("mongoose");
+
 require('dotenv').config();
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
@@ -64,27 +66,35 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
     // Step 1: Check if profile exists
 
-    const fullAddress = `${address}, ${state}, ${country} - ${zip}`;
+    const mongoose = require("mongoose");
 
+    const fullAddress = `${address}, ${state}, ${country} - ${zip}`;
     if (user) {
-      const updatedProfile = await ProfileData.findByIdAndUpdate(
-        user._id,
-        {
+
+      const profile = await ProfileData.find({userId :UserId}); 
+      if(profile){
+
+        const updatedProfile = await ProfileData.findOneAndUpdate(
+          { userId: new mongoose.Types.ObjectId(UserId) }, // 🔹 यहां सही किया
+          {
+            phone_number: phone_number,
+            address: fullAddress,
+          },
+          { new: true, runValidators: true }
+        );
+        console.log("Updated Profile:", updatedProfile);
+      }else{
+        const newProfile = new ProfileData({
+          userId: new mongoose.Types.ObjectId(UserId), // 🔹 यहां सही किया
           phone_number: phone_number,
           address: fullAddress,
-        },
-        { new: true, runValidators: true }
-      );
-    } else {
-      // Step 3: Save a new profile if not found
-      const newProfile = new ProfileData({
-        userId: UserId,
-        phone_number: phone_number,
-        address: fullAddress,
-      });
-
-      await newProfile.save();
+        });
+      
+        await newProfile.save();
+        console.log("New Profile Created:", newProfile);
+      }
     }
+    
 
     if (!order_id || !payment_id || !amount || !CourseId) {
       logger.warn("Missing required fields");

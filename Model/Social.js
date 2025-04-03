@@ -20,7 +20,7 @@ const socialSectionSchema =  mongoose.Schema(
             type: String,
             trim: true,
         },
-        github: {
+        instragram: {
             type: String,
             trim: true,
         },
