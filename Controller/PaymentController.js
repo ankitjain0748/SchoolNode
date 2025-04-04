@@ -71,8 +71,8 @@ exports.paymentAdd = catchAsync(async (req, res) => {
     const fullAddress = `${address}, ${state}, ${country} - ${zip}`;
     if (user) {
 
-      const profile = await ProfileData.find({userId :UserId}); 
-      if(profile){
+      const profile = await ProfileData.find({ userId: UserId });
+      if (profile) {
 
         const updatedProfile = await ProfileData.findOneAndUpdate(
           { userId: new mongoose.Types.ObjectId(UserId) }, // 🔹 यहां सही किया
@@ -82,19 +82,17 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           },
           { new: true, runValidators: true }
         );
-        console.log("Updated Profile:", updatedProfile);
-      }else{
+      } else {
         const newProfile = new ProfileData({
           userId: new mongoose.Types.ObjectId(UserId), // 🔹 यहां सही किया
           phone_number: phone_number,
           address: fullAddress,
         });
-      
+
         await newProfile.save();
-        console.log("New Profile Created:", newProfile);
       }
     }
-    
+
 
     if (!order_id || !payment_id || !amount || !CourseId) {
       logger.warn("Missing required fields");
@@ -380,7 +378,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
 exports.PaymentGet = catchAsync(async (req, res, next) => {
   try {
-    console.log("Request query:", req.query);
 
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 50, 1);
@@ -407,7 +404,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     //   const user = await User.findOne({ name: { $regex: `^${username}$`, $options: "i" } });
     //   query.userId = user ? user._id : null; // Assign userId or null
     // }
-    
+
     // Add selected option filter
     if (search) {
       query.payment_id = search;
@@ -429,8 +426,7 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
       endOfDay.setUTCHours(23, 59, 59, 999); // End of the day
       query.payment_date = { $gte: startOfDay, $lte: endOfDay }; // Match within the date range
     }
-    
-    console.log(query)
+
 
     // Fetch total count and pages
     const totalUsers = await Payment.countDocuments(query);
@@ -511,26 +507,39 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
 
 exports.PaymentGetdata = catchAsync(async (req, res) => {
   try {
-
     const page = Math.max(parseInt(req.query.page) || 1, 1);
-    const limit = Math.max(parseInt(req.query.limit) || 15, 1); // Use the provided limit or a reasonable default (15)
+    const limit = Math.max(parseInt(req.query.limit) || 15, 1);
     const skip = (page - 1) * limit;
-    const searchQuery = req.query.search ? req.query.search.trim() : ""; // Corrected typo: serach to search
+
+
+    const searchQuery = req.query.search ? req.query.search.trim() : "";
     const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
+    const paymentDate = req.query.payment_date ? new Date(req.query.payment_date) : null;
+
     const filter = {};
 
+    // 🔍 Search by user name
     if (searchQuery) {
-      // Correct filter for direct userId reference:
-      const users = await User.find({ name: { $regex: searchQuery, $options: "i" } }, '_id'); //get all user id match with search query
+      const users = await User.find({ name: { $regex: searchQuery, $options: "i" } }, '_id');
       const userIds = users.map(user => user._id);
-      filter.userId = { $in: userIds }; // Filter by user IDs
-
+      filter.userId = { $in: userIds };
     }
 
-
+    // 📄 Filter by payment type
     if (selectoption) {
       filter.page = selectoption;
     }
+
+    // 📅 Filter by payment date (only date, ignoring time)
+    if (paymentDate) {
+      const nextDate = new Date(paymentDate);
+      nextDate.setDate(nextDate.getDate() + 1); // Add one day to get end of that date
+      filter.payment_date = {
+        $gte: paymentDate,
+        $lt: nextDate,
+      };
+    }
+
 
     const payment = await AdminPays.find(filter)
       .populate({
@@ -544,25 +553,10 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
     const totalUsers = await AdminPays.countDocuments(filter);
     const totalPages = Math.ceil(totalUsers / limit);
 
-    // Improved empty result handling:  Return consistent structure
-    if (payment.length === 0) {
-      return res.status(200).json({
-        status: true,
-        message: "No payments found.", // Clearer message
-        payment: [],
-        totalUsers: 0,
-        totalPages: 0,
-        currentPage: page,
-        perPage: limit,
-        nextPage: null,
-        previousPage: null,
-      });
-    }
-
     res.status(200).json({
       status: true,
-      message: "Payments retrieved successfully!",
-      payment, // Shorthand for payment: payment
+      message: payment.length > 0 ? "Payments retrieved successfully!" : "No payments found.",
+      payment,
       totalUsers,
       totalPages,
       currentPage: page,
@@ -572,14 +566,14 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
     });
 
   } catch (err) {
-    logger.error(err); // Keep logging the error for debugging
+    logger.error(err);
     res.status(500).json({
       status: false,
-      message: "An error occurred. Please try again later.", // User-friendly message
-      // error: err.message,  // Remove in production for security!  Don't expose internal errors.
+      message: "An error occurred. Please try again later.",
     });
   }
 });
+
 
 exports.paymentdata = catchAsync(async (req, res) => {
   try {

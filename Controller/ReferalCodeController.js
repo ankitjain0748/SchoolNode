@@ -65,7 +65,6 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
 exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?.id;
     let { page = 1, limit = 10, payment_date, name = "" } = req.query;
-    console.log(req.query)
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
 
@@ -121,13 +120,10 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
                 $lte: endOfDay,
             };
         }
-        console.log("paymentFilter", paymentFilter)
 
         // Fetch the payment data
         const paymentReferralData = await Payment.find(paymentFilter).lean();
 
-
-        console.log("paymentReferralData", paymentReferralData)
 
         if (!paymentReferralData || paymentReferralData.length === 0) {
             return res.status(204).json({
@@ -193,7 +189,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
     const userId = req.query?.id;
 
     let { page = 1, limit = 10, payment_date, name = "" } = req.query;
-    console.log(req.query)
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
 
@@ -260,13 +255,11 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
                 $lte: endOfDay,
             };
         }
-        console.log("paymentFilter", paymentFilter)
 
         // Fetch the payment data
         const paymentReferralData = await Payment.find(paymentFilter).lean();
 
 
-        console.log("paymentReferralData", paymentReferralData)
 
         if (!paymentReferralData || paymentReferralData.length === 0) {
             return res.status(204).json({
