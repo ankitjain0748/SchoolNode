@@ -61,19 +61,12 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
     const UserId = req.User._id;
     const { order_id, payment_id, amount, currency, payment_status, CourseId, payment_method,
-      firstname, lastname, address, home_address, remember, saveInfo, sameAsBilling, phone_number, state, country, zip } = req.body;
+      address, home_address, remember, saveInfo, sameAsBilling, phone_number, state, country, zip } = req.body;
     const user = await User.findById(UserId);
-
-    // Step 1: Check if profile exists
-
-    const mongoose = require("mongoose");
-
     const fullAddress = `${address}, ${state}, ${country} - ${zip}`;
     if (user) {
-
-      const profile = await ProfileData.find({ userId: UserId });
-      if (profile) {
-
+      const existingProfile = await ProfileData.findOne({ userId: UserId });
+      if (existingProfile) {
         const updatedProfile = await ProfileData.findOneAndUpdate(
           { userId: new mongoose.Types.ObjectId(UserId) }, // 🔹 यहां सही किया
           {
@@ -89,7 +82,8 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           address: fullAddress,
         });
 
-        await newProfile.save();
+        const recorddata = await newProfile.save();
+        console.log("recorddata", recorddata)
       }
     }
 
@@ -470,11 +464,6 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
-
-
-
 
 exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
   const UserId = req.User._id;

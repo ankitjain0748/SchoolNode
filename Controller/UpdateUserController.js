@@ -151,17 +151,23 @@ exports.UserUpdate = catchAsync(async (req, res, next) => {
 
 exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   try {
-    const UserId = req?.User?._id
+    const UserId = req?.User?._id;
     const { price, percentage } = req.body;
+
     if (!UserId) {
       return res.status(400).json({
         status: false,
         message: "User ID is required.",
       });
     }
+
+    // ✅ Step 1: Update Admin User Prices
     const updatedRecord = await User.findByIdAndUpdate(
       UserId,
-      { ActiveUserPrice: price, InActiveUserPercanetage: percentage, },
+      {
+        ActiveUserPrice: price,
+        InActiveUserPercentage: percentage,
+      },
       { new: true, runValidators: true }
     );
 
@@ -171,18 +177,36 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
         message: "User not found!",
       });
     }
+
+    // ✅ Step 2: Update User Status based on ActiveUserPrice and ReferUserMonthlyPrice
+    const usersToUpdate = await User.find({ role: "user" });
+
+
+    if (usersToUpdate && usersToUpdate.length > 0) {
+      for (const user of usersToUpdate) {
+        if (updatedRecord.ActiveUserPrice >= user.referred_user_pay_monthly) {
+          console.log("User is active1:", user._id);
+          await User.findByIdAndUpdate(user._id, { user_status: "active" }, { new: true });
+        } else {
+          console.log("User is active2:", user._id);
+
+          await User.findByIdAndUpdate(user._id, { user_status: "inactive" }, { new: true });
+        }
+      }
+    }
+console.log("Users updated successfully.");
     res.status(200).json({
       status: true,
       data: updatedRecord,
-      message: "User updated successfully.",
+      usersToUpdate :usersToUpdate,
+      message: "User prices & statuses updated successfully.",
     });
   } catch (error) {
-    logger.error("Error deleting user record:", error);
+    console.error("❌ Error in UserPriceUpdate:", error);
 
     res.status(500).json({
       status: false,
-      message:
-        "An error occurred while updating the User. Please try again later.",
+      message: "An error occurred while updating users.",
       error: error.message,
     });
   }
