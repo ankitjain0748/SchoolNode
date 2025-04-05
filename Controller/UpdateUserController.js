@@ -178,31 +178,9 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
       });
     }
 
-    console.log("Updated Record:", updatedRecord);
 
-    // Step 2: Update User Status based on ActiveUserPrice and ReferUserMonthlyPrice
-    const usersToUpdate = await User.find({ role: "user" });
-
-    console.log("Users to Update:", usersToUpdate);
-
-    if (usersToUpdate && usersToUpdate.length > 0) {
-      console.log("Updating user statuses...");
-      for (const user of usersToUpdate) {
-        console.log(`Checking if ${updatedRecord.ActiveUserPrice} >= ${user.referred_user_pay_monthly}`);
-        if (updatedRecord.ActiveUserPrice >= user.referred_user_pay_monthly) {
-          console.log("Updating user status to active for user:", user._id);
-          await User.findByIdAndUpdate(user._id, { user_status: "active" });
-        } else {
-          console.log("Updating user status to inactive for user:", user._id);
-          await User.findByIdAndUpdate(user._id, { user_status: "inactive" });
-        }
-      }
-    }
-
-    console.log("User statuses updated successfully.");
     res.status(200).json({
       status: true,
-      data: updatedRecord,
       message: "User prices & statuses updated successfully.",
     });
   } catch (error) {

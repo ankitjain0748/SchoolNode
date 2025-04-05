@@ -98,6 +98,23 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
+        const totalPayments = await AdminPayment.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalAdd: { $sum: "$payment_Add" },
+                    totalWithdrawal: { $sum: "$paymentWidthrawal" },
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalAdd: 1,
+                    totalWithdrawal: 1,
+                    totalPayout: 1
+                }
+            }
+        ]);
         const totalGSTAmount = await Payment.aggregate([
             {
                 $group: {
@@ -182,6 +199,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             yesterdayIncome: yesterdayIncome.length > 0 ? yesterdayIncome[0].total : 0,
             thisWeekIncome: weekIncome.length > 0 ? weekIncome[0].total : 0,
             thisMonthIncome: monthIncome.length > 0 ? monthIncome[0].total : 0,
+            totalPayments: totalPayments.length > 0 ? totalPayments[0] : 0,
         });
     } catch (error) {
         console.log("error", error);
@@ -263,7 +281,7 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
         let inactiveCount = 0;
 
         for (const user of users) {
-            const { referred_user_pay, second_user_pay, first_user_pay ,referred_user_pay_monthly } = user;
+            const { referred_user_pay, second_user_pay, first_user_pay, referred_user_pay_monthly } = user;
             const totalPayment = referred_user_pay_monthly || 0;
             const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
             const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
