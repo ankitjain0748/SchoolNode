@@ -247,30 +247,26 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
 exports.profileadmin = catchAsync(async (req, res, next) => {
     try {
         const adminUser = await User.findOne({ role: "admin", isDeleted: false }).select("-password");
+        const SocialAdmin = await SocialSection.findOne({ userId: adminUser?._id });
+        const ProfileAdmin = await ProfileData.findOne({ userId: adminUser?._id });
+
         if (!adminUser) {
             return res.status(404).json({
                 status: false,
                 message: "Admin user not found.",
             });
         }
-
-        const SocialAdmin = await SocialSection.findOne({ userId: adminUser?._id });
-        const ProfileAdmin = await ProfileData.findOne({ userId: adminUser?._id });
-
         const users = await User.find({ role: "user", user_status: { $ne: "registered" }, isDeleted: false });
 
-        const userCount = users.length;
+        const userCount = await User.countDocuments();
         let activeCount = 0;
         let inactiveCount = 0;
 
         for (const user of users) {
-            const { referred_user_pay = 0, second_user_pay = 0, first_user_pay = 0 } = user;
-            const totalPayment = referred_user_pay;
-
-            // ✅ Fix: Ensure 1000 is considered "active"
-            const userStatus = totalPayment >= adminUser?.ActiveUserPrice ? 'active' : 'inactive';
-
-            const percentageValue = ((second_user_pay + first_user_pay) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
+            const { referred_user_pay, second_user_pay, first_user_pay ,referred_user_pay_monthly } = user;
+            const totalPayment = referred_user_pay_monthly || 0;
+            const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
+            const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
 
             await User.findByIdAndUpdate(
@@ -282,22 +278,31 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 { new: true }
             );
 
-            // ✅ Fix: Update counters correctly
-            userStatus === 'active' ? activeCount++ : inactiveCount++;
+            // Update counters
+            if (userStatus === 'active') {
+                activeCount++;
+            } else {
+                inactiveCount++;
+            }
         }
 
         res.status(200).json({
             status: true,
-            message: "Users updated successfully",
-            data: { adminUser, userCount, activeCount, inactiveCount },
-            ProfileAdmin,
-            SocialAdmin,
+            message: "Users retrieved and updated successfully with enquiry counts updated",
+            data: {
+                adminUser,
+                userCount,
+                activeCount,
+                inactiveCount,
+            },
+            ProfileAdmin: ProfileAdmin,
+            SocialAdmin: SocialAdmin
         });
     } catch (error) {
         Loggers.error("Error fetching users:", error);
         return res.status(500).json({
             status: false,
-            message: "An error occurred while updating users.",
+            message: "An error occurred while fetching and updating users.",
             error: error.message || "Internal Server Error",
         });
     }
