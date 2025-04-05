@@ -98,12 +98,19 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-        const totalPayments = await AdminPayment.aggregate([
+        
+        // 1. Today's payments
+        const todayAdminPayments = await AdminPayment.aggregate([
+            {
+                $match: {
+                    payment_date: { $gte: today, $lt: tomorrow }
+                }
+            },
             {
                 $group: {
                     _id: null,
                     totalAdd: { $sum: "$payment_Add" },
-                    totalWithdrawal: { $sum: "$paymentWidthrawal" },
+                    totalWithdrawal: { $sum: "$paymentWidthrawal" }
                 }
             },
             {
@@ -111,10 +118,48 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: 0,
                     totalAdd: 1,
                     totalWithdrawal: 1,
-                    totalPayout: 1
                 }
             }
         ]);
+        
+        // 2. Overall payments
+        const overallAdminPayments = await AdminPayment.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalAdd: { $sum: "$payment_Add" },
+                    totalWithdrawal: { $sum: "$paymentWidthrawal" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalAdd: 1,
+                    totalWithdrawal: 1,
+                }
+            }
+        ]);
+
+        const overallPassiveIncome = await User.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    pervious_passive_income_month: { $sum: "$pervious_passive_income_month" },
+                    first_user_pay: { $sum: "$first_user_pay" },
+                    second_user_pay: { $sum: "$second_user_pay" },
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    first_user_pay: 1,
+                    second_user_pay: 1,
+                    pervious_passive_income_month :1, 
+                }
+            }
+        ]);
+        console.log("overallPassiveIncome" , overallPassiveIncome)
+        
         const totalGSTAmount = await Payment.aggregate([
             {
                 $group: {
@@ -199,7 +244,9 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             yesterdayIncome: yesterdayIncome.length > 0 ? yesterdayIncome[0].total : 0,
             thisWeekIncome: weekIncome.length > 0 ? weekIncome[0].total : 0,
             thisMonthIncome: monthIncome.length > 0 ? monthIncome[0].total : 0,
-            totalPayments: totalPayments.length > 0 ? totalPayments[0] : 0,
+            todayAdminPayments: todayAdminPayments.length > 0 ? todayAdminPayments[0] : 0,
+            overallAdminPayments : overallAdminPayments.length > 0 ? overallAdminPayments[0] : 0,
+            overallPassiveIncome : overallPassiveIncome.length > 0 ? overallPassiveIncome[0] : 0,
         });
     } catch (error) {
         console.log("error", error);
@@ -373,10 +420,11 @@ exports.paymentdata = catchAsync(async (req, res) => {
 
         // Add current payments
         const referralAmount = Number(payment_Add) || 0;
+        updatedLastTodayIncome += referralAmount;
         updatedReferredUserPayOverall += referralAmount;
         updatedReferredUserPayMonthly += referralAmount;
         updatedReferredUserPayWeekly += referralAmount;
-        updatedReferredUserPayDaily += referralAmount;
+        // updatedReferredUserPayDaily += referralAmount;
         updatedPaymentKey += Number(paymentWidthrawal) || 0;
 
         const newPayment = new AdminPayment({

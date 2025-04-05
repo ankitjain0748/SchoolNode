@@ -139,6 +139,7 @@ cron.schedule('0 0 28-31 * *', async () => {
             let updates = {};
             if (user.lastPaymentMonth !== currentMonth) {
                 updates.referred_user_pay_monthly = 0;
+                updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.second_user_pay || 0) + (user.first_user_pay);
                 updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
                 updates.lastPaymentMonth = currentMonth;
                 updates.second_user_pay = 0;
