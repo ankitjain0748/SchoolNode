@@ -7,7 +7,10 @@ const socialSectionSchema =  mongoose.Schema(
             trim: true,
             // required: [true, "Website is required."],
         },
-        youtube : String,
+        youtube : {
+            type: String,
+            trim: true,
+        },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

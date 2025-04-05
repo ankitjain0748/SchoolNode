@@ -2,6 +2,7 @@ const catchAsync = require("../utill/catchAsync");
 const Profile = require("../Model/Profile");
 const User = require("../Model/User");
 const SocialSection = require("../Model/Social");
+const Refral = require("../Model/Referal");
 const Bank = require("../Model/Bank");
 const logger = require("../utill/Loggers");
 const Payment = require("../Model/Payment");
@@ -64,7 +65,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 
             const savedProfile = await newProfile.save();
             await User.findByIdAndUpdate(userId, {
-                name: `${firstname} ${lastname}`.trim(),
+                name:`${firstname}${lastname}`.trim(),
             });
             res.json({
                 status: true,
@@ -194,6 +195,8 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
         const BankData = await Bank.findOne({ userId: userId });
+        const RefralCode = await Refral.findOne({ userId: userId });
+
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ msg: "User not found", status: false });
@@ -216,6 +219,7 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
             social: updatedSocials,
             totalReferral: totalReferrals,
             Bank: BankData,
+            RefralCode :RefralCode,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
