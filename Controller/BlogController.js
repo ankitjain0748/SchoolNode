@@ -39,6 +39,8 @@ exports.createBlog = catchAsync(async (req, res) => {
     const allEmails = [...contactEmailList, ...subscribeEmailList, ...userEmailList];
     const uniqueEmails = [...new Set(allEmails)];  // Remove duplicate emails
     const subject1 = ` 🚀 New Blog Post: ${title} - Don't Miss Out!`;
+    const from = "StackEarn Blogs Update <updates@stackearn.com>"
+
     for (const email of uniqueEmails) {
       try {
         await sendEmail({
@@ -47,6 +49,7 @@ exports.createBlog = catchAsync(async (req, res) => {
           message: "Your booking request was successful!",
           subject: subject1,
           emailTemplate: BlogEmail,
+          from :from ,
         });
       } catch (error) {
         console.error(`Failed to send email to: ${email}`, error);

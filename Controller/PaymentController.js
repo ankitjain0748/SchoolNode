@@ -19,7 +19,7 @@ const razorpayInstance = new Razorpay({
 });
 
 exports.createOrder = catchAsync(async (req, res) => {
-  const { amount, currency, receipt } = req.body;
+  const { amount, currency ="INR", receipt } = req.body;
   try {
     if (!amount || !currency || !receipt) {
       logger.warn('Amount, currency, and receipt are required.')
@@ -123,7 +123,8 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
       const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
       const subject1 = `New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
-
+      const from = "StackEarn Transaction <billing@stackearn.com>"
+      const from1 = "StackEarn Transaction <admin@stackearn.com>"
       if (user) {
         await sendEmail({
           email: user.email,
@@ -133,6 +134,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           message: "Your booking request was successful!",
           subject: subject,
           emailTemplate: Purchase,
+          from: from,
         });
       }
 
@@ -145,6 +147,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         message: "Your booking request was successful!",
         subject: subject1,
         emailTemplate: AdminPurchase,
+        from: from1
       });
 
       const { referred_by, referred_first, referred_second } = user;

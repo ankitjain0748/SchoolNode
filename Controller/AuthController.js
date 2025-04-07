@@ -178,7 +178,7 @@ exports.OTP = catchAsync(async (req, res) => {
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT, 10),
-      secure: process.env.MAIL_PORT === '465',
+      secure: false,
       auth: {
         user: process.env.user,
         pass: process.env.password,
@@ -189,7 +189,7 @@ exports.OTP = catchAsync(async (req, res) => {
     });
     const emailHtml = VerifyAccount(otp, name);
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: "StackEarn Support <no-reply@stackearn.com>",
       to: email,
       subject: "StackEarn - Verify your Account",
       html: emailHtml,
@@ -221,7 +221,7 @@ exports.ReSendOtp = catchAsync(async (req, res) => {
       let transporter = nodemailer.createTransport({
         host: process.env.MAIL_HOST,
         port: parseInt(process.env.MAIL_PORT, 10),
-        secure: process.env.MAIL_PORT === '465',
+        secure: false,
         auth: {
           user: process.env.user,
           pass: process.env.password,
@@ -233,7 +233,7 @@ exports.ReSendOtp = catchAsync(async (req, res) => {
 
       const emailHtml = VerifyAccount(otp, recros.name);
       await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+        from: "StackEarn Support <no-reply@stackearn.com>",
         to: email,
         subject: "StackEarn - Verify your Account",
         html: emailHtml,

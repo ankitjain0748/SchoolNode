@@ -57,9 +57,9 @@ exports.forgotlinkrecord = catchAsync(async (req, res) => {
     });
     const emailHtml = VerifyMail(customerUser, resetLink);
     await transporter.sendMail({
-      from: process.env.user,
+      from: "StackEarn Support <no-reply@stackearn.com>",
       to: record.email,
-      subject: "Forgot Your Password",
+      subject: "Forgot Your StackEarn Password",
       html: emailHtml,
     });
     return successResponse(res, "Email has been sent to your registered email");

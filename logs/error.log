@@ -154,3 +154,11 @@
 2025-04-07 22:56:40 [ERROR]: Server selection timed out after 10000 ms
 2025-04-07 22:57:12 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-04-07 22:57:28 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-04-08 00:22:18 [ERROR]: Server selection timed out after 10000 ms
+2025-04-08 00:22:56 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-04-08 00:53:24 [ERROR]: Invalid login: 454-4.7.0 Too many login attempts, please try again later. For more information,
+454-4.7.0 go to
+454 4.7.0  https://support.google.com/mail/answer/7126229 98e67ed59e1d1-30584e10347sm9255271a91.20 - gsmtp
+2025-04-08 00:58:31 [ERROR]: Invalid login: 454-4.7.0 Too many login attempts, please try again later. For more information,
+454-4.7.0 go to
+454 4.7.0  https://support.google.com/mail/answer/7126229 d9443c01a7336-229785c385csm85035795ad.81 - gsmtp

@@ -1,13 +1,14 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (data) => {
-    const { email, name, datauser, message, cousreData, payment, subject,support,BlogRecord,Webniarrecord , dicount ,ImageUrl,BgImage ,SubContent,emailTemplate } = data;
+    console.log("Sending email with data:", data); // Log the 
+    const { email, name, datauser, message, cousreData, payment, subject, support, BlogRecord, Webniarrecord, dicount, ImageUrl, BgImage, SubContent, emailTemplate  , from} = data;
 
     // Set up the transport for the email
     const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        service: "Gmail",
+        host: process.env.MAIL_HOST,
+        port: process.env.MAIL_PORT,
+        // service: "sendgrid",
         secure: false,
         auth: {
             user: process.env.user, // Email address for sending
@@ -17,10 +18,10 @@ const sendEmail = async (data) => {
     });
 
     // Generate the email HTML content using the email template function
-    const emailHtml = emailTemplate({ name, message, cousreData, payment, datauser ,support,BlogRecord  ,Webniarrecord ,dicount, ImageUrl ,BgImage ,SubContent});
+    const emailHtml = emailTemplate({ name, message, cousreData, payment, datauser, support, BlogRecord, Webniarrecord, dicount, ImageUrl, BgImage, SubContent });
     // Define the email options
     const mailOptions = {
-        from: 'sainibhim133@gmail.com', // Sender email (match with Gmail account)
+        from: from || 'sainibhim133@gmail.com', // Sender email (match with Gmail account)
         to: email, // Recipient's email
         subject: subject, // Subject of the email
         html: emailHtml, // HTML body of the email

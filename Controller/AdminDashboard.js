@@ -551,12 +551,15 @@ exports.paymentdata = catchAsync(async (req, res) => {
         // Send email notification on successful payout
         if (page === "payout") {
             const subject1 = "🎉 Your Payout Has Been Successfully Received!";
+            const from = "StackEarn Payouts <payouts@stackearn.com>"
+
             await sendEmail({
                 email: updatedUser.email,
                 name: updatedUser.name,
                 Webniarrecord: paymentRecord,
                 subject: subject1,
                 emailTemplate: Payout,
+                from :from
             });
         }
     } catch (error) {

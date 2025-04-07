@@ -17,11 +17,13 @@ exports.SubscribePost = catchAsync(async (req, res) => {
         const record = new subscribemodal({ email, Email_verify });
         const result = await record.save();
         const subject1 = "Welcome to Our Newsletter! 🎉";
+        const from = "StackEarn Weekly Insights <newsletter@stackearn.com>";
         await sendEmail({
             email: email,
             message: "Your booking request was successful!",
             subject: subject1,
             emailTemplate: Subscriber,
+            from :from
         });
 
         if (result) {
@@ -255,6 +257,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
         const { title, selectedUsers, content, BgImage } = req.body;
         const record = await WebinarModal.findOne({ title });
         const subject1 = `Join Our Exclusive Webinar: ${title} - Register Now!🎉`;
+        const from = "StackEarn Events <events@stackearn.com>";
         for (const email of selectedUsers) {
             try {
                 await sendEmail({
@@ -264,6 +267,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
                     Webniarrecord: record,
                     subject: subject1,
                     emailTemplate: WebniarEmail,
+                    from:from,
                 });
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
@@ -287,6 +291,7 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
         const { title, selectedUsers, content, dicount, BgImage } = req.body;
         const record = await Course.findOne({ title });
         const subject1 = `${title} - Master New Skills Today! Limited Offer: ${dicount} % OFF!🎉`;
+        const from = "StackEarn Courses<promotions@stackearn.com>"
         for (const email of selectedUsers) {
             try {
                 await sendEmail({
@@ -297,6 +302,7 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
                     BgImage: BgImage,
                     subject: subject1,
                     emailTemplate: PromtionEmail,
+                    from :from
                 });
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
@@ -321,6 +327,7 @@ exports.OfferCourseEmail = catchAsync(async (req, res) => {
         const { title, selectedUsers, content, dicount, courseImage, BgImage, SubContent } = req.body;
         const record = await Course.findOne({ title });
         const subject1 = `🎉 Special Offer:${title} at ${dicount}% Off! Enroll Now!`;
+        const from = "StackEarn Deals <offers@stackearn.com>"
         for (const email of selectedUsers) {
             try {
                 await sendEmail({
@@ -333,6 +340,7 @@ exports.OfferCourseEmail = catchAsync(async (req, res) => {
                     SubContent: SubContent,
                     subject: subject1,
                     emailTemplate: OfferCourseEmail,
+                    from :from
                 });
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
