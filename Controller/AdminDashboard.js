@@ -110,7 +110,25 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 $group: {
                     _id: null,
                     totalAdd: { $sum: "$payment_Add" },
-                    totalWithdrawal: { $sum: "$paymentWidthrawal" }
+                    totalWithdrawal: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$page", "withdrawal"] },
+                                "$paymentWidthrawal",
+                                0
+                            ]
+                        }
+                    },
+
+                    totalPayout: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$page", "payout"] },
+                                "$paymentWidthrawal",
+                                0
+                            ]
+                        }
+                    }
                 }
             },
             {
@@ -118,6 +136,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: 0,
                     totalAdd: 1,
                     totalWithdrawal: 1,
+                    totalPayout: 1,
                 }
             }
         ]);
@@ -128,7 +147,24 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 $group: {
                     _id: null,
                     totalAdd: { $sum: "$payment_Add" },
-                    totalWithdrawal: { $sum: "$paymentWidthrawal" }
+                    totalWithdrawal: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$page", "withdrawal"] },
+                                "$paymentWidthrawal",
+                                0
+                            ]
+                        }
+                    },
+                    totalPayout: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$page", "payout"] },
+                                "$paymentWidthrawal",
+                                0
+                            ]
+                        }
+                    }
                 }
             },
             {
@@ -136,10 +172,11 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: 0,
                     totalAdd: 1,
                     totalWithdrawal: 1,
+                    totalPayout: 1,
                 }
             }
         ]);
-
+        
         const overallPassiveIncome = await User.aggregate([
             {
                 $group: {
@@ -158,6 +195,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
+
         console.log("overallPassiveIncome" , overallPassiveIncome)
         
         const totalGSTAmount = await Payment.aggregate([
