@@ -6,7 +6,7 @@ const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const VerifyAccount = require("../Mail/VerifyAccount")
-const {  errorResponse, successResponse } = require("../utill/ErrorHandling");
+const { errorResponse, successResponse } = require("../utill/ErrorHandling");
 const ProfileData = require("../Model/Profile");
 const logger = require("../utill/Loggers");
 const { default: mongoose } = require("mongoose");
@@ -101,7 +101,7 @@ exports.OTP = catchAsync(async (req, res) => {
     //     errors,
     //   });
     // }
-    
+
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
     let referrer = null;
@@ -152,7 +152,7 @@ exports.OTP = catchAsync(async (req, res) => {
       if (existingUser.email === email) {
         errors = "Email is already Exist!";
       }
-      else{
+      else {
         errors = "Phone number is already Exist!";
       }
       return res.status(400).json({
@@ -174,7 +174,7 @@ exports.OTP = catchAsync(async (req, res) => {
       referral_code: referral_code,
     };
 
- const record =    await TempUser.create(tempUser);
+    const record = await TempUser.create(tempUser);
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT, 10),
@@ -322,6 +322,9 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
       message: "Your account has been verified.",
       token,
     });
+    const from = "admin <admin@stackearn.com>";
+    const from1 = "Stackearn - Registration Successful!  <no-reply@stackearn.com>";
+
     const subject = "Welcome to Stackearn - Registration Successful! 🎉";
     const subject1 = ` New User Registration ${newUser.name} 🎉`;
     if (newUser) {
@@ -332,15 +335,18 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         message: "Your booking request was successful!",
         subject: subject,
         emailTemplate: RegisterEmail,
+        from: from1
       });
     }
     await sendEmail({
-      email: "ankitkumarjain0748@gmail.com",
+      email: "admin@stackearn.com",
       name: "Admin",
       datauser: newUser,
       message: "Your booking request was successful!",
       subject: subject1,
       emailTemplate: AdminEmail,
+      from: from,
+
     });
 
 
@@ -573,25 +579,25 @@ exports.userfilter = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.VerifyUser = catchAsync( async (req, res) => {
-    try {
-      const { token } = req.body;
-      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      const user = await User.findById(decoded.id);
-      if (!user) {
-        return errorResponse(res, "User not found", 404);
-      }
-      user.verified = true;
-      await user.save();
-      return successResponse(res, "Password has been successfully reset");
-    } catch (error) {
-      if (error.name === 'TokenExpiredError') {
-        return errorResponse(res, "Token has expired. Please contact support.", 401);
-      }
-      logger.error("Error deleting user record:", error);
-      return errorResponse(res, "Failed to verify account");
+exports.VerifyUser = catchAsync(async (req, res) => {
+  try {
+    const { token } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return errorResponse(res, "User not found", 404);
     }
+    user.verified = true;
+    await user.save();
+    return successResponse(res, "Password has been successfully reset");
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return errorResponse(res, "Token has expired. Please contact support.", 401);
+    }
+    logger.error("Error deleting user record:", error);
+    return errorResponse(res, "Failed to verify account");
   }
+}
 );
 
 
@@ -619,7 +625,8 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
 
     // Fetch users based on the query, with pagination
     const users = await User.find(query).skip(skip).limit(limitNumber).sort({
-      created_at : -1});
+      created_at: -1
+    });
 
     // Fetch additional user details
     const userDetails = await Promise.all(
@@ -696,7 +703,8 @@ exports.getUsersWithMonthRefDate = catchAsync(async (req, res) => {
 
     // Fetch users based on the query, with pagination
     const users = await User.find(query).skip(skip).limit(limitNumber).sort({
-      created_at : -1});
+      created_at: -1
+    });
 
     // Fetch additional user details
     const userDetails = await Promise.all(
