@@ -77,6 +77,8 @@ cron.schedule('0 0 * * *', async () => {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
         }
+        const from = "StackEarn  Cron Daliy <no-reply@stackearn.com>";
+
 
         console.log('✅ Daily payment reset job completed.');
         await sendEmail({
@@ -85,6 +87,7 @@ cron.schedule('0 0 * * *', async () => {
             message: "The daily payment reset job has been successfully completed at midnight.",
             subject: "✅ Daily Cron Job Completed",
             emailTemplate: CronEmail,
+            from :from
         });
 
     } catch (error) {
@@ -111,12 +114,15 @@ cron.schedule('0 0 * * 0', async () => {
         }
 
         console.log('✅ Weekly payment reset job completed.');
+        const from = "StackEarn  Cron Weekly<no-reply@stackearn.com>";
+
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
             name: "Admin",
             message: "The weekly payment reset job has been successfully completed at midnight.",
             subject: "✅ Weekly Cron Job Completed",
             emailTemplate: CronEmail,
+            from :from
         });
 
     } catch (error) {
@@ -152,12 +158,16 @@ cron.schedule('0 0 28-31 * *', async () => {
         }
 
         console.log('✅ Monthly payment reset job completed.');
+        const from = "StackEarn  Cron Monthly <no-reply@stackearn.com>";
+
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
             name: "Admin",
+
             message: "The monthly payment reset job has been successfully completed.",
             subject: "✅ Monthly Cron Job Completed",
             emailTemplate: CronEmail,
+            from :from
         });
 
     } catch (error) {
