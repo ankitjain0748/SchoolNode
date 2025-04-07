@@ -672,6 +672,83 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
   }
 });
 
+
+exports.getUsersWithMonthRefDate = catchAsync(async (req, res) => {
+  try {
+    const { search, page = 1, limit = 10 } = req.query;
+    let query = {
+      role: 'user', // Adding filter for users with role 'user'
+      passive_income: { $gt: 0 } // Adding filter for lastTodayIncome greater than 0
+    };
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate());
+    startDate.setHours(0, 0, 0, 0);
+    const formattedDate = startDate.toISOString().split("T")[0];
+
+    if (search && search.trim() !== "") {
+      query.name = { $regex: search, $options: "i" }; // Search query for name
+    }
+
+    const pageNumber = Math.max(1, parseInt(page, 10));
+    const limitNumber = Math.max(1, parseInt(limit, 10));
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Fetch users based on the query, with pagination
+    const users = await User.find(query).skip(skip).limit(limitNumber).sort({
+      created_at : -1});
+
+    // Fetch additional user details
+    const userDetails = await Promise.all(
+      users.map(async (user) => {
+        const [referredBy, referredFirst, referredSecond, userBankDetails] = await Promise.all([
+          user.referred_by ? User.findById(user.referred_by).select("-password") : null,
+          user.referred_first ? User.findById(user.referred_first).select("-password") : null,
+          user.referred_second ? User.findById(user.referred_second).select("-password") : null,
+          Bank.findOne({ userId: user._id }),
+        ]);
+
+        const [referredByBankDetails, referredByProfileDetails, referredFirstBankDetails, referredSecondBankDetails] = await Promise.all([
+          referredBy ? Bank.findOne({ userId: referredBy._id }) : null,
+          referredBy ? ProfileData.findOne({ userId: referredBy._id }) : null,
+          referredFirst ? Bank.findOne({ userId: referredFirst._id }) : null,
+          referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
+        ]);
+
+        return {
+          ...user.toObject(),
+          referred_by_details: referredBy,
+          referred_first_details: referredFirst,
+          referred_second_details: referredSecond,
+          bank_details: userBankDetails,
+          referred_by_bank_details: referredByBankDetails,
+          referred_first_bank_details: referredFirstBankDetails,
+          referred_second_bank_details: referredSecondBankDetails,
+          referredByProfileDetails,
+        };
+      })
+    );
+
+    const totalUsers = await User.countDocuments(query); // Get total users count with filters
+
+    res.status(200).json({
+      status: true,
+      message: "Users fetched successfully",
+      userDetails: userDetails,
+      totalUsers,
+      currentPage: pageNumber,
+      totalPages: Math.ceil(totalUsers / limitNumber),
+      limit: limitNumber,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "An error occurred while fetching users",
+      error: err.message,
+    });
+  }
+});
+
 exports.UserListIds = catchAsync(async (req, res, next) => {
   try {
     const userId = req.User._id;

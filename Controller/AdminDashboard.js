@@ -98,7 +98,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-        
+
         // 1. Today's payments
         const todayAdminPayments = await AdminPayment.aggregate([
             {
@@ -140,7 +140,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
-        
+
         // 2. Overall payments
         const overallAdminPayments = await AdminPayment.aggregate([
             {
@@ -176,7 +176,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
-        
+
         const overallPassiveIncome = await User.aggregate([
             {
                 $group: {
@@ -191,13 +191,48 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: 0,
                     first_user_pay: 1,
                     second_user_pay: 1,
-                    pervious_passive_income_month :1, 
+                    pervious_passive_income_month: 1,
                 }
             }
         ]);
 
-        console.log("overallPassiveIncome" , overallPassiveIncome)
-        
+
+
+        const todays = new Date();
+        todays.setHours(0, 0, 0, 0);
+        const todayaa = new Date(todays);
+        const todayDateString = todayaa.toISOString().split("T")[0];
+        const tomorrows = new Date(todays);
+        tomorrows.setDate(today.getDate());
+        const yyyy = tomorrows.getFullYear();
+        const mm = String(tomorrows.getMonth() + 1).padStart(2, '0');
+        const dd = String(tomorrows.getDate()).padStart(2, '0');
+        const tomorrowDateString = `${yyyy}-${mm}-${dd}`;
+
+        const NextPayoutPayments = await User.aggregate([
+            {
+                $match: {
+                    lastPaymentDay: tomorrowDateString // You probably meant a range here
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalReferred: { $sum: "$referred_user_pay" },
+                    totalFirst: { $sum: "$first_user_pay" },
+                    totalSecond: { $sum: "$second_user_pay" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    total: {
+                        $add: ["$totalReferred", "$totalFirst", "$totalSecond"]
+                    }
+                }
+            }
+        ]);
+
         const totalGSTAmount = await Payment.aggregate([
             {
                 $group: {
@@ -283,8 +318,9 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             thisWeekIncome: weekIncome.length > 0 ? weekIncome[0].total : 0,
             thisMonthIncome: monthIncome.length > 0 ? monthIncome[0].total : 0,
             todayAdminPayments: todayAdminPayments.length > 0 ? todayAdminPayments[0] : 0,
-            overallAdminPayments : overallAdminPayments.length > 0 ? overallAdminPayments[0] : 0,
-            overallPassiveIncome : overallPassiveIncome.length > 0 ? overallPassiveIncome[0] : 0,
+            overallAdminPayments: overallAdminPayments.length > 0 ? overallAdminPayments[0] : 0,
+            overallPassiveIncome: overallPassiveIncome.length > 0 ? overallPassiveIncome[0] : 0,
+            NextPayoutPayments: NextPayoutPayments.length > 0 ? NextPayoutPayments[0] : 0,
         });
     } catch (error) {
         console.log("error", error);
@@ -364,14 +400,12 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
         const userCount = await User.countDocuments();
         let activeCount = 0;
         let inactiveCount = 0;
-
         for (const user of users) {
-            const { referred_user_pay, second_user_pay, first_user_pay, referred_user_pay_monthly } = user;
+            const { second_user_pay, first_user_pay, referred_user_pay_monthly, pervious_passive_income_month } = user;
             const totalPayment = referred_user_pay_monthly || 0;
             const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
-            const percentageValue = (((second_user_pay || 0) + (first_user_pay || 0)) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
+            const percentageValue = ((pervious_passive_income_month) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
-
             await User.findByIdAndUpdate(
                 user._id,
                 {

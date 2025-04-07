@@ -3,7 +3,7 @@ const CronEmail = require("../Mail/CronEmail");
 const User = require('../Model/User');
 const cron = require('node-cron');
 
-
+a
 cron.schedule('*/1 * * * *', async () => {
     try {
       console.log('Running daily payment reset job...');

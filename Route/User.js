@@ -1,9 +1,9 @@
-const { login, verifyToken,  profilegettoken, userfilter, VerifyUser, OTP, VerifyOtp, getUsersWithTodayRefDate,  UserListIds, ReSendOtp } = require("../Controller/AuthController");
-const {  updateUserStatus, UserUpdate,  profile,   UserPriceUpdate } = require("../Controller/UpdateUserController");
-const { resetpassword,  forgotlinkrecord, forgotpassword ,UserListIdDelete  , UserIdDelete} = require("../Controller/PasswordanddeleteuserController");
+const { login, verifyToken, profilegettoken, getUsersWithMonthRefDate, userfilter, VerifyUser, OTP, VerifyOtp, getUsersWithTodayRefDate, UserListIds, ReSendOtp } = require("../Controller/AuthController");
+const { updateUserStatus, UserUpdate, profile, UserPriceUpdate } = require("../Controller/UpdateUserController");
+const { resetpassword, forgotlinkrecord, forgotpassword, UserListIdDelete, UserIdDelete } = require("../Controller/PasswordanddeleteuserController");
 const { BankAddOrEdit } = require("../Controller/BankController");
-const { AdminDashboard   , profileadmin , adminlogin , paymentdata } = require("../Controller/AdminDashboard");
-const { ProfileData, ProfileDataId, profileAddOrUpdate ,ProfileAdminPayeData } = require("../Controller/ProfileController");
+const { AdminDashboard, profileadmin, adminlogin, paymentdata } = require("../Controller/AdminDashboard");
+const { ProfileData, ProfileDataId, profileAddOrUpdate, ProfileAdminPayeData } = require("../Controller/ProfileController");
 const { SocialAddOrEdit } = require("../Controller/SocialController");
 const userRoute = require("express").Router();
 
@@ -19,7 +19,9 @@ userRoute.post("/user-filter", userfilter);
 userRoute.post("/profile-data", ProfileData)
 userRoute.post("/profile_id", verifyToken, ProfileDataId)
 userRoute.get('/referrals', getUsersWithTodayRefDate);
-userRoute.get("/userlist",verifyToken , UserListIds);
+userRoute.get('/month_reffrals', getUsersWithMonthRefDate);
+
+userRoute.get("/userlist", verifyToken, UserListIds);
 
 
 // Bank And Soiclas profileAddOrUpdate controlerr 
@@ -47,7 +49,7 @@ userRoute.post("/refral-active", verifyToken, UserPriceUpdate);
 userRoute.get('/admin_dashboard', AdminDashboard)
 userRoute.post("/adminlogin", adminlogin)
 userRoute.get("/adminprofile", profileadmin)
-userRoute.get("/user_admin_payment",ProfileAdminPayeData)
+userRoute.get("/user_admin_payment", ProfileAdminPayeData)
 userRoute.post("/payment", paymentdata);
 
 module.exports = userRoute;
