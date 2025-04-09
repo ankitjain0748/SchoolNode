@@ -8,6 +8,7 @@ const OnlineSchema = mongoose.Schema({
   webnair_time: String,
   webniar_end_time: String,
   place: String,
+  thumbnail :String,
   createdAt: {
     type: Date,
     default: Date.now,

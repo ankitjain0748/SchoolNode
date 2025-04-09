@@ -14,6 +14,7 @@ const OnlineSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  thumbnail :String ,
 });
 
 OnlineSchema.pre('save', function (next) {

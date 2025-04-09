@@ -118,6 +118,7 @@ const courseSchema = new mongoose.Schema({
     default: 0
 
   },
+  thumbnail :String,
   createdAt: {
     type: Date,
     default: Date.now,

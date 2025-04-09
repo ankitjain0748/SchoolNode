@@ -5,6 +5,7 @@ const TranningSchema = mongoose.Schema({
   video: String,
   content: String,
   webnair_date: String,
+  thumbnail: String,
   place: String
 }, { timestamps: true });
 
