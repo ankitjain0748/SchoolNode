@@ -208,7 +208,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const mm = String(tomorrows.getMonth() + 1).padStart(2, '0');
         const dd = String(tomorrows.getDate()).padStart(2, '0');
         const tomorrowDateString = `${yyyy}-${mm}-${dd}`;
-console.log("tomorrowDateString" ,tomorrowDateString)
         const NextPayoutPayments = await User.aggregate([
             {
                 $match: {
