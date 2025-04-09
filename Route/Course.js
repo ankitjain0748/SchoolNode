@@ -34,7 +34,7 @@ Router.get("/webniar_get/:Id", WebniarGetId)
 // Video Tranning
 
 
-Router.post("/video_traning_add",Tranningpost);
+Router.post("/video_traning_add", Tranningpost);
 
 Router.get("/video_traning_get", TranningGet);
 

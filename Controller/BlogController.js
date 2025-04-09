@@ -49,7 +49,7 @@ exports.createBlog = catchAsync(async (req, res) => {
           message: "Your booking request was successful!",
           subject: subject1,
           emailTemplate: BlogEmail,
-          from :from ,
+          from: from,
         });
       } catch (error) {
         console.error(`Failed to send email to: ${email}`, error);

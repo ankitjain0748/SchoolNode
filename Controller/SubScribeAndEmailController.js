@@ -23,7 +23,7 @@ exports.SubscribePost = catchAsync(async (req, res) => {
             message: "Your booking request was successful!",
             subject: subject1,
             emailTemplate: Subscriber,
-            from :from
+            from: from
         });
 
         if (result) {
@@ -56,7 +56,7 @@ exports.Subscribeget = catchAsync(async (req, res, next) => {
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         const selectoption = req.query.selectedoption ? String(req.query.selectedoption).trim() : ""; // Assuming you'll use this later
-      
+
         let query = {};
 
         if (search !== "") {
@@ -267,7 +267,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
                     Webniarrecord: record,
                     subject: subject1,
                     emailTemplate: WebniarEmail,
-                    from:from,
+                    from: from,
                 });
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
@@ -302,7 +302,7 @@ exports.promtionalEmail = catchAsync(async (req, res) => {
                     BgImage: BgImage,
                     subject: subject1,
                     emailTemplate: PromtionEmail,
-                    from :from
+                    from: from
                 });
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);
@@ -340,7 +340,7 @@ exports.OfferCourseEmail = catchAsync(async (req, res) => {
                     SubContent: SubContent,
                     subject: subject1,
                     emailTemplate: OfferCourseEmail,
-                    from :from
+                    from: from
                 });
             } catch (error) {
                 console.error(`Failed to send email to: ${email}`, error);

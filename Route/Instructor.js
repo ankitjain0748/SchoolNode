@@ -1,5 +1,5 @@
 const Router = require("express").Router();
-const { InstructorPost, InstructorGet, InstructorUpdate, InstructorIdDelete ,InstructorGetId } = require("../Controller/InstructorController");
+const { InstructorPost, InstructorGet, InstructorUpdate, InstructorIdDelete, InstructorGetId } = require("../Controller/InstructorController");
 
 Router.post("/instrutor_post", InstructorPost)
 

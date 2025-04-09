@@ -63,8 +63,9 @@ exports.CourseGet = catchAsync(async (req, res, next) => {
         const totalCourse = await Course.countDocuments(query);
 
         const Courseget = await Course.find(query)
-            .sort({ 
-                createdAt: -1 })
+            .sort({
+                createdAt: -1
+            })
             .populate('InstrutorId')
             .skip(skip)
             .limit(limit);
@@ -666,7 +667,7 @@ exports.TranningGet = catchAsync(async (req, res) => {
         const totalCourse = await Tranning.countDocuments(query);
 
         const Courseget = await Tranning.find(query)
-            .skip(skip).sort({createdAt :-1 })
+            .skip(skip).sort({ createdAt: -1 })
             .limit(limit);
 
         const totalPages = Math.ceil(totalCourse / limit);

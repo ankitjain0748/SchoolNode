@@ -1,6 +1,6 @@
 const { login, verifyToken, profilegettoken, getUsersWithMonthRefDate, userfilter, VerifyUser, OTP, VerifyOtp, getUsersWithTodayRefDate, UserListIds, ReSendOtp } = require("../Controller/AuthController");
 const { updateUserStatus, UserUpdate, profile, UserPriceUpdate } = require("../Controller/UpdateUserController");
-const { resetpassword, forgotlinkrecord, forgotpassword, UserListIdDelete, UserIdDelete } = require("../Controller/PasswordanddeleteuserController");
+const { resetpassword, forgotlinkrecord, forgotpassword, UserListIdDelete, UserIdDelete } = require("../Controller/passanddeluser");
 const { BankAddOrEdit } = require("../Controller/BankController");
 const { AdminDashboard, profileadmin, adminlogin, paymentdata } = require("../Controller/AdminDashboard");
 const { ProfileData, ProfileDataId, profileAddOrUpdate, ProfileAdminPayeData } = require("../Controller/ProfileController");

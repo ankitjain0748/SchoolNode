@@ -205,17 +205,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             return res.status(404).json({ msg: "User not found", status: false });
         }
 
-        // Payment filter for the user
-        // let paymentFilter = { UserId: userId, status: "success" };
-        // if (paymentDate) {
-        //     paymentFilter.createdAt = {
-        //         $gte: new Date(paymentDate + "T00:00:00.000Z"),
-        //         $lt: new Date(paymentDate + "T23:59:59.999Z"),
-        //     };
-        // }
-        // const payments = await Payment.find(paymentFilter).sort({ createdAt: -1 });
-
-        // Build the referral query
+      
         let referralQuery = {
             $or: [
                 { referred_by: userId },
@@ -320,89 +310,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
     }
 });
 
-
-
-// exports.RefralCodeGetId = catchAsync(async (req, res) => {
-//     const userId = req.query?.id;
-//     let { page = 1, limit = 10, payment_date, name = "" } = req.query;
-//     page = parseInt(page, 10);
-//     limit = parseInt(limit, 10);
-//     if (isNaN(page) || page < 1) page = 1;
-//     if (isNaN(limit) || limit < 1) limit = 10;
-//     if (!userId) {
-//         return res.status(400).json({ msg: "User ID is missing", status: false });
-//     }
-//     try {
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ msg: "User not found", status: false });
-//         }
-//         let referralQuery = {
-//             $or: [
-//                 { referred_by: userId },
-//                 { referred_first: userId },
-//                 { referred_second: userId }
-//             ]
-//         };
-
-//         if (name) {
-//             referralQuery.name = { $regex: new RegExp(name, "i") };
-//         }
-
-
-//         const testReferrals = await User.find(referralQuery)
-//             .populate("CourseId", "title discountPrice category courseImage")
-//             .skip((page - 1) * limit)
-//             .limit(limit);
-
-//         const totalReferrals = await User.countDocuments(referralQuery);
-
-//         const referralUserIds = testReferrals.map(user => user._id);
-
-
-//         const paymentReferralData = await Payment.find({
-//             UserId: { $in: referralUserIds },
-//             status: "success",
-//         });
-
-
-//         const referralCodes = await RefralModel.find({
-//             $or: [
-//                 { userId: { $in: testReferrals.map(user => user.referred_by).filter(id => id !== null) } },
-//                 { userId: { $in: testReferrals.map(user => user.referred_first).filter(id => id !== null) } },
-//                 { userId: { $in: testReferrals.map(user => user.referred_second).filter(id => id !== null) } }
-//             ]
-//         }).sort({created_at :-1});
-
-
-//         const referralUsersWithPayment = testReferrals.map(referralUser => {
-//             const referralCode = referralCodes.find(code => code.userId.toString() === referralUser.referred_by?.toString());
-//             const paymentData = paymentReferralData.filter(pay => pay.UserId.toString() === referralUser._id.toString());
-//             return {
-//                 ...referralUser.toObject(),
-//                 paymentDetails: paymentData.length > 0 ? paymentData : null,
-//                 referral_code: referralCode ? referralCode.referral_code : null,
-
-//             };
-//         });
-//         return res.status(200).json({
-//             msg: "Referral data retrieved successfully",
-//             status: true,
-//             page,
-//             limit,
-//             totalPages: Math.ceil(totalReferrals / limit),
-//             totalReferrals,
-//             data: referralUsersWithPayment,
-//             user,
-//         });
-//     } catch (error) {
-//         console.error("Error fetching referral data:", error);
-//         return res.status(500).json({
-//             msg: "Internal Server Error",
-//             status: false,
-//         });
-//     }
-// });
 
 exports.RefralCodeDelete = catchAsync(async (req, res) => {
     try {

@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 
 // Define schema for lectures (nested in the Online schema)
 const OnlineSchema = new mongoose.Schema({
-  title :String ,
-  video :String , 
-  content :String,
+  title: String,
+  video: String,
+  content: String,
   createdAt: {
     type: Date,
     default: Date.now,

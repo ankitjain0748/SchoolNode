@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-const socialSectionSchema =  mongoose.Schema(
+const socialSectionSchema = mongoose.Schema(
     {
         website: {
             type: String,
             trim: true,
             // required: [true, "Website is required."],
         },
-        youtube : {
+        youtube: {
             type: String,
             trim: true,
         },

@@ -65,7 +65,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 
             const savedProfile = await newProfile.save();
             await User.findByIdAndUpdate(userId, {
-                name:`${firstname}${lastname}`.trim(),
+                name: `${firstname}${lastname}`.trim(),
             });
             res.json({
                 status: true,
@@ -219,7 +219,7 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
             social: updatedSocials,
             totalReferral: totalReferrals,
             Bank: BankData,
-            RefralCode :RefralCode,
+            RefralCode: RefralCode,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {

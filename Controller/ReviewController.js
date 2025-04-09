@@ -85,56 +85,56 @@ exports.ReviewGet = catchAsync(async (req, res) => {
         const totalPages = Math.ceil(totalRecords / limit);
 
         const reviews = await Review.aggregate([
-            { 
-                $lookup: { 
-                    from: "users", 
-                    localField: "userId", 
-                    foreignField: "_id", 
-                    as: "user" 
-                } 
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user"
+                }
             },
             { $unwind: "$user" },
-            
+
             // 🔍 Lookup from Profile table to get profile image
-            { 
-                $lookup: { 
+            {
+                $lookup: {
                     from: "profiles", // Ensure the correct collection name
-                    localField: "userId", 
-                    foreignField: "userId", 
-                    as: "profile" 
-                } 
+                    localField: "userId",
+                    foreignField: "userId",
+                    as: "profile"
+                }
             },
             { $unwind: { path: "$profile", preserveNullAndEmptyArrays: true } }, // Preserve if no profile exists
-        
-            { 
-                $lookup: { 
-                    from: "courses", 
-                    localField: "CourseId", 
-                    foreignField: "_id", 
-                    as: "course" 
-                } 
+
+            {
+                $lookup: {
+                    from: "courses",
+                    localField: "CourseId",
+                    foreignField: "_id",
+                    as: "course"
+                }
             },
             { $unwind: { path: "$course", preserveNullAndEmptyArrays: true } },
             { $match: matchStage },
-        
-            { 
-                $project: { 
-                    _id: 1, 
-                    message: 1, 
-                    status: 1, 
-                    rating: 1, 
-                    created_at: 1, 
-                    "user.name": 1, 
-                    "user.email": 1, 
+
+            {
+                $project: {
+                    _id: 1,
+                    message: 1,
+                    status: 1,
+                    rating: 1,
+                    created_at: 1,
+                    "user.name": 1,
+                    "user.email": 1,
                     "profile.profileImage": 1, // ✅ Get profile image from Profile table
-                    "course.title": 1 
-                } 
+                    "course.title": 1
+                }
             },
             { $skip: skip },
             { $limit: limit }
-        ]).sort({created_at :-1});
-        
-        
+        ]).sort({ created_at: -1 });
+
+
 
         res.json({
             status: true,
@@ -159,8 +159,10 @@ exports.ReviewGet = catchAsync(async (req, res) => {
 
 exports.ReviewGetStatus = catchAsync(async (req, res) => {
     try {
-        const review = await Review.find({ status: "read" }).sort({created_at
- :-1        });
+        const review = await Review.find({ status: "read" }).sort({
+            created_at
+                : -1
+        });
         res.json({
             status: true,
             message: "Review fetched Successfully",
@@ -276,9 +278,9 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
             data: {
                 reviews,
                 profile,
-                    currentPage: pageNumber,
-                    totalPages: Math.ceil(totalReviews / limitNumber),
-                    totalReviews,
+                currentPage: pageNumber,
+                totalPages: Math.ceil(totalReviews / limitNumber),
+                totalReviews,
             },
             message: "Reviews fetched successfully.",
         });
@@ -302,10 +304,12 @@ exports.ReviewCourseUser = catchAsync(async (req, res) => {
             });
         }
 
-        const reviews = await Review.find({ userId }).populate("userId").sort({created_at
-:-1        });
+        const reviews = await Review.find({ userId }).populate("userId").sort({
+            created_at
+                : -1
+        });
         const profile = await ProfileData.findOne({ userId }).populate("userId");
-        const userdata = await User.findOne({_id : userId });
+        const userdata = await User.findOne({ _id: userId });
         if (!reviews) {
 
             return res.status(404).json({

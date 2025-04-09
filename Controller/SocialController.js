@@ -56,7 +56,7 @@ exports.SocialAddOrEdit = catchAsync(async (req, res) => {
                 data: result,
             });
         }
-        
+
     } catch (error) {
         logger.error(error)
         return res.status(500).json({

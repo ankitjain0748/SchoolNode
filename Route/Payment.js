@@ -15,7 +15,7 @@ router.get("/payment_get", verifyToken, PaymentGetCourse)
 
 router.get("/user_payment", verifyToken, paymentdata)
 
-router.get("/payment_course" , verifyToken , PaymentGetCourseId)
+router.get("/payment_course", verifyToken, PaymentGetCourseId)
 
 
 module.exports = router;

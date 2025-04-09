@@ -1,6 +1,6 @@
 
 
-  const mongoose = require("mongoose")
+const mongoose = require("mongoose")
 
 const contactSchema = mongoose.Schema({
     email: {
@@ -29,7 +29,7 @@ const contactSchema = mongoose.Schema({
         type: String,
         default: "unread"
     },
-    role :String,
+    role: String,
     created_at: {
         type: Date,
         default: Date.now

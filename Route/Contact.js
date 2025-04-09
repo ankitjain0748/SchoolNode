@@ -1,6 +1,6 @@
 const ContactRoute = require("express").Router();
 
-const { ContactPost, ContactGet , ContactDelete} = require("../Controller/ContactController");
+const { ContactPost, ContactGet, ContactDelete } = require("../Controller/ContactController");
 
 ContactRoute.post("/contact-add", ContactPost);
 

@@ -3,7 +3,7 @@ const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
 
 exports.InstructorPost = (async (req, res) => {
-    const {  firstName,lastName,designation,lessions, students,Skills, email,sales, phoneNumber, address, profileImage,   bio, gender, rating } = req.body;
+    const { firstName, lastName, designation, lessions, students, Skills, email, sales, phoneNumber, address, profileImage, bio, gender, rating } = req.body;
 
     const record = new Instructor({
         firstName,
@@ -45,12 +45,13 @@ exports.InstructorGet = catchAsync(async (req, res, next) => {
     let query = {};
 
     if (search !== "") {
-      query = { firstName: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
+        query = { firstName: { $regex: new RegExp(search, "i") } }; // Use RegExp constructor
     }
     const totalInstructor = await Instructor.countDocuments(query);
     const Instructorget = await Instructor.find(query)
-        .sort({ 
-            createdAt: -1 })
+        .sort({
+            createdAt: -1
+        })
         .skip(skip)
         .limit(limit);
     const totalPages = Math.ceil(totalInstructor / limit);
@@ -105,7 +106,7 @@ exports.InstructorUpdate = catchAsync(async (req, res, next) => {
                 lessions,
                 sales,
                 students,
-                Skill :Skill,
+                Skill: Skill,
                 email,
                 phoneNumber,
                 address,

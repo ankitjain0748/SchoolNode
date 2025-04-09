@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 
-const transactionSchema =  mongoose.Schema(
+const transactionSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -11,7 +11,7 @@ const transactionSchema =  mongoose.Schema(
     referred_user_pay: {
       type: Number,
     },
-    payment_type :String,
+    payment_type: String,
     widthrawal_reason: {
       type: String,
     },

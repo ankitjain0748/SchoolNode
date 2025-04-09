@@ -183,7 +183,7 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    referred_user_type :String,
+    referred_user_type: String,
 });
 
 const User = mongoose.model("User", userSchema);

@@ -153,8 +153,8 @@ exports.UserPriceUpdate = catchAsync(async (req, res, next) => {
   try {
     const UserId = req?.User?._id;
     const { price, percentage } = req.body;
-console.log("UserId" , UserId)
-    console.log("req.body" , req.body)
+    console.log("UserId", UserId)
+    console.log("req.body", req.body)
     if (!UserId) {
       return res.status(400).json({
         status: false,
@@ -172,7 +172,7 @@ console.log("UserId" , UserId)
       { new: true, runValidators: true }
     );
 
-    console.log("updatedRecord" ,updatedRecord)
+    console.log("updatedRecord", updatedRecord)
     if (!updatedRecord) {
       return res.status(404).json({
         status: false,

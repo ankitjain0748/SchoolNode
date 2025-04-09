@@ -1,10 +1,9 @@
 // Import mongoose
 const mongoose = require('mongoose');
 
-// Define schema for lectures (nested in the course schema)
 
 
-const SubtitleSchema = new mongoose.Schema({
+const SubtitleSchema = mongoose.Schema({
   subtitle: {
     type: String,
     trim: true,

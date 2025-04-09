@@ -559,7 +559,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
                 Webniarrecord: paymentRecord,
                 subject: subject1,
                 emailTemplate: Payout,
-                from :from
+                from: from
             });
         }
     } catch (error) {

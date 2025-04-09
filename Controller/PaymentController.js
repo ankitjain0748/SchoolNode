@@ -19,7 +19,7 @@ const razorpayInstance = new Razorpay({
 });
 
 exports.createOrder = catchAsync(async (req, res) => {
-  const { amount, currency ="INR", receipt } = req.body;
+  const { amount, currency = "INR", receipt } = req.body;
   try {
     if (!amount || !currency || !receipt) {
       logger.warn('Amount, currency, and receipt are required.')
@@ -64,26 +64,28 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       address, home_address, remember, saveInfo, sameAsBilling, phone_number, state, country, zip } = req.body;
     const user = await User.findById(UserId);
     const fullAddress = `${address}, ${state}, ${country} - ${zip}`;
-    if (user) {
-      const existingProfile = await ProfileData.findOne({ userId: UserId });
-      if (existingProfile) {
-        const updatedProfile = await ProfileData.findOneAndUpdate(
-          { userId: new mongoose.Types.ObjectId(UserId) }, // 🔹 यहां सही किया
-          {
+    if (payment_status === "success") {
+      if (user) {
+        const existingProfile = await ProfileData.findOne({ userId: UserId });
+        if (existingProfile) {
+          const updatedProfile = await ProfileData.findOneAndUpdate(
+            { userId: new mongoose.Types.ObjectId(UserId) }, // 🔹 यहां सही किया
+            {
+              phone_number: phone_number,
+              address: fullAddress,
+            },
+            { new: true, runValidators: true }
+          );
+        } else {
+          const newProfile = new ProfileData({
+            userId: new mongoose.Types.ObjectId(UserId), // 🔹 यहां सही किया
             phone_number: phone_number,
             address: fullAddress,
-          },
-          { new: true, runValidators: true }
-        );
-      } else {
-        const newProfile = new ProfileData({
-          userId: new mongoose.Types.ObjectId(UserId), // 🔹 यहां सही किया
-          phone_number: phone_number,
-          address: fullAddress,
-        });
+          });
 
-        const recorddata = await newProfile.save();
-        console.log("recorddata", recorddata)
+          const recorddata = await newProfile.save();
+          console.log("recorddata", recorddata)
+        }
       }
     }
 

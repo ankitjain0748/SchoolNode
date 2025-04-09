@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const paymentSchema =  mongoose.Schema({
+const paymentSchema = mongoose.Schema({
     transactionId: {
         type: String,
         default: "", // Default empty string

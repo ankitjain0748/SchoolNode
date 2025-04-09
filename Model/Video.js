@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const TranningSchema =  mongoose.Schema({
+const TranningSchema = mongoose.Schema({
   title: String,
   video: String,
   content: String,

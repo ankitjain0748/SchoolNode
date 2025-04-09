@@ -29,7 +29,7 @@ exports.ContactPost = catchAsync(async (req, res) => {
                 message: "Your booking request was successful!",
                 subject: subject1,
                 emailTemplate: EmailContact,
-                from :from,
+                from: from,
             });
 
         }
