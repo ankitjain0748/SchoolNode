@@ -208,7 +208,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const mm = String(tomorrows.getMonth() + 1).padStart(2, '0');
         const dd = String(tomorrows.getDate()).padStart(2, '0');
         const tomorrowDateString = `${yyyy}-${mm}-${dd}`;
-
+console.log("tomorrowDateString" ,tomorrowDateString)
         const NextPayoutPayments = await User.aggregate([
             {
                 $match: {
@@ -219,15 +219,13 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 $group: {
                     _id: null,
                     totalReferred: { $sum: "$referred_user_pay" },
-                    totalFirst: { $sum: "$first_user_pay" },
-                    totalSecond: { $sum: "$second_user_pay" }
                 }
             },
             {
                 $project: {
                     _id: 0,
                     total: {
-                        $add: ["$totalReferred", "$totalFirst", "$totalSecond"]
+                        $add: ["$totalReferred"]
                     }
                 }
             }
