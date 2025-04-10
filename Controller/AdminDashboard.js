@@ -218,18 +218,19 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 $group: {
                     _id: null,
                     totalReferred: { $sum: "$referred_user_pay" },
+                    totalFirst: { $sum: "$first_user_pay" },
+                    totalSecond: { $sum: "$second_user_pay" }
                 }
             },
             {
                 $project: {
                     _id: 0,
                     total: {
-                        $add: ["$totalReferred"]
+                        $add: ["$totalReferred", "$totalFirst", "$totalSecond"]
                     }
                 }
             }
         ]);
-
         const totalGSTAmount = await Payment.aggregate([
             {
                 $group: {
