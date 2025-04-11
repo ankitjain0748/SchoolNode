@@ -3,8 +3,9 @@ const RefralModel = require("../Model/Referal");
 const logger = require("../utill/Loggers");
 const catchAsync = require("../utill/catchAsync");
 const User = require("../Model/User");
-const Course = require("../Model/Course");
 const Payment = require("../Model/Payment");
+const moment = require("moment-timezone");
+
 
 exports.RefralCodeAdd = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
@@ -107,26 +108,36 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             status: "success",
         };
 
-        if (payment_date) {
-            const startOfDay = new Date(payment_date);
-            const endOfDay = new Date(payment_date);
-            endOfDay.setUTCHours(23, 59, 59, 999);
+        // if (payment_date) {
+        //     const startOfDay = new Date(payment_date);
+        //     const endOfDay = new Date(payment_date);
+        //     endOfDay.setUTCHours(23, 59, 59, 999);
 
-            paymentFilter.payment_date = {
-                $gte: startOfDay,
-                $lte: endOfDay,
-            };
+        //     paymentFilter.payment_date = {
+        //         $gte: startOfDay,
+        //         $lte: endOfDay,
+        //     };
+        // }
+
+        if (payment_date) {
+            const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
+            const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");
+
+            const startUTC = startOfDayIST.clone().utc().toDate();
+            const endUTC = endOfDayIST.clone().utc().toDate();
+
+            paymentFilter.payment_date = { $gte: startUTC, $lte: endUTC };
         }
 
         const paymentReferralData = await Payment.find(paymentFilter).lean();
 
-        if (!paymentReferralData || paymentReferralData.length === 0) {
-            return res.status(204).json({
-                msg: "No payments found for the provided filters.",
-                status: false,
-                data: [],
-            });
-        }
+        // if (!paymentReferralData || paymentReferralData.length === 0) {
+        //     return res.status(204).json({
+        //         msg: "No payments found for the provided filters.",
+        //         status: false,
+        //         data: [],
+        //     });
+        // }
 
         // ✅ Filter testReferrals to only include users with payments on the specified date
         let filteredReferrals = testReferrals;
@@ -201,7 +212,7 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             return res.status(404).json({ msg: "User not found", status: false });
         }
 
-      
+
         let referralQuery = {
             $or: [
                 { referred_by: userId },
@@ -231,16 +242,28 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         };
 
         // If `paymentDate` is provided, add the date range filter
-        if (payment_date) {
-            const startOfDay = new Date(payment_date);
-            const endOfDay = new Date(payment_date);
-            endOfDay.setUTCHours(23, 59, 59, 999); // End of the day
+        // if (payment_date) {
+        //     const startOfDay = new Date(payment_date);
+        //     const endOfDay = new Date(payment_date);
+        //     endOfDay.setUTCHours(23, 59, 59, 999); // End of the day
 
-            paymentFilter.payment_date = {
-                $gte: startOfDay,
-                $lte: endOfDay,
-            };
+        //     paymentFilter.payment_date = {
+        //         $gte: startOfDay,
+        //         $lte: endOfDay,
+        //     };
+        // }
+
+
+        if (payment_date) {
+            const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
+            const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");
+
+            const startUTC = startOfDayIST.clone().utc().toDate();
+            const endUTC = endOfDayIST.clone().utc().toDate();
+
+            paymentFilter.payment_date = { $gte: startUTC, $lte: endUTC };
         }
+
 
         // Fetch the payment data
         const paymentReferralData = await Payment.find(paymentFilter).lean();

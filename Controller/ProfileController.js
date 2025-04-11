@@ -10,6 +10,8 @@ const AdminPay = require("../Model/Adminpay");
 const Transaction = require("../Model/Transcation");
 const Review = require("../Model/Review");
 const mongoose = require('mongoose');
+const moment = require("moment-timezone");
+
 
 
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
@@ -142,19 +144,16 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
         // Initialize the query with userId
         const query = { userId: userId };
 
-        // Add date filtering if payment_date is provided
-        if (payment_date) {
-            const startDate = new Date(payment_date);
-            startDate.setUTCHours(0, 0, 0, 0); // 🔹 दिन की शुरुआत (Midnight)
-
-            const endDate = new Date(payment_date);
-            endDate.setUTCHours(23, 59, 59, 999); // 🔹 दिन का अंत (11:59:59 PM)
-
-            query.payment_date = {
-                $gte: startDate, // 🔹 पूरे दिन का डेटा लाएगा
-                $lte: endDate,
-            };
-        }
+          if (payment_date) {
+              const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
+              const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");
+            
+              const startUTC = startOfDayIST.clone().utc().toDate();
+              const endUTC = endOfDayIST.clone().utc().toDate();
+            
+              query.payment_date = { $gte: startUTC, $lte: endUTC };
+            }
+            console.log("Query:", query); // Log the query
 
         const AdminPayments = await AdminPay.find(query)
             .sort({ payment_date: -1 }) // Sort by payment_date in descending order

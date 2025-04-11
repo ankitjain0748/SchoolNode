@@ -96,7 +96,7 @@ cron.schedule('0 0 * * *', async () => {
 });
 
 // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('0 0 * * 0', async () => {
     try {
         console.log('Running weekly payment reset job...');
         const currentWeek = moment().format('YYYY-WW');

@@ -1,8 +1,5 @@
 // Import mongoose
 const mongoose = require('mongoose');
-
-
-
 const SubtitleSchema = mongoose.Schema({
   subtitle: {
     type: String,
@@ -16,6 +13,12 @@ const SubtitleSchema = mongoose.Schema({
     type: String,
     trim: true,
   },
+  thumbnail :{
+    type: String,
+    trim: true,
+    default :"https://stackearnimage.s3.amazonaws.com/uploads/passive.png"
+
+  }
 });
 
 const LectureSchema = new mongoose.Schema({
@@ -29,7 +32,6 @@ const LectureSchema = new mongoose.Schema({
   },
 });
 const Lecture = mongoose.model("Lecture", LectureSchema);
-
 
 
 const lectureFilesSchema = new mongoose.Schema({
@@ -48,6 +50,12 @@ const lectureFiles = new mongoose.Schema({
     type: [lectureFilesSchema],
     default: [],
   },
+  thumbnail :{
+    type: String,
+    trim: true,
+  }
+
+
 });
 const lectureFile = mongoose.model("lectureFiles", lectureFiles);
 // Define the schema for a course

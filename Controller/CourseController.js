@@ -6,11 +6,10 @@ const Webinar = require('../Model/Webniar'); // Import the model
 const Tranning = require("../Model/Video")
 // Configure Multer for file uploads
 
-
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
-        const { title, description, thumbnail ,courseVideo, sub_content, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
+        const { title, description, thumbnail, courseVideo, sub_content, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
         const record = new Course({
             title,
             description,
@@ -106,7 +105,7 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             price,
             lectureFiles,
             level,
-            thumbnail ,
+            thumbnail,
             InstrutorId,
             courseImage,
             discountPrice,
@@ -115,6 +114,7 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             sub_content
         } = req.body;
 
+       
         if (!_id) {
             return res.status(400).json({
                 status: false,
@@ -126,7 +126,7 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             {
                 title,
                 sub_content,
-                thumbnail ,
+                thumbnail,
                 lectureFiles,
                 discountPrice,
                 description,
@@ -138,7 +138,8 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
                 level,
                 InstrutorId,
                 Onlines,
-                courseImage
+                courseImage,
+
             },
             { new: true, runValidators: true }
         );
@@ -269,10 +270,10 @@ exports.CoursepriceUpdate = catchAsync(async (req, res, next) => {
 exports.onlinePost = catchAsync(
     async (req, res) => {
         try {
-            const { title, content, video ,thumbnail } = req.body;
+            const { title, content, video, thumbnail } = req.body;
             const record = new Online({
                 title,
-                content, video ,thumbnail
+                content, video, thumbnail
             });
             const result = await record.save();
             if (result) {
@@ -343,7 +344,7 @@ exports.onlineupdate = catchAsync(async (req, res) => {
         const {
             _id, // Course ID
             title,
-            video, content ,thumbnail
+            video, content, thumbnail
         } = req.body;
 
         if (!_id) {
@@ -356,7 +357,7 @@ exports.onlineupdate = catchAsync(async (req, res) => {
             _id,
             {
                 title,
-                video, content ,thumbnail
+                video, content, thumbnail
             },
             { new: true, runValidators: true }
         );
@@ -441,7 +442,7 @@ exports.OnlineGetId = catchAsync(async (req, res, next) => {
 
 exports.Webniarpost = catchAsync(async (req, res) => {
     try {
-        const { title, content, video, webnair_date, place, webnair_time, webniar_end_time ,thumbnail } = req.body;
+        const { title, content, video, webnair_date, place, webnair_time, webniar_end_time, thumbnail } = req.body;
         const record = new Webinar({
             title,
             content,
@@ -547,7 +548,7 @@ exports.WebinarUpdate = catchAsync(async (req, res) => {
                 webniar_end_time,
                 webnair_date, place,
                 content,
-                thumbnail 
+                thumbnail
             },
             { new: true, runValidators: true }
         );
@@ -631,10 +632,10 @@ exports.WebniarGetId = catchAsync(async (req, res, next) => {
 exports.Tranningpost = catchAsync(
     async (req, res) => {
         try {
-            const { title, content, video, webnair_date, place  , thumbnail} = req.body;
+            const { title, content, video, webnair_date, place, thumbnail } = req.body;
             const record = new Tranning({
                 title,
-                content, video,thumbnail,
+                content, video, thumbnail,
                 webnair_date, place
             });
             const result = await record.save();
@@ -707,7 +708,7 @@ exports.tranningUpdate = catchAsync(async (req, res) => {
             title,
             video,
             content,
-            webnair_date, place , thumbnail
+            webnair_date, place, thumbnail
         } = req.body;
 
         if (!_id) {
@@ -722,7 +723,7 @@ exports.tranningUpdate = catchAsync(async (req, res) => {
             {
                 title,
                 video,
-                webnair_date, place,thumbnail,
+                webnair_date, place, thumbnail,
                 content
             },
             { new: true, runValidators: true }

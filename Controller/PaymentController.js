@@ -2,6 +2,7 @@ const Payment = require("../Model/Payment");
 const AdminPays = require("../Model/Adminpay");
 const Course = require("../Model/Course");
 const mongoose = require("mongoose");
+const moment = require("moment-timezone");
 
 require('dotenv').config();
 const catchAsync = require("../utill/catchAsync");
@@ -13,6 +14,7 @@ const sendEmail = require("../utill/Emailer");
 const Purchase = require("../Mail/Purchase")
 const AdminPurchase = require("../Mail/AdminPurchase");
 const ProfileData = require("../Model/Profile");
+
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -84,7 +86,6 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           });
 
           const recorddata = await newProfile.save();
-          console.log("recorddata", recorddata)
         }
       }
     }
@@ -419,13 +420,17 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     //   query.payment_date = new Date(paymentDate); // Parse date correctly
     // }
 
-    if (paymentDate) {
-      const startOfDay = new Date(paymentDate);
-      const endOfDay = new Date(paymentDate);
-      endOfDay.setUTCHours(23, 59, 59, 999); // End of the day
-      query.payment_date = { $gte: startOfDay, $lte: endOfDay }; // Match within the date range
-    }
 
+    if (paymentDate) {
+      const startOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").startOf("day");
+      const endOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").endOf("day");
+    
+      const startUTC = startOfDayIST.clone().utc().toDate();
+      const endUTC = endOfDayIST.clone().utc().toDate();
+    
+      query.payment_date = { $gte: startUTC, $lte: endUTC };
+    }
+    
 
     // Fetch total count and pages
     const totalUsers = await Payment.countDocuments(query);
@@ -481,14 +486,18 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
         Payments: [],
       });
     }
+    const Payments = await Payment.findOne({ UserId });
+
     const CourseIds = UserPayments.map((payment) => payment.CourseId);
     const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId").sort({ createdAt: -1 });
     res.status(200).json({
       status: true,
       message: "Courses retrieved successfully!",
       Payments: UserPayments,
+      PaymentsData :Payments,
       Courses: courses,
     });
+    
   } catch (err) {
     logger.error(err);
     return res.status(500).json({
@@ -508,7 +517,9 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
 
     const searchQuery = req.query.search ? req.query.search.trim() : "";
     const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
-    const paymentDate = req.query.payment_date ? new Date(req.query.payment_date) : null;
+    // const paymentDate = req.query.payment_date ? req.query.payment_date : null;
+    const paymentDate = req.query.payment_date?.trim() || "";
+
 
     const filter = {};
 
@@ -526,14 +537,15 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
 
     // 📅 Filter by payment date (only date, ignoring time)
     if (paymentDate) {
-      const nextDate = new Date(paymentDate);
-      nextDate.setDate(nextDate.getDate() + 1); // Add one day to get end of that date
-      filter.payment_date = {
-        $gte: paymentDate,
-        $lt: nextDate,
-      };
+      const startOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").startOf("day");
+      const endOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").endOf("day");
+    
+      const startUTC = startOfDayIST.clone().utc().toDate();
+      const endUTC = endOfDayIST.clone().utc().toDate();
+    
+      filter.payment_date = { $gte: startUTC, $lte: endUTC };
     }
-
+    
 
     const payment = await AdminPays.find(filter)
       .populate({

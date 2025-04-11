@@ -238,9 +238,11 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
     }
 });
 
+
 exports.ReviewCourse = catchAsync(async (req, res) => {
     try {
         const { CourseId, page = 1, limit = 10 } = req.body;
+
         if (!CourseId) {
             return res.status(400).json({
                 status: false,
@@ -248,22 +250,17 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
             });
         }
 
-        // Convert page and limit to numbers and ensure valid values
         const pageNumber = Math.max(1, parseInt(page, 10));
         const limitNumber = Math.max(1, parseInt(limit, 10));
         const skip = (pageNumber - 1) * limitNumber;
 
-        // Fetch paginated reviews
+        // Step 1: Fetch paginated reviews with user data
         const reviews = await Review.find({ CourseId, status: "read" })
             .skip(skip)
             .limit(limitNumber)
-            .populate("userId", "name email"); // Optional: Populate user data
+            .populate("userId", "name email");
 
-        // Get total number of reviews for the course
         const totalReviews = await Review.countDocuments({ CourseId, status: "read" });
-
-        // Fetch profile data
-        const profile = await ProfileData.findOne().populate("userId");
 
         if (!reviews.length) {
             return res.status(404).json({
@@ -272,18 +269,43 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
             });
         }
 
-        // Respond with fetched data
+        // Step 2: Get all userIds from reviews
+        const userIds = reviews.map(review => review.userId?._id);
+
+        // Step 3: Fetch profiles where userId matches
+        const profiles = await ProfileData.find({ userId: { $in: userIds } }).select("userId profileImage");
+
+        // Step 4: Create a map of userId => profileImage
+        const profileMap = {};
+        profiles.forEach(profile => {
+            profileMap[profile.userId.toString()] = profile.profileImage;
+        });
+
+        // Step 5: Merge profileImage into review.userId
+        const reviewsWithProfileImage = reviews.map(review => {
+            const user = review.userId;
+            const profileImage = profileMap[user?._id.toString()] || null;
+
+            return {
+                ...review._doc,
+                userId: {
+                    ...user._doc,
+                    profileImage,
+                },
+            };
+        });
+
         return res.status(200).json({
             status: true,
             data: {
-                reviews,
-                profile,
+                reviews: reviewsWithProfileImage,
                 currentPage: pageNumber,
                 totalPages: Math.ceil(totalReviews / limitNumber),
                 totalReviews,
             },
             message: "Reviews fetched successfully.",
         });
+
     } catch (error) {
         console.error("Error fetching reviews:", error);
         return res.status(500).json({
@@ -292,6 +314,7 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 exports.ReviewCourseUser = catchAsync(async (req, res) => {
     try {
