@@ -175,7 +175,5 @@ cron.schedule('0 0 28-31 * *', async () => {
     }
 });
 
-console.log("✅ All cron jobs scheduled successfully!");
-
 
 app.listen(PORT, () => Loggers.http("Server is running at port : " + PORT));

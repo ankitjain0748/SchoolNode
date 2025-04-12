@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (data) => {
-    console.log("Sending email with data:", data); // Log the 
     const { email, name, datauser, message, cousreData, payment, subject, support, BlogRecord, Webniarrecord, dicount, ImageUrl, BgImage, SubContent, emailTemplate  , from} = data;
 
     // Set up the transport for the email

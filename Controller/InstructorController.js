@@ -3,7 +3,7 @@ const catchAsync = require("../utill/catchAsync");
 const logger = require("../utill/Loggers");
 
 exports.InstructorPost = (async (req, res) => {
-    const { firstName, lastName, designation, lessions, students, Skills, email, sales, phoneNumber, address, profileImage, bio, gender, rating } = req.body;
+    const { firstName, lastName, designation, lessions, students, Skill, email, sales, phoneNumber, address, profileImage, bio, gender, rating } = req.body;
 
     const record = new Instructor({
         firstName,
@@ -12,7 +12,7 @@ exports.InstructorPost = (async (req, res) => {
         lessions,
         sales,
         students,
-        Skill: Skills,
+        Skill,
         email,
         phoneNumber,
         address,

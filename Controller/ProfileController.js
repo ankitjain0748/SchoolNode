@@ -144,16 +144,15 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
         // Initialize the query with userId
         const query = { userId: userId };
 
-          if (payment_date) {
-              const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
-              const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");
-            
-              const startUTC = startOfDayIST.clone().utc().toDate();
-              const endUTC = endOfDayIST.clone().utc().toDate();
-            
-              query.payment_date = { $gte: startUTC, $lte: endUTC };
-            }
-            console.log("Query:", query); // Log the query
+        if (payment_date) {
+            const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
+            const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");
+
+            const startUTC = startOfDayIST.clone().utc().toDate();
+            const endUTC = endOfDayIST.clone().utc().toDate();
+
+            query.payment_date = { $gte: startUTC, $lte: endUTC };
+        }
 
         const AdminPayments = await AdminPay.find(query)
             .sort({ payment_date: -1 }) // Sort by payment_date in descending order
