@@ -101,7 +101,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 },
             },
         ]);
-
         // 1. Today's payments
         const todayAdminPayments = await AdminPayment.aggregate([
             {
