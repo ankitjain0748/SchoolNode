@@ -238,7 +238,6 @@ exports.ReviewStatus = catchAsync(async (req, res) => {
     }
 });
 
-
 exports.ReviewCourse = catchAsync(async (req, res) => {
     try {
         const { CourseId, page = 1, limit = 10 } = req.body;
@@ -269,8 +268,10 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
             });
         }
 
-        // Step 2: Get all userIds from reviews
-        const userIds = reviews.map(review => review.userId?._id);
+        // Step 2: Get all valid userIds from reviews
+        const userIds = reviews
+            .filter(review => review.userId && review.userId._id)
+            .map(review => review.userId._id);
 
         // Step 3: Fetch profiles where userId matches
         const profiles = await ProfileData.find({ userId: { $in: userIds } }).select("userId profileImage");
@@ -284,7 +285,16 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         // Step 5: Merge profileImage into review.userId
         const reviewsWithProfileImage = reviews.map(review => {
             const user = review.userId;
-            const profileImage = profileMap[user?._id.toString()] || null;
+
+            if (!user || !user._id) {
+                // In case user info is missing
+                return {
+                    ...review._doc,
+                    userId: null,
+                };
+            }
+
+            const profileImage = profileMap[user._id.toString()] || null;
 
             return {
                 ...review._doc,
@@ -314,6 +324,7 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         });
     }
 });
+
 
 
 exports.ReviewCourseUser = catchAsync(async (req, res) => {
