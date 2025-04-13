@@ -77,8 +77,8 @@ cron.schedule('0 0 * * *', async () => {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
         }
-        const from = "StackEarn  Cron Daliy <no-reply@stackearn.com>";
 
+        const from = "StackEarn Cron Daily <no-reply@stackearn.com>";
 
         console.log('✅ Daily payment reset job completed.');
         await sendEmail({
@@ -87,13 +87,16 @@ cron.schedule('0 0 * * *', async () => {
             message: "The daily payment reset job has been successfully completed at midnight.",
             subject: "✅ Daily Cron Job Completed",
             emailTemplate: CronEmail,
-            from :from
+            from: from
         });
 
     } catch (error) {
         console.error('❌ Error in daily payment reset job:', error);
     }
+}, {
+    timezone: "Asia/Kolkata" // ⬅️ This is the key fix
 });
+
 
 // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
 cron.schedule('0 0 * * 0', async () => {
@@ -122,12 +125,14 @@ cron.schedule('0 0 * * 0', async () => {
             message: "The weekly payment reset job has been successfully completed at midnight.",
             subject: "✅ Weekly Cron Job Completed",
             emailTemplate: CronEmail,
-            from :from
+            from: from
         });
 
     } catch (error) {
         console.error('❌ Error in weekly payment reset job:', error);
     }
+}, {
+    timezone: "Asia/Kolkata" // ⬅️ This is the key fix
 });
 
 // 🔴 MONTHLY CRON JOB (Runs at midnight on the last day of the month)
@@ -136,7 +141,6 @@ cron.schedule('0 0 28-31 * *', async () => {
     if (today.date() !== today.endOf('month').date()) {
         return; // Only run on the last day of the month
     }
-
     try {
         console.log('Running monthly payment reset job...');
         const currentMonth = moment().format('YYYY-MM');
@@ -167,12 +171,14 @@ cron.schedule('0 0 28-31 * *', async () => {
             message: "The monthly payment reset job has been successfully completed.",
             subject: "✅ Monthly Cron Job Completed",
             emailTemplate: CronEmail,
-            from :from
+            from: from
         });
 
     } catch (error) {
         console.error('❌ Error in monthly payment reset job:', error);
     }
+}, {
+    timezone: "Asia/Kolkata" // ⬅️ This is the key fix
 });
 
 
