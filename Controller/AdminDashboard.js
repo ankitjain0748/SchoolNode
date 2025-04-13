@@ -49,7 +49,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     referred_user_pay_overall: { $sum: "$referred_user_pay_overall" },
                     passive_income :{$sum :"$passive_income"},
                     totalFirst: { $sum: "$first_user_pay" },
-                    totalSecond: { $sum: "$second_user_pay" }
+                    totalSecond: { $sum: "$second_user_pay" },
+                    totalDirect :{$sum :"$referred_user_pay"}
                 }
             }
         ]);
