@@ -38,8 +38,8 @@ exports.InstructorPost = (async (req, res) => {
 });
 
 exports.InstructorGet = catchAsync(async (req, res, next) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
     const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
     let query = {};

@@ -183,6 +183,10 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    InActivePercanetageAmount :{
+        type: Number,
+        default: 0
+    },
     referred_user_type: String,
 });
 

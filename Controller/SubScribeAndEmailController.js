@@ -51,8 +51,8 @@ exports.SubscribePost = catchAsync(async (req, res) => {
 exports.Subscribeget = catchAsync(async (req, res, next) => {
     try {
 
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 50;
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         const selectoption = req.query.selectedoption ? String(req.query.selectedoption).trim() : ""; // Assuming you'll use this later
@@ -122,8 +122,8 @@ exports.SubscriberDelete = catchAsync(async (req, res, next) => {
 // Email Format Api  /
 exports.EmailDataSubScribe = catchAsync(async (req, res, next) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         const totalsubscribemodal = await subscribemodal.countDocuments();
         const subscribedata = await subscribemodal.find({ Email_verify: "valid" }).sort({ created_at: -1 })
@@ -203,8 +203,8 @@ exports.EmailDataprofile = catchAsync(async (req, res, next) => {
 
 exports.EmailDataContactGet = catchAsync(async (req, res, next) => {
     try {
-        const page = Math.max(parseInt(req.query.page) || 1, 1); // Ensure page is at least 1
-        const limit = Math.max(parseInt(req.query.limit) || 50, 1); // Ensure limit is at least 1
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         const searchQuery = req.query.search ? req.query.search.trim() : null; // Get search query
 

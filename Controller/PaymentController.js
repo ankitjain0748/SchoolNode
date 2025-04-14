@@ -584,8 +584,8 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
 exports.paymentdata = catchAsync(async (req, res) => {
   try {
     const userId = req.User?._id;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
 
     const searchDate = req.query.payment_date; // Get payment date from query params
@@ -640,8 +640,8 @@ exports.paymentdata = catchAsync(async (req, res) => {
 exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
   try {
     // Fetch page and limit from query params, set defaults if not provided
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
 
     // Fetch user payments with status "success"

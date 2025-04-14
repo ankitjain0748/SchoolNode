@@ -469,20 +469,31 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
         let activeCount = 0;
         let inactiveCount = 0;
         for (const user of users) {
-            const { second_user_pay, first_user_pay, referred_user_pay_monthly, pervious_passive_income_month } = user;
+            const {
+                referred_user_pay_monthly,
+                pervious_passive_income_month
+            } = user;
             const totalPayment = referred_user_pay_monthly || 0;
             const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
-            const percentageValue = ((pervious_passive_income_month) * (adminUser?.InActiveUserPercanetage || 0)) / 100;
+            const percentageValue = (pervious_passive_income_month * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
+            const incFields = {
+                passive_income: validPercentageValue
+            };
+        
+            if (userStatus === 'inactive') {
+                incFields.InActivePercanetageAmount = validPercentageValue; // 30% amount added
+            }
+        
             await User.findByIdAndUpdate(
                 user._id,
                 {
                     $set: { user_status: userStatus },
-                    $inc: { passive_income: validPercentageValue },
+                    $inc: incFields
                 },
                 { new: true }
             );
-
+        
             // Update counters
             if (userStatus === 'active') {
                 activeCount++;
@@ -490,6 +501,7 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 inactiveCount++;
             }
         }
+        
 
         res.status(200).json({
             status: true,

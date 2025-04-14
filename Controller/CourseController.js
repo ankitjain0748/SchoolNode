@@ -51,8 +51,8 @@ exports.CoursePost = async (req, res) => {
 
 exports.CourseGet = catchAsync(async (req, res, next) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
@@ -300,8 +300,8 @@ exports.onlinePost = catchAsync(
 
 exports.OnlineGet = catchAsync(async (req, res, next) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 25;
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
@@ -479,8 +479,8 @@ exports.Webniarpost = catchAsync(async (req, res) => {
 
 exports.WebniarGet = catchAsync(async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 25;
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
         let query = {};
@@ -663,8 +663,9 @@ exports.Tranningpost = catchAsync(
 
 exports.TranningGet = catchAsync(async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 25;
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt() || 50, 1);
+
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
 

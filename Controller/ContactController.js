@@ -56,8 +56,8 @@ exports.ContactPost = catchAsync(async (req, res) => {
 
 exports.ContactGet = catchAsync(async (req, res, next) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 30;
+        const page = Math.max(parseInt(req.query.page) || 1, 1);
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         let query = {};
         const search = req.query.search ? String(req.query.search).trim() : "";
