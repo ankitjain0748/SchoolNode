@@ -122,7 +122,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                             ]
                         }
                     },
-
                     totalPayout: {
                         $sum: {
                             $cond: [
@@ -139,10 +138,21 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: 0,
                     totalAdd: 1,
                     totalWithdrawal: 1,
-                    totalPayout: 1,
+                    totalPayout: 1
                 }
             }
         ]);
+        
+        // ✅ If no data found, set default values
+        const payments = todayAdminPayments[0] || {
+            totalAdd: 0,
+            totalWithdrawal: 0,
+            totalPayout: 0
+        };
+        
+        console.log(payments);
+        
+        console.log("todayAdminPayments" ,todayAdminPayments)
 
         // 2. Overall payments
         const overallAdminPayments = await AdminPayment.aggregate([
@@ -179,6 +189,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
+
+        console.log("overallAdminPayments" ,overallAdminPayments)
 
         const overallPassiveIncome = await User.aggregate([
             {
@@ -308,18 +320,18 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             enrolled: enrolledCount,
             totalusercount: totalusercount,
             AdminPaidAmount: AdminPaidAmount,
-            totalPaymentAddAmount: totalPaymentAddAmount.length > 0 ? totalPaymentAddAmount[0].total : 0,
-            totalGSTAmount: totalGSTAmount.length > 0 ? totalGSTAmount[0].totalGSTAmount : 0,
-            totaluserIncome: totaluserIncome.length > 0 ? totaluserIncome[0] : 0,
-            totalAmount: totalAmount.length > 0 ? totalAmount[0].total : 0,
-            todayIncome: todayIncome.length > 0 ? todayIncome[0].total : 0,
-            yesterdayIncome: yesterdayIncome.length > 0 ? yesterdayIncome[0].total : 0,
-            thisWeekIncome: weekIncome.length > 0 ? weekIncome[0].total : 0,
-            thisMonthIncome: monthIncome.length > 0 ? monthIncome[0].total : 0,
-            todayAdminPayments: todayAdminPayments.length > 0 ? todayAdminPayments[0] : 0,
-            overallAdminPayments: overallAdminPayments.length > 0 ? overallAdminPayments[0] : 0,
-            overallPassiveIncome: overallPassiveIncome.length > 0 ? overallPassiveIncome[0] : 0,
-            NextPayoutPayments: NextPayoutPayments.length > 0 ? NextPayoutPayments[0] : 0,
+            totalPaymentAddAmount: totalPaymentAddAmount[0].total ,
+            totalGSTAmount:  totalGSTAmount[0].totalGSTAmount ,
+            totaluserIncome: totaluserIncome[0] ,
+            totalAmount:  totalAmount[0] ,
+            todayIncome: todayIncome[0] ,
+            yesterdayIncome:  yesterdayIncome[0].total ,
+            thisWeekIncome: weekIncome[0].total,
+            thisMonthIncome: monthIncome[0].total ,
+            todayAdminPayments:  payments ,
+            overallAdminPayments: overallAdminPayments[0] ,
+            overallPassiveIncome:  overallPassiveIncome[0] ,
+            NextPayoutPayments: NextPayoutPayments[0] ,
         });
     } catch (error) {
         console.log("error", error);

@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
 
 
 // 🟢 DAILY CRON JOB (Runs every day at midnight)
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('10 6 * * *', async () => {
     try {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
@@ -93,8 +93,6 @@ cron.schedule('0 0 * * *', async () => {
     } catch (error) {
         console.error('❌ Error in daily payment reset job:', error);
     }
-}, {
-    timezone: "Asia/Kolkata" // ⬅️ This is the key fix
 });
 
 
@@ -131,8 +129,6 @@ cron.schedule('0 0 * * 0', async () => {
     } catch (error) {
         console.error('❌ Error in weekly payment reset job:', error);
     }
-}, {
-    timezone: "Asia/Kolkata" // ⬅️ This is the key fix
 });
 
 // 🔴 MONTHLY CRON JOB (Runs at midnight on the last day of the month)
@@ -177,8 +173,6 @@ cron.schedule('0 0 28-31 * *', async () => {
     } catch (error) {
         console.error('❌ Error in monthly payment reset job:', error);
     }
-}, {
-    timezone: "Asia/Kolkata" // ⬅️ This is the key fix
 });
 
 
