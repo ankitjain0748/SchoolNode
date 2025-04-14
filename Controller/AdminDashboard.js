@@ -51,8 +51,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     totalFirst: { $sum: "$first_user_pay" },
                     totalSecond: { $sum: "$second_user_pay" },
                     totalDirect: { $sum: "$referred_user_pay" },
-                    Percentageamount: { $sum: "$InActivePercentageamount" }
-
+                    InActivePercentageamount: { $sum: "$InActivePercentageamount" },
                 }
             }
         ]);
@@ -98,9 +97,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
 
         const finalResult = result.length > 0 ? result : [{ userId: null, totalPayAmount: 0 }];
 
-
         const total = result[0]?.totalPayAmount || 0;
-
 
         const AdminPaidAmount = await AdminPayment.aggregate([
             {
@@ -197,8 +194,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             totalWithdrawal: 0,
             totalPayout: 0
         };
-
-
         // 2. Overall payments
         const overallAdminPayments = await AdminPayment.aggregate([
             {
@@ -235,7 +230,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             }
         ]);
 
-
         const overallPassiveIncome = await User.aggregate([
             {
                 $group: {
@@ -256,7 +250,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         ]);
         const todays = new Date();
         todays.setHours(0, 0, 0, 0);
-        const todayaa = new Date(todays);
         const tomorrows = new Date(todays);
         tomorrows.setDate(today.getDate());
         const yyyy = tomorrows.getFullYear();
@@ -276,6 +269,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     totalReferred: { $sum: "$referred_user_pay" },
                     totalFirst: { $sum: "$first_user_pay" },
                     totalSecond: { $sum: "$second_user_pay" }
+
                 }
             },
             {
@@ -369,9 +363,9 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             totaluserIncome: totaluserIncome[0],
             totalAmount: totalAmount[0],
             todayIncome: todayIncome[0],
-            yesterdayIncome: yesterdayIncome[0] ? yesterdayIncome[0]?.total  :0,
-            thisWeekIncome: weekIncome[0] ? weekIncome[0]?.total  :0,
-            thisMonthIncome: monthIncome[0] ? monthIncome[0]?.total  :0,
+            yesterdayIncome: yesterdayIncome[0]?.total,
+            thisWeekIncome: weekIncome[0]?.total,
+            thisMonthIncome: monthIncome[0]?.total,
             todayAdminPayments: payments,
             overallAdminPayments: overallAdminPayments[0],
             overallPassiveIncome: overallPassiveIncome[0],
@@ -383,6 +377,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+
 
 
 exports.adminlogin = catchAsync(async (req, res, next) => {
