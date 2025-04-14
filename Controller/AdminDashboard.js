@@ -54,6 +54,58 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
+
+        
+        const result = await Payment.aggregate([
+          {
+            $match: {
+              payment_date: { $gte: today, $lt: tomorrow },
+              payment_status: "success"
+            }
+          },
+          {
+            $project: {
+              data: [
+                {
+                  userId: "$referredData2.userId",
+                  payAmount: "$referredData2.payAmount"
+                },
+                {
+                  userId: "$referredData3.userId",
+                  payAmount: "$referredData3.payAmount"
+                }
+              ]
+            }
+          },
+          { $unwind: "$data" },
+          { $match: { "data.userId": { $ne: null } } },
+          {
+            $group: {
+              _id: "$data.userId",
+              totalPayAmount: { $sum: "$data.payAmount" }
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              userId: "$_id",
+              totalPayAmount: 1
+            }
+          }
+        ]);
+        
+        const finalResult = result.length > 0 ? result : [{ userId: null, totalPayAmount: 0 }];
+        
+        console.log(finalResult);
+        
+        
+        console.log(result);
+        
+        
+        const total = result[0]?.totalPayAmount || 0;
+        
+        console.log("Total payAmount for user:", total);
+        
         const AdminPaidAmount = await AdminPayment.aggregate([
             {
                 $group: {
@@ -221,6 +273,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const dd = String(tomorrows.getDate()).padStart(2, '0');
         const tomorrowDateString = `${yyyy}-${mm}-${dd}`;
 
+        console.log("tomorrowDateString" ,tomorrowDateString)
+
         const NextPayoutPayments = await User.aggregate([
             {
                 $match: {
@@ -244,6 +298,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
+
+        console.log("NextPayoutPayments" ,NextPayoutPayments)
         const totalGSTAmount = await Payment.aggregate([
             {
                 $group: {
@@ -332,6 +388,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             overallAdminPayments: overallAdminPayments[0] ,
             overallPassiveIncome:  overallPassiveIncome[0] ,
             NextPayoutPayments: NextPayoutPayments[0] ,
+            UserPayout :total,
         });
     } catch (error) {
         console.log("error", error);
