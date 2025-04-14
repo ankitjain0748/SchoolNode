@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
 
 
 // 🟢 DAILY CRON JOB (Runs every day at midnight)
-cron.schedule('10 6 * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
