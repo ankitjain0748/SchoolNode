@@ -257,7 +257,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const todays = new Date();
         todays.setHours(0, 0, 0, 0);
         const todayaa = new Date(todays);
-        const todayDateString = todayaa.toISOString().split("T")[0];
         const tomorrows = new Date(todays);
         tomorrows.setDate(today.getDate());
         const yyyy = tomorrows.getFullYear();
