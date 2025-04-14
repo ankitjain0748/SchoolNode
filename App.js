@@ -51,8 +51,8 @@ app.get("/", (req, res) => {
 });
 
 
-// 🟢 DAILY CRON JOB (Runs every day at midnight)
 cron.schedule('0 5 * * *', async () => {
+    // 🟢 DAILY CRON JOB (Runs every day at midnight)
     try {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
@@ -77,9 +77,7 @@ cron.schedule('0 5 * * *', async () => {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
         }
-
         const from = "StackEarn Cron Daily <no-reply@stackearn.com>";
-
         console.log('✅ Daily payment reset job completed.');
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
@@ -89,15 +87,14 @@ cron.schedule('0 5 * * *', async () => {
             emailTemplate: CronEmail,
             from: from
         });
-
     } catch (error) {
         console.error('❌ Error in daily payment reset job:', error);
     }
 });
 
 
-// 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
 cron.schedule('8 0 * * 0', async () => {
+    // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
     console.log('⏰ Weekly job running at 12:08 AM on Sunday');
     try {
         console.log('Running weekly payment reset job...');
@@ -132,8 +129,8 @@ cron.schedule('8 0 * * 0', async () => {
     }
 });
 
-// 🔴 MONTHLY CRON JOB (Runs at midnight on the last day of the month)
-cron.schedule('0 0 28-31 * *', async () => {
+cron.schedule('15 0 28-31 * *', async () => {
+    // 🔴 MONTHLY CRON JOB (Runs at midnight on the last day of the month)  Runs at 12:15 AM on 28th, 29th, 30th, and 31st of each month
     const today = moment();
     if (today.date() !== today.endOf('month').date()) {
         return; // Only run on the last day of the month
