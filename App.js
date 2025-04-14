@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
 
 
 // 🟢 DAILY CRON JOB (Runs every day at midnight)
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('0 5 * * *', async () => {
     try {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
@@ -97,7 +97,8 @@ cron.schedule('0 0 * * *', async () => {
 
 
 // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
-cron.schedule('0 0 * * 0', async () => {
+cron.schedule('8 0 * * 0', async () => {
+    console.log('⏰ Weekly job running at 12:08 AM on Sunday');
     try {
         console.log('Running weekly payment reset job...');
         const currentWeek = moment().format('YYYY-WW');
