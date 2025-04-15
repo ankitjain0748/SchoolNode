@@ -62,6 +62,7 @@ cron.schedule('0 0 * * *', async () => {
             let updates = {};
 
             if (user.lastPaymentDay !== currentDay) {
+                updates.UnPaidAmounts = (user.lastTodayIncome || 0)
                 updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_monthly = (user.lastTodayIncome || 0) + (user.referred_user_pay_monthly || 0) + (user.referred_user_pay);
@@ -127,6 +128,7 @@ cron.schedule('8 0 * * 0', async () => {
         console.error('❌ Error in weekly payment reset job:', error);
     }
 });
+
 cron.schedule('15 0 28-31 * *', async () => {
     // 🔴 MONTHLY CRON JOB (Runs at midnight on the last day of the month)  Runs at 12:15 AM on 28th, 29th, 30th, and 31st of each month
     const today = moment();

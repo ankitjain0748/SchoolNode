@@ -187,6 +187,10 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    UnPaidAmounts :{
+        type: Number,
+        default: 0
+    },
     referred_user_type: String,
 });
 
