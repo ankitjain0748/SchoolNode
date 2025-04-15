@@ -57,7 +57,8 @@ cron.schedule('53 0 * * *', async () => {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
         const users = await User.find({ role: "user" });
-console.log("users" ,users)
+        console.log("users", users)
+        Loggers.info("Done Cron Daliy")
         for (let user of users) {
             let updates = {};
 
@@ -67,7 +68,7 @@ console.log("users" ,users)
                 updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_monthly = (user.lastTodayIncome || 0) + (user.referred_user_pay_monthly || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_weekly = (user.lastTodayIncome || 0) + (user.referred_user_pay_weekly || 0) + (user.referred_user_pay);
-                updates.passive_income = (user.second_user_pay || 0) + (user.first_user_pay)+(updates.passive_income || 0);
+                updates.passive_income = (user.second_user_pay || 0) + (user.first_user_pay) + (updates.passive_income || 0);
                 updates.referred_user_pay_daily = 0;
                 updates.payment_key_daily = 0;
                 updates.referred_user_pay = 0;
