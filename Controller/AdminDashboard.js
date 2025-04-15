@@ -24,9 +24,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         console.log("userId" ,userId)
         const user = await User.findById(userId);
         const profileData = await ProfileData.findOne({ userId });
-
-
-
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const startOfWeek = new Date(today);
@@ -59,6 +56,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     totalSecond: { $sum: "$second_user_pay" },
                     totalDirect: { $sum: "$referred_user_pay" },
                     InActivePercentageamount: { $sum: "$InActivePercentageamount" },
+                    UnPaidAmounts: { $sum: "$UnPaidAmounts" },
                 }
             }
         ]);
