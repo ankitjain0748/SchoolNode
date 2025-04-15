@@ -352,16 +352,13 @@ exports.paymentAdd = catchAsync(async (req, res) => {
           { $set: { CourseId: CourseId, user_status: "Enrolled", ref_date: new Date() } },
           { new: true }
         );
+        return res.status(200).json({
+          status: "success",
+          message: "Payment verified and saved successfully",
+          data,
+        });
       }
-     
-
-      return res.status(200).json({
-        status: "success",
-        message: "Payment verified and saved successfully",
-        data,
-      });
     }
-
     if (payment_status === "failed") {
       return res.status(200).json({
         status: "failed",
