@@ -664,8 +664,7 @@ exports.Tranningpost = catchAsync(
 exports.TranningGet = catchAsync(async (req, res) => {
     try {
         const page = Math.max(parseInt(req.query.page) || 1, 1);
-        const limit = Math.max(parseInt() || 50, 1);
-
+        const limit = Math.max(parseInt(req.query.limit) || 50, 1);
         const skip = (page - 1) * limit;
         const search = req.query.search ? String(req.query.search).trim() : ""; // Ensure search is a string
 
