@@ -20,8 +20,7 @@ const signToken = async (id) => {
 
 exports.AdminDashboard = catchAsync(async (req, res) => {
     try {
-        const  userId = req.User._id;
-        console.log("userId" ,userId)
+        const userId = req.User._id;
         const user = await User.findById(userId);
         const profileData = await ProfileData.findOne({ userId });
         const today = new Date();
@@ -100,21 +99,14 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             }
         ]);
 
-        console.log("result" ,result)
-
         const finalResult = result.length > 0 ? result : [{ userId: null, totalPayAmount: 0 }];
-
-        console.log("finalResult" ,finalResult);
 
         let totalSum = 0;
 
-for (const item of finalResult) {
-  totalSum += item.totalPayAmount;
-}
+        for (const item of finalResult) {
+            totalSum += item.totalPayAmount;
+        }
 
-console.log("Total Sum:", totalSum);
-        const total = result[0]?.totalPayAmount || 0;
-        console.log("totalSum" ,totalSum);
 
 
         const AdminPaidAmount = await AdminPayment.aggregate([
@@ -310,26 +302,26 @@ console.log("Total Sum:", totalSum);
         ]);
         const todayIncome = await Payment.aggregate([
             {
-              $match: {
-                payment_date: { $gte: today, $lt: tomorrow },
-                payment_status: "success" // ✅ Only successful payments
-              },
+                $match: {
+                    payment_date: { $gte: today, $lt: tomorrow },
+                    payment_status: "success" // ✅ Only successful payments
+                },
             },
             {
-              $group: {
-                _id: null,
-                total: { $sum: "$amount" },
-              },
+                $group: {
+                    _id: null,
+                    total: { $sum: "$amount" },
+                },
             },
-          ]);
-          
-          let totalTodayIncome = 0; // Default value if no data
-          
-          if (todayIncome.length > 0) {
+        ]);
+
+        let totalTodayIncome = 0; // Default value if no data
+
+        if (todayIncome.length > 0) {
             totalTodayIncome = todayIncome[0]?.total || 0;
-          }
-          
-          console.log("Today's Income:", totalTodayIncome);
+        }
+
+        console.log("Today's Income:", totalTodayIncome);
 
         const yesterdayIncome = await Payment.aggregate([
             {
@@ -378,8 +370,8 @@ console.log("Total Sum:", totalSum);
         ]);
         res.status(200).json({
             success: true,
-            user :user,
-            profileData :profileData ,
+            user: user,
+            profileData: profileData,
             registered: registeredCount,
             active: activeCount,
             inactive: inactiveCount,

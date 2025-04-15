@@ -56,7 +56,6 @@ cron.schedule('0 0 * * *', async () => {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
         const users = await User.find({ role: "user" });
-        console.log("users", users)
         Loggers.info("Done Cron Daliy")
         for (let user of users) {
             let updates = {};
