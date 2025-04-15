@@ -20,6 +20,13 @@ const signToken = async (id) => {
 
 exports.AdminDashboard = catchAsync(async (req, res) => {
     try {
+        const  userId = req.User._id;
+        console.log("userId" ,userId)
+        const user = await User.findById(userId);
+        const profileData = await ProfileData.findOne({ userId });
+
+
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const startOfWeek = new Date(today);
@@ -352,6 +359,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         ]);
         res.status(200).json({
             success: true,
+            user :user,
+            profileData :profileData ,
             registered: registeredCount,
             active: activeCount,
             inactive: inactiveCount,

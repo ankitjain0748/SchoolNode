@@ -522,6 +522,7 @@ exports.profilegettoken = catchAsync(async (req, res, next) => {
       return res.status(400).json({ msg: "User not authenticated" });
     }
 
+    
     // Fetch user profile excluding password
     const userProfile = await User.findById(userId).select('-password');
     if (!userProfile) {

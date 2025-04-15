@@ -345,11 +345,15 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       await updateReferredUser(referred_first, "firstuser", "first_user_pay", coursedata.discountPrice, coursedata?.referred_first || 0);
       await updateReferredUser(referred_second, "seconduser", "second_user_pay", coursedata.discountPrice, coursedata?.referred_second || 0);
 
-      const data = await User.findByIdAndUpdate(
-        UserId,
-        { $set: { CourseId: CourseId, user_status: "Enrolled", ref_date: new Date() } },
-        { new: true }
-      );
+
+      if (payment_status === "success") {
+        const data = await User.findByIdAndUpdate(
+          UserId,
+          { $set: { CourseId: CourseId, user_status: "Enrolled", ref_date: new Date() } },
+          { new: true }
+        );
+      }
+     
 
       return res.status(200).json({
         status: "success",
@@ -413,14 +417,6 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     if (selectOption) {
       query.payment_status = selectOption;
     }
-
-
-    // Add payment date filter (ensure proper formatting)
-    // if (paymentDate) {
-    //   query.payment_date = new Date(paymentDate); // Parse date correctly
-    // }
-
-
     if (paymentDate) {
       const startOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").startOf("day");
       const endOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").endOf("day");
