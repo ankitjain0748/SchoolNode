@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 });
 
 
-cron.schedule('53 0 * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
     // 🟢 DAILY CRON JOB (Runs every day at midnight)
     try {
         console.log('Running daily payment reset job...');
