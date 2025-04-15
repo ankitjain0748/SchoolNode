@@ -257,7 +257,11 @@ exports.ReviewCourse = catchAsync(async (req, res) => {
         const reviews = await Review.find({ CourseId, status: "read" })
             .skip(skip)
             .limit(limitNumber)
+            .sort({
+                created_at: -1
+              })
             .populate("userId", "name email");
+
 
         const totalReviews = await Review.countDocuments({ CourseId, status: "read" });
 

@@ -102,9 +102,22 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             }
         ]);
 
+        console.log("result" ,result)
+
         const finalResult = result.length > 0 ? result : [{ userId: null, totalPayAmount: 0 }];
 
+        console.log("finalResult" ,finalResult);
+
+        let totalSum = 0;
+
+for (const item of finalResult) {
+  totalSum += item.totalPayAmount;
+}
+
+console.log("Total Sum:", totalSum);
         const total = result[0]?.totalPayAmount || 0;
+        console.log("totalSum" ,totalSum);
+
 
         const AdminPaidAmount = await AdminPayment.aggregate([
             {
@@ -379,7 +392,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             overallAdminPayments: overallAdminPayments[0],
             overallPassiveIncome: overallPassiveIncome[0],
             NextPayoutPayments: NextPayoutPayments[0],
-            UserPayout: total,
+            UserPayout: totalSum,
         });
     } catch (error) {
         console.log("error", error);
