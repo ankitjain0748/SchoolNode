@@ -310,18 +310,26 @@ console.log("Total Sum:", totalSum);
         ]);
         const todayIncome = await Payment.aggregate([
             {
-                $match: {
-                    payment_date: { $gte: today, $lt: tomorrow },
-                    payment_status: "success" // ✅ Only successful payments
-                },
+              $match: {
+                payment_date: { $gte: today, $lt: tomorrow },
+                payment_status: "success" // ✅ Only successful payments
+              },
             },
             {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$amount" },
-                },
+              $group: {
+                _id: null,
+                total: { $sum: "$amount" },
+              },
             },
-        ]);
+          ]);
+          
+          let totalTodayIncome = 0; // Default value if no data
+          
+          if (todayIncome.length > 0) {
+            totalTodayIncome = todayIncome[0]?.total || 0;
+          }
+          
+          console.log("Today's Income:", totalTodayIncome);
 
         const yesterdayIncome = await Payment.aggregate([
             {
@@ -382,7 +390,7 @@ console.log("Total Sum:", totalSum);
             totalGSTAmount: totalGSTAmount[0]?.totalGSTAmount,
             totaluserIncome: totaluserIncome[0],
             totalAmount: totalAmount[0],
-            todayIncome: todayIncome[0],
+            todayIncome: totalTodayIncome,
             yesterdayIncome: yesterdayIncome[0]?.total,
             thisWeekIncome: weekIncome[0]?.total,
             thisMonthIncome: monthIncome[0]?.total,
