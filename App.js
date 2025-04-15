@@ -51,13 +51,13 @@ app.get("/", (req, res) => {
 });
 
 
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('40 0 * * *', async () => {
     // 🟢 DAILY CRON JOB (Runs every day at midnight)
     try {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
         const users = await User.find({ role: "user" });
-
+console.log("users" ,users)
         for (let user of users) {
             let updates = {};
 
