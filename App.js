@@ -92,7 +92,6 @@ cron.schedule('0 0 * * *', async () => {
     }
 });
 
-
 cron.schedule('8 0 * * 0', async () => {
     // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
     console.log('⏰ Weekly job running at 12:08 AM on Sunday');
@@ -128,7 +127,6 @@ cron.schedule('8 0 * * 0', async () => {
         console.error('❌ Error in weekly payment reset job:', error);
     }
 });
-
 cron.schedule('15 0 28-31 * *', async () => {
     // 🔴 MONTHLY CRON JOB (Runs at midnight on the last day of the month)  Runs at 12:15 AM on 28th, 29th, 30th, and 31st of each month
     const today = moment();
@@ -172,6 +170,5 @@ cron.schedule('15 0 28-31 * *', async () => {
         console.error('❌ Error in monthly payment reset job:', error);
     }
 });
-
 
 app.listen(PORT, () => Loggers.http("Server is running at port : " + PORT));
