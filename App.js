@@ -50,7 +50,6 @@ app.get("/", (req, res) => {
     });
 });
 
-
 cron.schedule('0 0 * * *', async () => {
     // 🟢 DAILY CRON JOB (Runs every day at midnight)
     try {
