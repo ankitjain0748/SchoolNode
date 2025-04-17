@@ -184,3 +184,20 @@
 2025-04-12 00:39:27 [ERROR]: moment is not defined
 2025-04-12 00:40:11 [ERROR]: moment is not defined
 2025-04-15 21:38:30 [ERROR]: data is not defined
+2025-04-17 20:26:17 [ERROR]: Class constructor ObjectId cannot be invoked without 'new'
+2025-04-17 20:27:41 [ERROR]: the match filter must be an expression in an object
+2025-04-17 21:03:20 [ERROR]: Error fetching users: referred_user_pay is not defined
+2025-04-17 21:04:00 [ERROR]: Error fetching users: referred_user_pay is not defined
+2025-04-17 21:04:27 [ERROR]: Error fetching users: referred_user_pay is not defined
+2025-04-17 21:09:31 [ERROR]: Error fetching users: AdminPay is not defined
+2025-04-17 21:10:22 [ERROR]: Error fetching users: AdminPay is not defined
+2025-04-17 21:10:22 [ERROR]: Error fetching users: AdminPay is not defined
+2025-04-17 21:10:35 [ERROR]: Error fetching users: AdminPay is not defined
+2025-04-17 21:11:01 [ERROR]: Error fetching users: AdminPay is not defined
+2025-04-17 21:11:46 [ERROR]: Error fetching users: mongoose is not defined
+2025-04-17 21:12:12 [ERROR]: Error fetching users: mongoose is not defined
+2025-04-17 21:13:00 [ERROR]: Error fetching users: mongoose is not defined
+2025-04-17 21:14:53 [ERROR]: Error fetching users: mongoose is not defined
+2025-04-17 21:15:09 [ERROR]: Error fetching users: mongoose is not defined
+2025-04-17 21:16:05 [ERROR]: Error fetching users: mongoose is not defined
+2025-04-17 21:17:00 [ERROR]: Error fetching users: mongoose is not defined

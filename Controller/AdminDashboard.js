@@ -321,7 +321,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             totalTodayIncome = todayIncome[0]?.total || 0;
         }
 
-        console.log("Today's Income:", totalTodayIncome);
 
         const yesterdayIncome = await Payment.aggregate([
             {
@@ -398,8 +397,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
     }
 });
 
-
-
 exports.adminlogin = catchAsync(async (req, res, next) => {
     try {
         const { email, password, role } = req.body;
@@ -453,7 +450,6 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
     }
 });
 
-
 exports.profileadmin = catchAsync(async (req, res, next) => {
     try {
         const adminUser = await User.findOne({ role: "admin", isDeleted: false }).select("-password");
@@ -468,15 +464,20 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
         }
         const users = await User.find({ role: "user", user_status: { $ne: "registered" }, isDeleted: false });
 
+
+
         const userCount = await User.countDocuments();
         let activeCount = 0;
         let inactiveCount = 0;
         for (const user of users) {
             const {
                 referred_user_pay_monthly,
-                pervious_passive_income_month
+                referred_user_pay,
+                UnPaidAmounts,
+                pervious_passive_income_month,
+                totalWidthrawal  
             } = user;
-            const totalPayment = referred_user_pay_monthly || 0;
+            const totalPayment = (referred_user_pay_monthly || 0) + (referred_user_pay || 0) - (UnPaidAmounts) -(totalWidthrawal ? totalWidthrawal : 0 ) || 0;
             const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
             const percentageValue = (pervious_passive_income_month * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;

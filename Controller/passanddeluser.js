@@ -59,10 +59,10 @@ exports.forgotlinkrecord = catchAsync(async (req, res) => {
     await transporter.sendMail({
       from: "StackEarn Support <no-reply@stackearn.com>",
       to: record.email,
-      subject: "Forgot Your StackEarn Password",
+      subject: "Reset Your Password – StackEarn",
       html: emailHtml,
     });
-    return successResponse(res, "Email has been sent to your registered email");
+    return successResponse(res, "Password reset link has been sent to your email.");
   } catch (error) {
     logger.error("Error deleting user record:", error);
 

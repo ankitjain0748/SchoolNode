@@ -38,7 +38,7 @@ exports.createBlog = catchAsync(async (req, res) => {
     const userEmailList = userEmails.map(user => user.email);
     const allEmails = [...contactEmailList, ...subscribeEmailList, ...userEmailList];
     const uniqueEmails = [...new Set(allEmails)];  // Remove duplicate emails
-    const subject1 = ` 🚀 New Blog Post: ${title} - Don't Miss Out!`;
+    const subject1 = ` 🚀 New Blog Alert: ${title}`;
     const from = "StackEarn Blogs Update <updates@stackearn.com>"
 
     for (const email of uniqueEmails) {

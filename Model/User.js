@@ -183,11 +183,23 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    InActivePercentageamount :{
+    InActivePercentageamount: {
         type: Number,
         default: 0
     },
-    UnPaidAmounts :{
+    UnPaidAmounts: {
+        type: Number,
+        default: 0
+    },
+    totalPayout: {
+        type: Number,
+        default: 0
+    },
+    totalWidthrawal: {
+        type: Number,
+        default: 0
+    },
+    totalAdd: {
         type: Number,
         default: 0
     },

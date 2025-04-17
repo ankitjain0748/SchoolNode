@@ -15,8 +15,6 @@ const TempUser = require("../Model/TempUser");
 const RegisterEmail = require("../Mail/RegisterEmail");
 const AdminEmail = require("../Mail/AdminRegister");
 const sendEmail = require("../utill/Emailer");
-const Payout = require("../Mail/Payout");
-const moment = require('moment');
 
 const signToken = async (id) => {
   const token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -87,21 +85,6 @@ exports.OTP = catchAsync(async (req, res) => {
     if (existingTempUser) {
       await TempUser.deleteOne({ _id: existingTempUser._id });
     }
-    // if (existingTempUser) {
-    //   const errors = "Email or Phone number already Exist!!";
-    //   if (existingTempUser.email === email) {
-    //     errors = "Email is already Exist!";
-    //   }
-    //   if (existingTempUser.phone_number === phone_number) {
-    //     errors = "Phone number is already Exist!";
-    //   }
-    //   return res.status(400).json({
-    //     status: false,
-    //     message: errors,
-    //     errors,
-    //   });
-    // }
-
     const hashedPassword = await bcrypt.hash(password, 12);
     const otp = generateOTP();
     let referrer = null;
@@ -319,7 +302,7 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
     const token = await signToken(newUser._id);
     res.json({
       status: true,
-      message: "Your account has been verified.",
+      message: "Account created successfully. Let’s get started!",
       token,
     });
     const from = "admin <admin@stackearn.com>";
@@ -332,14 +315,14 @@ exports.VerifyOtp = catchAsync(async (req, res, next) => {
         email: newUser.email,
         name: newUser.name,
         Webniarrecord: newUser,
-        message: "Your booking request was successful!",
+        message: "Account created successfully. Let’s get started!",
         subject: subject,
         emailTemplate: RegisterEmail,
         from: from1
       });
     }
     await sendEmail({
-      email: "admin@stackearn.com",
+      email: "stackearn@gmail.com",
       name: "Admin",
       datauser: newUser,
       message: "Your booking request was successful!",
@@ -363,21 +346,6 @@ exports.signup = catchAsync(async (req, res) => {
   try {
     const { email, password, name, phone_number, referred_by } = req.body;
     const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
-    // if (existingUser) {
-    //   const errors = "Email or Phone number already Exist!!";
-    //   if (existingUser.email === email) {
-    //     errors = "Email is already Exist!";
-    //   }
-    //   if (existingUser.phone_number === phone_number) {
-    //     errors = "Phone number is already Exist!";
-    //   }
-    //   return res.status(400).json({
-    //     status: false,
-    //     message: errors,
-    //     errors,
-    //   });
-    // }
-
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -442,7 +410,7 @@ exports.signup = catchAsync(async (req, res) => {
     await updateReferralData(referrerdata?._id); // Update for the third-level referrer
 
 
-    return successResponse(res, "You have been registered successfully!", 201, {
+    return successResponse(res, "Account created successfully. Let’s get started!", 201, {
       userId: result._id,
     });
   } catch (error) {
@@ -479,16 +447,6 @@ exports.login = catchAsync(async (req, res, next) => {
         message: "Incorrect password. Please try again.",
       });
     }
-
-    // Check if the user account is inactive
-    // if (user.user_status === "inactive") {
-    //   logger.warn("Your account is inactive. Please contact support.")
-    //   return res.status(403).json({
-    //     status: false,
-    //     message: "Your account is inactive. Please contact support.",
-    //   });
-    // }
-
     // Validate user role
     if (user.role !== role) {
       logger.warn("Access denied. Only user can log in.")
@@ -522,7 +480,7 @@ exports.profilegettoken = catchAsync(async (req, res, next) => {
       return res.status(400).json({ msg: "User not authenticated" });
     }
 
-    
+
     // Fetch user profile excluding password
     const userProfile = await User.findById(userId).select('-password');
     if (!userProfile) {

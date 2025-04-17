@@ -5,7 +5,8 @@ const catchAsync = require("../utill/catchAsync");
 const User = require("../Model/User");
 const Payment = require("../Model/Payment");
 const moment = require("moment-timezone");
-
+const AdminPay = require("../Model/Adminpay");
+const mongoose = require('mongoose');
 
 exports.RefralCodeAdd = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
@@ -108,17 +109,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             status: "success",
         };
 
-        // if (payment_date) {
-        //     const startOfDay = new Date(payment_date);
-        //     const endOfDay = new Date(payment_date);
-        //     endOfDay.setUTCHours(23, 59, 59, 999);
-
-        //     paymentFilter.payment_date = {
-        //         $gte: startOfDay,
-        //         $lte: endOfDay,
-        //     };
-        // }
-
         if (payment_date) {
             const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
             const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");
@@ -130,14 +120,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         }
 
         const paymentReferralData = await Payment.find(paymentFilter).lean();
-
-        // if (!paymentReferralData || paymentReferralData.length === 0) {
-        //     return res.status(204).json({
-        //         msg: "No payments found for the provided filters.",
-        //         status: false,
-        //         data: [],
-        //     });
-        // }
 
         // ✅ Filter testReferrals to only include users with payments on the specified date
         let filteredReferrals = testReferrals;
@@ -170,6 +152,67 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
         const AdminUser = await User.findOne({ role: "admin" });
 
+        const matchStage = userId ? { userId: new mongoose.Types.ObjectId(userId) } : {};
+
+        const overallAdminPayments = await AdminPay.aggregate([
+            { $match: matchStage }, // Optional match stage if userId is passed
+            {
+                $group: {
+                    _id: "$userId",
+                    totalAdd: { $sum: "$payment_Add" },
+                    totalWithdrawal: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$page", "withdrawal"] },
+                                "$paymentWidthrawal",
+                                0
+                            ]
+                        }
+                    },
+                    totalPayout: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$page", "payout"] },
+                                "$paymentWidthrawal",
+                                0
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    userId: "$_id",
+                    totalAdd: 1,
+                    totalWithdrawal: 1,
+                    totalPayout: 1,
+                }
+            }
+        ]);
+
+        const paymentData = overallAdminPayments[0] || {
+            totalAdd: 0,
+            totalWithdrawal: 0,
+            totalPayout: 0
+        };
+
+        
+
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    totalPayout: paymentData.totalPayout,
+                    totalWidthrawal: paymentData.totalWithdrawal,
+                    totalAdd: paymentData.totalAdd
+                },
+            },
+            { new: true }
+        );
+
+
+
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
             status: true,
@@ -179,6 +222,7 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             totalReferrals,
             data: referralUsersWithPayment,
             user,
+            overallAdminPayments: overallAdminPayments ? overallAdminPayments[0] : "",
             AdminUser: AdminUser,
         });
     } catch (error) {

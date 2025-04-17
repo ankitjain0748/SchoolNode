@@ -16,11 +16,11 @@ exports.SubscribePost = catchAsync(async (req, res) => {
         const { email, Email_verify } = req.body;
         const record = new subscribemodal({ email, Email_verify });
         const result = await record.save();
-        const subject1 = "Welcome to Our Newsletter! 🎉";
+        const subject1 = "You’ve Joined Our Newsletter. Let's Grow Together!";
         const from = "StackEarn Weekly Insights <newsletter@stackearn.com>";
         await sendEmail({
             email: email,
-            message: "Your booking request was successful!",
+            message: "Thanks for Subscribing – Get Ready for Fresh Updates!",
             subject: subject1,
             emailTemplate: Subscriber,
             from: from
@@ -29,7 +29,7 @@ exports.SubscribePost = catchAsync(async (req, res) => {
         if (result) {
             res.json({
                 status: true,
-                message: "Request Sent Successfully!!.",
+                message: "Thanks for Subscribing – Get Ready for Fresh Updates!",
             });
         } else {
             logger.info(result)
@@ -256,7 +256,7 @@ exports.WebniarEmail = catchAsync(async (req, res) => {
     try {
         const { title, selectedUsers, content, BgImage } = req.body;
         const record = await WebinarModal.findOne({ title });
-        const subject1 = `Join Our Exclusive Webinar: ${title} - Register Now!🎉`;
+        const subject1 = `Upcoming Event Just for You – ${title}`;
         const from = "StackEarn Events <events@stackearn.com>";
         for (const email of selectedUsers) {
             try {
@@ -326,7 +326,7 @@ exports.OfferCourseEmail = catchAsync(async (req, res) => {
     try {
         const { title, selectedUsers, content, dicount, courseImage, BgImage, SubContent } = req.body;
         const record = await Course.findOne({ title });
-        const subject1 = `🎉 Special Offer:${title} at ${dicount}% Off! Enroll Now!`;
+        const subject1 = `Special Offer: Affiliate & AI Mastery at 70% OFF – Today Only!`;
         const from = "StackEarn Deals <offers@stackearn.com>"
         for (const email of selectedUsers) {
             try {

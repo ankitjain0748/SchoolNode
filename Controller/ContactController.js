@@ -21,12 +21,12 @@ exports.ContactPost = catchAsync(async (req, res) => {
 
         const result = await record.save();
         if (result.role = "support") {
-            const subject1 = `Your Support Ticket ${result?._id} has been Created 🎉`;
+            const subject1 = `We've Received Your Inquiry – Thank You for Reaching Out`;
             const from = "	StackEarn Support Team <support@stackearn.com>"
             await sendEmail({
                 email: email,
                 support: result,
-                message: "Your booking request was successful!",
+                message: "Thank You – Your Request Has Been Successfully Submitted",
                 subject: subject1,
                 emailTemplate: EmailContact,
                 from: from,
@@ -36,7 +36,7 @@ exports.ContactPost = catchAsync(async (req, res) => {
         if (result) {
             res.json({
                 status: true,
-                message: "Request Sent Successfully!!.",
+                message: "Thank You – Your Request Has Been Successfully Submitted",
             });
         } else {
             res.json({

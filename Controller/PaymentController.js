@@ -124,7 +124,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
 
     if (payment_status === "success") {
 
-      const subject = `Thank You for Your Purchase! ${coursedata.title} is Now Available for You 🎉`;
+      const subject = `Payment Successful – You’re Enrolled in ${coursedata.title}`;
       const subject1 = `New Course Purchase: ${coursedata.title} by ${user.name} 🎉`;
       const from = "StackEarn Transaction <billing@stackearn.com>"
       const from1 = "StackEarn Transaction <admin@stackearn.com>"
@@ -142,7 +142,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       }
 
       await sendEmail({
-        email: "sainibhim133@gmail.com",
+        email: "stackearn@gmail.com",
         name: "Admin",
         datauser: user,
         payment: record,
@@ -354,7 +354,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
         );
         return res.status(200).json({
           status: "success",
-          message: "Payment verified and saved successfully",
+          message: "Thank you! Your course purchase was successful. Happy learning!",
           data,
         });
       }
