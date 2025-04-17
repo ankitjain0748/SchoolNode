@@ -326,7 +326,7 @@ exports.OfferCourseEmail = catchAsync(async (req, res) => {
     try {
         const { title, selectedUsers, content, dicount, courseImage, BgImage, SubContent } = req.body;
         const record = await Course.findOne({ title });
-        const subject1 = `Special Offer: Affiliate & AI Mastery at 70% OFF – Today Only!`;
+        const subject1 = `Special Offer: Affiliate & AI Mastery at 70% OFF – Today Only!g`;
         const from = "StackEarn Deals <offers@stackearn.com>"
         for (const email of selectedUsers) {
             try {
