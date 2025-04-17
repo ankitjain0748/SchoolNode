@@ -100,6 +100,8 @@ cron.schedule('0 0 * * *', async () => {
     }
 });
 
+
+
 cron.schedule('8 0 * * 0', async () => {
     // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
     console.log('⏰ Weekly job running at 12:08 AM on Sunday');

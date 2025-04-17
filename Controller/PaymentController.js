@@ -507,7 +507,6 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
     const limit = Math.max(parseInt(req.query.limit) || 15, 1);
     const skip = (page - 1) * limit;
 
-
     const searchQuery = req.query.search ? req.query.search.trim() : "";
     const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
     // const paymentDate = req.query.payment_date ? req.query.payment_date : null;
