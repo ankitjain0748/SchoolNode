@@ -62,7 +62,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
   try {
 
     const UserId = req.User._id;
-    const { order_id, payment_id, amount, currency, payment_status, CourseId, payment_method,
+    const { order_id, payment_id, amount, currency, payment_status, CourseId,
       address, home_address, remember, saveInfo, sameAsBilling, phone_number, state, country, zip } = req.body;
     const user = await User.findById(UserId);
     const fullAddress = `${address}, ${state}, ${country} - ${zip}`;
@@ -108,7 +108,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       UserId,
       status,
       CourseId,
-      payment_method
+      payment_method :"online"
     });
 
     const record = await payment.save();
@@ -349,7 +349,7 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       if (payment_status === "success") {
         const data = await User.findByIdAndUpdate(
           UserId,
-          { $set: { CourseId: CourseId, user_status: "Enrolled", ref_date: new Date() } },
+          { $set: { CourseId: CourseId, user_status: "enrolled", ref_date: new Date() } },
           { new: true }
         );
         return res.status(200).json({
