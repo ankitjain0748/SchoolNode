@@ -492,7 +492,9 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 pervious_passive_income_month,
             } = user;
             const totalPayment = (referred_user_pay_monthly || 0) + (referred_user_pay || 0) - (UnPaidAmounts || 0)  || 0;
-            const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'active' : 'inactive';
+       console.log("totalPayment" ,totalPayment)
+       console.log("adminUser?.ActiveUserPrice" ,adminUser?.ActiveUserPrice)
+       const userStatus = totalPayment >= adminUser?.ActiveUserPrice ? 'active' : 'inactive';
             const percentageValue = (pervious_passive_income_month * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
             const incFields = {
