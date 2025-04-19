@@ -5,8 +5,6 @@ const catchAsync = require("../utill/catchAsync");
 const User = require("../Model/User");
 const Payment = require("../Model/Payment");
 const moment = require("moment-timezone");
-const AdminPay = require("../Model/Adminpay");
-const mongoose = require('mongoose');
 
 exports.RefralCodeAdd = catchAsync(async (req, res) => {
     const userId = req?.User?._id;
@@ -62,7 +60,6 @@ exports.RefralCodeAdd = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.RefralCodeGet = catchAsync(async (req, res) => {
     const userId = req.User?.id;
@@ -152,66 +149,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
         const AdminUser = await User.findOne({ role: "admin" });
 
-        const matchStage = userId ? { userId: new mongoose.Types.ObjectId(userId) } : {};
-
-        const overallAdminPayments = await AdminPay.aggregate([
-            { $match: matchStage }, // Optional match stage if userId is passed
-            {
-                $group: {
-                    _id: "$userId",
-                    totalAdd: { $sum: "$payment_Add" },
-                    totalWithdrawal: {
-                        $sum: {
-                            $cond: [
-                                { $eq: ["$page", "withdrawal"] },
-                                "$paymentWidthrawal",
-                                0
-                            ]
-                        }
-                    },
-                    totalPayout: {
-                        $sum: {
-                            $cond: [
-                                { $eq: ["$page", "payout"] },
-                                "$paymentWidthrawal",
-                                0
-                            ]
-                        }
-                    }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    userId: "$_id",
-                    totalAdd: 1,
-                    totalWithdrawal: 1,
-                    totalPayout: 1,
-                }
-            }
-        ]);
-
-        const paymentData = overallAdminPayments[0] || {
-            totalAdd: 0,
-            totalWithdrawal: 0,
-            totalPayout: 0
-        };
-
-        
-
-        await User.findByIdAndUpdate(
-            userId,
-            {
-                $set: {
-                    totalPayout: paymentData.totalPayout,
-                    totalWidthrawal: paymentData.totalWithdrawal,
-                    totalAdd: paymentData.totalAdd
-                },
-            },
-            { new: true }
-        );
-
-
 
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
@@ -222,7 +159,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             totalReferrals,
             data: referralUsersWithPayment,
             user,
-            overallAdminPayments: overallAdminPayments ? overallAdminPayments[0] : "",
             AdminUser: AdminUser,
         });
     } catch (error) {
@@ -233,8 +169,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         });
     }
 });
-
-
 
 exports.RefralCodeGetId = catchAsync(async (req, res) => {
     const userId = req.query?.id;
@@ -372,7 +306,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         });
     }
 });
-
 
 exports.RefralCodeDelete = catchAsync(async (req, res) => {
     try {

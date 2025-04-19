@@ -13,10 +13,10 @@ const SubtitleSchema = mongoose.Schema({
     type: String,
     trim: true,
   },
-  thumbnail :{
+  thumbnail: {
     type: String,
     trim: true,
-    default :"https://stackearnimage.s3.amazonaws.com/uploads/passive.png"
+    default: "https://stackearnimage.s3.amazonaws.com/uploads/passive.png"
 
   }
 });
@@ -31,8 +31,6 @@ const LectureSchema = new mongoose.Schema({
     default: [],
   },
 });
-const Lecture = mongoose.model("Lecture", LectureSchema);
-
 
 const lectureFilesSchema = new mongoose.Schema({
   subtitle: {
@@ -50,16 +48,16 @@ const lectureFiles = new mongoose.Schema({
     type: [lectureFilesSchema],
     default: [],
   },
-  thumbnail :{
+  thumbnail: {
     type: String,
     trim: true,
   }
 
 
 });
-const lectureFile = mongoose.model("lectureFiles", lectureFiles);
+
 // Define the schema for a course
-const courseSchema = new mongoose.Schema({
+const courseSchema = mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Course title is required'],
@@ -126,7 +124,7 @@ const courseSchema = new mongoose.Schema({
     default: 0
 
   },
-  thumbnail :String,
+  thumbnail: String,
   createdAt: {
     type: Date,
     default: Date.now,

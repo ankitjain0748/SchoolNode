@@ -66,9 +66,9 @@ cron.schedule('0 0 * * *', async () => {
                 updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_monthly = (user.lastTodayIncome || 0) + (user.referred_user_pay_monthly || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_weekly = (user.lastTodayIncome || 0) + (user.referred_user_pay_weekly || 0) + (user.referred_user_pay);
+                updates.referred_user_pay_daily = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
                 updates.passive_income = (user.second_user_pay || 0) + (user.first_user_pay) + (updates.passive_income || 0);
                 updates.referred_user_pay_daily = 0;
-                updates.payment_key_daily = 0;
                 updates.referred_user_pay = 0;
                 updates.lastPaymentDay = currentDay;
             }
@@ -100,10 +100,8 @@ cron.schedule('0 0 * * *', async () => {
     }
 });
 
-
-
-cron.schedule('8 0 * * 0', async () => {
-    // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight)
+cron.schedule('8 0 * * 1', async () => {
+    // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight) Let me know what day/time you want exactly (Sunday night, Monday morning, etc.) and I’ll lock it in precisely.
     console.log('⏰ Weekly job running at 12:08 AM on Sunday');
     try {
         console.log('Running weekly payment reset job...');

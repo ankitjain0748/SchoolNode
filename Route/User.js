@@ -12,7 +12,6 @@ userRoute.post("/OTP", VerifyOtp)
 userRoute.post("/login", login)
 userRoute.post("/resendotp", ReSendOtp)
 userRoute.get("/profile-token", verifyToken, profilegettoken)
-// userRoute.get("/profile_Id", verifyToken, ProfileUserId)
 
 userRoute.post("/verifyaccount", VerifyUser)
 userRoute.post("/user-filter", userfilter);
@@ -46,7 +45,7 @@ userRoute.post("/refral-active", verifyToken, UserPriceUpdate);
 
 //AdminDashboard aand prfoile
 
-userRoute.get('/admin_dashboard', verifyToken, AdminDashboard)
+userRoute.get('/admin_dashboard', AdminDashboard)
 userRoute.post("/adminlogin", adminlogin)
 userRoute.get("/adminprofile", profileadmin)
 userRoute.get("/user_admin_payment", ProfileAdminPayeData)

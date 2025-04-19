@@ -98,7 +98,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const AdminPayments = await AdminPay.find({ userId: userId });
         const Transactions = await Transaction.find({ user: user });
         const matchStage = userId ? { userId: new mongoose.Types.ObjectId(userId) } : {};
-
         const overallAdminPayments = await AdminPay.aggregate([
             { $match: matchStage }, // Optional match stage if userId is passed
             {
@@ -135,8 +134,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
                 }
             }
         ]);
-
-
         const referralData = await User.find({
             $or: [
                 { referred_by: UserData?.referred_by },
