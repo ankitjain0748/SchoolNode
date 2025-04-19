@@ -394,7 +394,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             totalGSTAmount: totalGSTAmount[0]?.totalGSTAmount || 0,
             totaluserIncome: totaluserIncome[0],
             totalAmount: totalAmount[0],
-            todayIncome: todayIncome[0],
+            todayIncome: todayIncome[0].total,
             yesterdayIncome: yesterdayIncome[0]?.total,
             thisWeekIncome: weekIncome[0]?.total,
             thisMonthIncome: monthIncome[0]?.total,
@@ -492,8 +492,10 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 pervious_passive_income_month,
                 totalWidthrawal
             } = user;
-            const totalPayment = (referred_user_pay_monthly || 0) + (referred_user_pay || 0) - (UnPaidAmounts) - (totalWidthrawal ? totalWidthrawal : 0) || 0;
-            const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
+            const totalPayment = (referred_user_pay_monthly || 0) + (referred_user_pay || 0) - (UnPaidAmounts || 0)  || 0;
+            console.log("totalPayment" ,totalPayment)
+            console.log("adminUser?.ActiveUserPrice" ,adminUser?.ActiveUserPrice)
+            const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'active' : 'inactive';
             const percentageValue = (pervious_passive_income_month * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
             const incFields = {
