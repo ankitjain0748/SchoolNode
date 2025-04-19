@@ -580,8 +580,12 @@ exports.paymentdata = catchAsync(async (req, res) => {
         updatedReferredUserPayOverall += referralAmount;
         updatedReferredUserPayMonthly += referralAmount;
         updatedReferredUserPayWeekly += referralAmount;
-        // updatedReferredUserPayDaily += referralAmount;
         updatedPaymentKey += Number(paymentWidthrawal) || 0;
+
+        const referralPayAmount = Number(paymentWidthrawal) || 0;
+        updatedReferredUserPayOverall -= referralPayAmount;
+        updatedReferredUserPayMonthly -= referralPayAmount;
+        updatedReferredUserPayWeekly -= referralPayAmount;
 
         const newPayment = new AdminPayment({
             userId: Id, paymentMethod, payment_type, success_reasons,
