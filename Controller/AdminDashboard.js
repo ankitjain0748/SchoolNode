@@ -18,88 +18,18 @@ const signToken = async (id) => {
     return token;
 };
 
-
-
-
-// const todays = new Date();
-// todays.setHours(0, 0, 0, 0);
-// const tomorrows = new Date(todays);
-// tomorrows.setDate(today.getDate());
-// const yyyy = tomorrows.getFullYear();
-// const mm = String(tomorrows.getMonth() + 1).padStart(2, '0');
-// const dd = String(tomorrows.getDate()).padStart(2, '0');
-// const tomorrowDateString = `${yyyy}-${mm}-${dd}`;
-// const NextPayoutPayments = await User.aggregate([
-//     {
-//         $match: {
-//             lastPaymentDay: tomorrowDateString
-//         }
-//     },
-//     {
-//         $group: {
-//             _id: null,
-//             totalReferred: { $sum: "$referred_user_pay" },
-//             totalFirst: { $sum: "$first_user_pay" },
-//             totalSecond: { $sum: "$second_user_pay" }
-
-//         }
-//     },
-//     {
-//         $project: {
-//             _id: 0,
-//             total: {
-//                 $add: ["$totalReferred", "$totalFirst", "$totalSecond"]
-//             }
-//         }
-//     }
-// ]);
-
-// const startOfDay = moment().startOf('day').toDate();
-// const startOfWeeks = moment().startOf('week').toDate();
-// const startOfMonths = moment().startOf('month').toDate();
-// const previousDate = moment().subtract(1, 'days').toDate();
-// const AdminPaidAmount = await AdminPayment.aggregate([
-//     {
-//         $group: {
-//             _id: "$paymentType",
-//             totalAmount: { $sum: "$payment_key" },
-//             previousDay: {
-//                 $sum: {
-//                     $cond: [{ $gte: ["$payment_date", previousDate] }, "$payment_key", 0]
-//                 }
-//             },
-//             today: {
-//                 $sum: {
-//                     $cond: [{ $gte: ["$payment_date", startOfDay] }, "$payment_key", 0]
-//                 }
-//             },
-//             weekly: {
-//                 $sum: {
-//                     $cond: [{ $gte: ["$payment_date", startOfWeeks] }, "$payment_key", 0]
-//                 }
-//             },
-//             monthly: {
-//                 $sum: {
-//                     $cond: [{ $gte: ["$payment_date", startOfMonths] }, "$payment_key", 0]
-//                 }
-//             },
-//             overall: { $sum: "$payment_key" }  // Total sum
-//         }
-//     }
-// ]);
-
 exports.AdminDashboard = catchAsync(async (req, res) => {
     try {
         const userId = req.User._id;
         const user = await User.findById(userId);
         const profileData = await ProfileData.findOne({ userId });
-         // User Count with status
-         const registeredCount = await User.countDocuments({ user_status: "registered", role: "user" });
-         const activeCount = await User.countDocuments({ user_status: "active", role: "user" });
-         const inactiveCount = await User.countDocuments({ user_status: "inactive", role: "user" });
-         const enrolledCount = await User.countDocuments({ user_status: "enrolled", role: "user" });
-         const totalusercount = await User.countDocuments({});
- 
+        // User Count with status
+        const registeredCount = await User.countDocuments({ user_status: "registered", role: "user" });
+        const activeCount = await User.countDocuments({ user_status: "active", role: "user" });
+        const inactiveCount = await User.countDocuments({ user_status: "inactive", role: "user" });
+        const enrolledCount = await User.countDocuments({ user_status: "enrolled", role: "user" });
+        const totalusercount = await User.countDocuments({});
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const startOfWeek = new Date(today);
@@ -131,9 +61,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     totalDirect: { $sum: "$referred_user_pay" },
                     InActivePercentageamount: { $sum: "$InActivePercentageamount" },
                     UnPaidAmounts: { $sum: "$UnPaidAmounts" },
-                    totalPayout: { $sum: "$totalPayout" },
-                    totalWidthrawal: { $sum: "$totalWidthrawal" },
-                    totalAdd: { $sum: "$totalAdd" },
                 }
             }
         ]);
@@ -196,16 +123,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     total: { $sum: "$amount" }, // Sirf successful payments ka sum karega
                 }
             }
-        ]);
-
-        //Sum off totla payment 
-        const totalPaymentAddAmount = await AdminPayment.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$payment_Add" },
-                },
-            },
         ]);
 
         // 1. Today's payments
@@ -474,8 +391,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             enrolled: enrolledCount,
             totalusercount: totalusercount,
             // AdminPaidAmount: AdminPaidAmount,
-            totalPaymentAddAmount: totalPaymentAddAmount[0]?.total,
-            totalGSTAmount: totalGSTAmount[0]?.totalGSTAmount,
+            totalGSTAmount: totalGSTAmount[0]?.totalGSTAmount || 0,
             totaluserIncome: totaluserIncome[0],
             totalAmount: totalAmount[0],
             todayIncome: todayIncome[0],
@@ -672,11 +588,13 @@ exports.paymentdata = catchAsync(async (req, res) => {
         updatedReferredUserPayDaily += referralAmount;
         updatedPaymentKey += Number(paymentWidthrawal) || 0;
 
-        const referralPayAmount = Number(paymentWidthrawal) || 0;
-        updatedReferredUserPayOverall -= referralPayAmount;
-        updatedReferredUserPayMonthly -= referralPayAmount;
-        updatedReferredUserPayWeekly -= referralPayAmount;
-        updatedReferredUserPayDaily -= referralPayAmount;
+        if(page === "withdrawal"){
+            const referralPayAmount = Number(paymentWidthrawal) || 0;
+            updatedReferredUserPayOverall -= referralPayAmount;
+            updatedReferredUserPayMonthly -= referralPayAmount;
+            updatedReferredUserPayWeekly -= referralPayAmount;
+            updatedReferredUserPayDaily -= referralPayAmount;
+        }
 
         const newPayment = new AdminPayment({
             userId: Id, paymentMethod, payment_type, success_reasons,
