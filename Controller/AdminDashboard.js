@@ -394,7 +394,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             totalGSTAmount: totalGSTAmount[0]?.totalGSTAmount || 0,
             totaluserIncome: totaluserIncome[0],
             totalAmount: totalAmount[0],
-            todayIncome: todayIncome[0].total,
+            todayIncome: todayIncome[0]?.total,
             yesterdayIncome: yesterdayIncome[0]?.total,
             thisWeekIncome: weekIncome[0]?.total,
             thisMonthIncome: monthIncome[0]?.total,
@@ -587,13 +587,11 @@ exports.paymentdata = catchAsync(async (req, res) => {
         updatedReferredUserPayDaily += referralAmount;
         updatedPaymentKey += Number(paymentWidthrawal) || 0;
 
-        if (page === "withdrawal") {
-            const referralPayAmount = Number(paymentWidthrawal) || 0;
-            updatedReferredUserPayOverall -= referralPayAmount;
-            updatedReferredUserPayMonthly -= referralPayAmount;
-            updatedReferredUserPayWeekly -= referralPayAmount;
-            updatedReferredUserPayDaily -= referralPayAmount;
-        }
+        const referralPayAmount = Number(paymentWidthrawal) || 0;
+        updatedReferredUserPayOverall -= referralPayAmount;
+        updatedReferredUserPayMonthly -= referralPayAmount;
+        updatedReferredUserPayWeekly -= referralPayAmount;
+        updatedReferredUserPayDaily -= referralPayAmount;
 
         const newPayment = new AdminPayment({
             userId: Id, paymentMethod, payment_type, success_reasons,
