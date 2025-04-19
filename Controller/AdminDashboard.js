@@ -564,16 +564,8 @@ exports.paymentdata = catchAsync(async (req, res) => {
         let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
         let updatedPaymentKey = user.payment_key_daily || 0;
         let updatedLastTodayIncome = user.lastTodayIncome - payment_key || 0;
-        // Reset values when period changes
         if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
         if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
-
-        //   if (user.lastPaymentDay !== currentDay) {
-        //     updatedLastTodayIncome = updatedReferredUserPayDaily; // Save today's income to lastTodayIncome
-        //     updatedReferredUserPayDaily = 0;
-        //     updatedPaymentKey = 0;
-        //   }
-
         // Add current payments
         const referralAmount = Number(payment_Add) || 0;
         updatedLastTodayIncome += referralAmount;
