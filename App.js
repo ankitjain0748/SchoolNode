@@ -68,7 +68,7 @@ cron.schedule('0 0 * * *', async () => {
                 updates.referred_user_pay_weekly = (user.lastTodayIncome || 0) + (user.referred_user_pay_weekly || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_daily = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
                 updates.passive_income = (user.second_user_pay || 0) + (user.first_user_pay) + (updates.passive_income || 0);
-                updates.referred_user_pay_daily = 0;
+                // updates.referred_user_pay_daily = 0;
                 updates.referred_user_pay = 0;
                 updates.lastPaymentDay = currentDay;
             }

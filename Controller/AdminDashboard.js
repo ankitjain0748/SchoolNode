@@ -491,10 +491,8 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 UnPaidAmounts,
                 pervious_passive_income_month,
             } = user;
-            const totalPayment = (referred_user_pay_monthly || 0) + (referred_user_pay || 0) - (UnPaidAmounts || 0)  || 0;
-       console.log("totalPayment" ,totalPayment)
-       console.log("adminUser?.ActiveUserPrice" ,adminUser?.ActiveUserPrice)
-       const userStatus = totalPayment >= adminUser?.ActiveUserPrice ? 'active' : 'inactive';
+            const totalPayment = (referred_user_pay_monthly || 0) + (referred_user_pay || 0) - (UnPaidAmounts || 0) || 0;
+            const userStatus = totalPayment >= adminUser?.ActiveUserPrice ? 'active' : 'inactive';
             const percentageValue = (pervious_passive_income_month * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
             const incFields = {
@@ -589,7 +587,7 @@ exports.paymentdata = catchAsync(async (req, res) => {
         updatedReferredUserPayDaily += referralAmount;
         updatedPaymentKey += Number(paymentWidthrawal) || 0;
 
-        if(page === "withdrawal"){
+        if (page === "withdrawal") {
             const referralPayAmount = Number(paymentWidthrawal) || 0;
             updatedReferredUserPayOverall -= referralPayAmount;
             updatedReferredUserPayMonthly -= referralPayAmount;
