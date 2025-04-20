@@ -97,43 +97,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const payment = await Payment.findOne({ UserId: userId });
         const AdminPayments = await AdminPay.find({ userId: userId });
         const Transactions = await Transaction.find({ user: user });
-        const matchStage = userId ? { userId: new mongoose.Types.ObjectId(userId) } : {};
-        const overallAdminPayments = await AdminPay.aggregate([
-            { $match: matchStage }, // Optional match stage if userId is passed
-            {
-                $group: {
-                    _id: "$userId",
-                    totalAdd: { $sum: "$payment_Add" },
-                    totalWithdrawal: {
-                        $sum: {
-                            $cond: [
-                                { $eq: ["$page", "withdrawal"] },
-                                "$paymentWidthrawal",
-                                0
-                            ]
-                        }
-                    },
-                    totalPayout: {
-                        $sum: {
-                            $cond: [
-                                { $eq: ["$page", "payout"] },
-                                "$paymentWidthrawal",
-                                0
-                            ]
-                        }
-                    }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    userId: "$_id",
-                    totalAdd: 1,
-                    totalWithdrawal: 1,
-                    totalPayout: 1,
-                }
-            }
-        ]);
         const referralData = await User.find({
             $or: [
                 { referred_by: UserData?.referred_by },
@@ -157,7 +120,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             Transactions: Transactions,
             AdminPayments: AdminPayments,
             review: reviews,
-            overallAdminPayments: overallAdminPayments ? overallAdminPayments[0] :"",
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {

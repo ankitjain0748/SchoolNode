@@ -59,7 +59,6 @@ cron.schedule('0 0 * * *', async () => {
         Loggers.info("Done Cron Daliy")
         for (let user of users) {
             let updates = {};
-
             if (user.lastPaymentDay !== currentDay) {
                 updates.UnPaidAmounts = (user.lastTodayIncome || 0)
                 updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);

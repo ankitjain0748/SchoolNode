@@ -50,6 +50,10 @@ const paymentSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
+    payoutpayment :{
+        type: Number,
+        default: 0,  
+    },
     page: {
         type: String,
         default: "Dashboard",
