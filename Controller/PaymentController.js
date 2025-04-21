@@ -482,7 +482,7 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
     const Payments = await Payment.findOne({ UserId });
 
     const CourseIds = UserPayments.map((payment) => payment.CourseId);
-    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId").sort({ createdAt: -1 });
+    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId");
     res.status(200).json({
       status: true,
       message: "Courses retrieved successfully!",
