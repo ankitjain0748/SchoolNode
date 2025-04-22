@@ -59,7 +59,7 @@ cron.schedule('0 0 * * *', async () => {
         Loggers.info("Done Cron Daliy")
         for (let user of users) {
             let updates = {};
-            if (user.lastPaymentDay === currentDay) {
+            if (user.lastPaymentDay !== currentDay) {
                 updates.UnPaidAmounts = (user.lastTodayIncome || 0)
                 updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay) -(user?.totalPayout);
                 updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
@@ -71,7 +71,7 @@ cron.schedule('0 0 * * *', async () => {
                 updates.referred_user_pay = 0;
                 updates.lastPaymentDay = currentDay;
             }
-
+            Loggers.info("updates" ,updates) 
             if (Object.keys(updates).length > 0) {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
@@ -129,6 +129,14 @@ cron.schedule('8 0 * * 1', async () => {
             emailTemplate: CronEmail,
             from: from
         });
+        await sendEmail({
+            email: "sainibhim133@gmail.com",
+            name: "Admin",
+            message: "The weekly payment reset job has been successfully completed at midnight.",
+            subject: "✅ weekly Cron Job Completed",
+            emailTemplate: CronEmail,
+            from: from
+        });
 
     } catch (error) {
         console.error('❌ Error in weekly payment reset job:', error);
@@ -167,8 +175,15 @@ cron.schedule('15 0 28-31 * *', async () => {
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
             name: "Admin",
-
             message: "The monthly payment reset job has been successfully completed.",
+            subject: "✅ Monthly Cron Job Completed",
+            emailTemplate: CronEmail,
+            from: from
+        });
+        await sendEmail({
+            email: "sainibhim133@gmail.com",
+            name: "Admin",
+            message: "The Monthly payment reset job has been successfully completed at midnight.",
             subject: "✅ Monthly Cron Job Completed",
             emailTemplate: CronEmail,
             from: from

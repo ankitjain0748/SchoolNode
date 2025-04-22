@@ -44,7 +44,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         endOfWeek.setDate(endOfWeek.getDate() + 7);
         const startOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
 
-//Next Payout
+        //Next Payout
         const todays = new Date();
         todays.setHours(0, 0, 0, 0);
         const tomorrows = new Date(todays);
@@ -53,7 +53,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const mm = String(tomorrows.getMonth() + 1).padStart(2, '0');
         const dd = String(tomorrows.getDate()).padStart(2, '0');
         const tomorrowDateString = `${yyyy}-${mm}-${dd}`;
-     
+
 
 
         const totaluserIncome = await User.aggregate([
@@ -208,56 +208,56 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         };
 
 
-            // weekly overall income :- 
-            const weeklyAdminPayments = await AdminPayment.aggregate([
-                {
-                    $match: {
-                        payment_date: { $gte: startOfWeek, $lt: endOfWeek }
-    
-                    }
-                },
-                {
-                    $group: {
-                        _id: null,
-                        totalAdd: { $sum: "$payment_Add" },
-                        totalWithdrawal: { $sum: "$paymentWidthrawal" },
-                        totalPayout: { $sum: "$payoutpayment" },
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        totalAdd: 1,
-                        totalWithdrawal: 1,
-                        totalPayout: 1
-                    }
+        // weekly overall income :- 
+        const weeklyAdminPayments = await AdminPayment.aggregate([
+            {
+                $match: {
+                    payment_date: { $gte: startOfWeek, $lt: endOfWeek }
+
                 }
-            ]);
-    
-            // Monthly overall income :- 
-            const MonthlyAdminPayments = await AdminPayment.aggregate([
-                {
-                    $match: {
-                        payment_date: { $gte: startOfMonth, $lt: startOfNextMonth }
-                    }
-                },
-                {
-                    $group: {
-                        _id: null,
-                        totalAdd: { $sum: "$payment_Add" },
-                        totalWithdrawal: { $sum: "$paymentWidthrawal" },
-                        totalPayout: { $sum: "$payoutpayment" },
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        totalAdd: 1,
-                        totalWithdrawal: 1,
-                        totalPayout: 1
-                    }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalAdd: { $sum: "$payment_Add" },
+                    totalWithdrawal: { $sum: "$paymentWidthrawal" },
+                    totalPayout: { $sum: "$payoutpayment" },
                 }
-            ]);
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalAdd: 1,
+                    totalWithdrawal: 1,
+                    totalPayout: 1
+                }
+            }
+        ]);
+
+        // Monthly overall income :- 
+        const MonthlyAdminPayments = await AdminPayment.aggregate([
+            {
+                $match: {
+                    payment_date: { $gte: startOfMonth, $lt: startOfNextMonth }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalAdd: { $sum: "$payment_Add" },
+                    totalWithdrawal: { $sum: "$paymentWidthrawal" },
+                    totalPayout: { $sum: "$payoutpayment" },
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalAdd: 1,
+                    totalWithdrawal: 1,
+                    totalPayout: 1
+                }
+            }
+        ]);
         // 2. Overall payments
         const overallAdminPayments = await AdminPayment.aggregate([
             {
@@ -296,7 +296,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
-      
+
 
         const NextPayoutPayments = await User.aggregate([
             {
@@ -511,7 +511,11 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 totalWidthrawal
             } = user;
             const totalPayment = (referred_user_pay_monthly || 0) + (referred_user_pay || 0) - (UnPaidAmounts) - (totalWidthrawal ? totalWidthrawal : 0) || 0;
-            const userStatus = totalPayment >= adminUser?.ActiveUserPrice ? 'active' : 'inactive';
+            const userStatus =
+                Number(totalPayment) >= Number(adminUser?.ActiveUserPrice)
+                    ? 'active'
+                    : 'inactive';
+
             // const userStatus = adminUser?.ActiveUserPrice >= totalPayment ? 'inactive' : 'active';
             const percentageValue = (pervious_passive_income_month * (adminUser?.InActiveUserPercanetage || 0)) / 100;
             const validPercentageValue = isNaN(percentageValue) ? 0 : percentageValue;
