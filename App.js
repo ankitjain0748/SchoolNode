@@ -66,10 +66,11 @@ cron.schedule('0 0 * * *', async () => {
                 updates.referred_user_pay_monthly = (user.lastTodayIncome || 0) + (user.referred_user_pay_monthly || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_weekly = (user.lastTodayIncome || 0) + (user.referred_user_pay_weekly || 0) + (user.referred_user_pay);
                 updates.passive_income = (user.second_user_pay || 0) + (user.first_user_pay) + (updates.passive_income || 0);
+                updates.TodayPayment = user.paymentmanage || 0;
                 updates.referred_user_pay_daily = 0;
                 updates.referred_user_pay = 0;
                 updates.lastPaymentDay = currentDay;
-                updates.TodayPayment = 0;
+                updates.paymentmanage = 0;
             }
             if (Object.keys(updates).length > 0) {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });

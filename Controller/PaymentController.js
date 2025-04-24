@@ -3,13 +3,11 @@ const AdminPays = require("../Model/Adminpay");
 const Course = require("../Model/Course");
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
-
 require('dotenv').config();
 const catchAsync = require("../utill/catchAsync");
 const Razorpay = require('razorpay');
 const logger = require("../utill/Loggers");
 const User = require("../Model/User");
-const Transaction = require("../Model/Transcation");
 const sendEmail = require("../utill/Emailer");
 const Purchase = require("../Mail/Purchase")
 const AdminPurchase = require("../Mail/AdminPurchase");
@@ -56,11 +54,8 @@ exports.createOrder = catchAsync(async (req, res) => {
   }
 });
 
-
-
 exports.paymentAdd = catchAsync(async (req, res) => {
   try {
-
     const UserId = req.User._id;
     const { order_id, payment_id, amount, currency, payment_status, CourseId,
       address, home_address, remember, saveInfo, sameAsBilling, phone_number, state, country, zip } = req.body;
@@ -104,17 +99,17 @@ exports.paymentAdd = catchAsync(async (req, res) => {
       payment_id,
       amount,
       state,
-       country,
-        zip,
-         home_address,
-          remember,
-           saveInfo,
-            sameAsBilling,
+      country,
+      zip,
+      home_address,
+      remember,
+      saveInfo,
+      sameAsBilling,
       payment_status,
       UserId,
       status,
       CourseId,
-      payment_method :"online"
+      payment_method: "online"
     });
 
     const record = await payment.save();
@@ -423,13 +418,13 @@ exports.PaymentGet = catchAsync(async (req, res, next) => {
     if (paymentDate) {
       const startOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").startOf("day");
       const endOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").endOf("day");
-    
+
       const startUTC = startOfDayIST.clone().utc().toDate();
       const endUTC = endOfDayIST.clone().utc().toDate();
-    
+
       query.payment_date = { $gte: startUTC, $lte: endUTC };
     }
-    
+
 
     // Fetch total count and pages
     const totalUsers = await Payment.countDocuments(query);
@@ -493,10 +488,10 @@ exports.PaymentGetCourse = catchAsync(async (req, res, next) => {
       status: true,
       message: "Courses retrieved successfully!",
       Payments: UserPayments,
-      PaymentsData :Payments,
+      PaymentsData: Payments,
       Courses: courses,
     });
-    
+
   } catch (err) {
     logger.error(err);
     return res.status(500).json({
@@ -515,35 +510,30 @@ exports.PaymentGetdata = catchAsync(async (req, res) => {
 
     const searchQuery = req.query.search ? req.query.search.trim() : "";
     const selectoption = req.query.selectedOption ? String(req.query.selectedOption).trim() : "";
-    // const paymentDate = req.query.payment_date ? req.query.payment_date : null;
     const paymentDate = req.query.payment_date?.trim() || "";
-
 
     const filter = {};
 
-    // 🔍 Search by user name
     if (searchQuery) {
       const users = await User.find({ name: { $regex: searchQuery, $options: "i" } }, '_id');
       const userIds = users.map(user => user._id);
       filter.userId = { $in: userIds };
     }
 
-    // 📄 Filter by payment type
     if (selectoption) {
       filter.page = selectoption;
     }
 
-    // 📅 Filter by payment date (only date, ignoring time)
     if (paymentDate) {
       const startOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").startOf("day");
       const endOfDayIST = moment.tz(paymentDate, "Asia/Kolkata").endOf("day");
-    
+
       const startUTC = startOfDayIST.clone().utc().toDate();
       const endUTC = endOfDayIST.clone().utc().toDate();
-    
+
       filter.payment_date = { $gte: startUTC, $lte: endUTC };
     }
-    
+
 
     const payment = await AdminPays.find(filter)
       .populate({
@@ -637,12 +627,10 @@ exports.paymentdata = catchAsync(async (req, res) => {
 
 exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
   try {
-    // Fetch page and limit from query params, set defaults if not provided
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
 
-    // Fetch user payments with status "success"
     const UserPayments = await Payment.find({ payment_status: "success" })
       .populate("UserId")
       .populate("CourseId")

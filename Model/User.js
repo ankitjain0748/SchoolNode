@@ -151,26 +151,6 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    widthrawal_reason: {
-        type: String,
-        default: ""
-    },
-    success_reasons: {
-        type: String,
-        default: ""
-    },
-    transactionId: {
-        type: String,
-        default: ""
-    },
-    payment_reason: {
-        type: String,
-        default: ""
-    },
-    paymentMethod: {
-        type: String,
-        default: ""
-    },
     OTP: {
         type: Number,
         default: null
@@ -191,7 +171,7 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    TodayPayment :{
+    TodayPayment: {
         type: Number,
         default: 0
     },
@@ -204,6 +184,10 @@ const userSchema = mongoose.Schema({
         default: 0
     },
     totalAdd: {
+        type: Number,
+        default: 0
+    },
+    paymentmanage :{
         type: Number,
         default: 0
     },

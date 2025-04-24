@@ -19,7 +19,6 @@ exports.payoutData = catchAsync(async (req, res) => {
                 message: "User ID is required."
             });
         }
-
         const currentDate = moment();
         const currentMonth = currentDate.format('YYYY-MM');
         const currentWeek = currentDate.format('YYYY-WW');
@@ -32,7 +31,6 @@ exports.payoutData = catchAsync(async (req, res) => {
                 message: "User not found!"
             });
         }
-
         // Initialize or reset values
         let updatedReferredUserPayOverall = user.referred_user_pay_overall || 0;
         let updatedReferredUserPayMonthly = user.referred_user_pay_monthly || 0;
@@ -43,8 +41,6 @@ exports.payoutData = catchAsync(async (req, res) => {
         // Reset values when period changes
         if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
         if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
-
-
         // Add current payments
         const referralAmount = Number(payment_Add) || 0;
         updatedLastTodayIncome += referralAmount;
@@ -60,7 +56,6 @@ exports.payoutData = catchAsync(async (req, res) => {
             transactionId, payment_data, payment_income, data_payment, page,
             referred_user_pay, payment_Add, payoutpayment
         });
-
         const paymentRecord = await newPayment.save();
         if (!paymentRecord) {
             return res.status(400).json({
@@ -68,24 +63,28 @@ exports.payoutData = catchAsync(async (req, res) => {
                 message: "Failed to save payment data."
             });
         }
-
         // Update user payment data
         const incFields = {
             ...(payment_Add && { totalAdd: payment_Add }),
             ...(paymentWidthrawal && { totalWidthrawal: paymentWidthrawal }),
             ...(payoutpayment && { totalPayout: payoutpayment }),
-
         };
-
-
-
+        const withdrawal = Number(paymentWidthrawal) || 0;
+        const payout = Number(payoutpayment) || 0;
+        
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        let paymentmanage = Number(user.paymentmanage) || 0;
+        
+        if (page !== "Add" || currentDate === today) {
+            paymentmanage += withdrawal + payout;
+        }
+        
         const updatedUser = await User.findByIdAndUpdate(
             Id,
             {
                 $set: {
-                    payment_Add,
-                    payment_data,
-                    referred_user_pay,
+                    payment_Add, payment_data,  referred_user_pay,
                     referred_user_pay_overall: updatedReferredUserPayOverall,
                     referred_user_pay_monthly: updatedReferredUserPayMonthly,
                     referred_user_pay_weekly: updatedReferredUserPayWeekly,
@@ -93,10 +92,9 @@ exports.payoutData = catchAsync(async (req, res) => {
                     lastTodayIncome: updatedLastTodayIncome,
                     lastPaymentMonth: currentMonth,
                     lastPaymentWeek: currentWeek,
-                    payment_key,
                     lastPaymentDay: currentDay,
                     payment_key_daily: updatedPaymentKey,
-                    TodayPayment :payoutpayment + paymentWidthrawal,
+                    paymentmanage 
                 },
                 $inc: incFields
             },
