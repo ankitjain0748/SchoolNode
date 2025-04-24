@@ -96,6 +96,7 @@ exports.payoutData = catchAsync(async (req, res) => {
                     payment_key,
                     lastPaymentDay: currentDay,
                     payment_key_daily: updatedPaymentKey,
+                    TodayPayment :payoutpayment + paymentWidthrawal,
                 },
                 $inc: incFields
             },

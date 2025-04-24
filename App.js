@@ -61,17 +61,16 @@ cron.schedule('0 0 * * *', async () => {
             let updates = {};
             if (user.lastPaymentDay !== currentDay) {
                 updates.UnPaidAmounts = (user.lastTodayIncome || 0)
-                updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay) -(user?.totalPayout);
+                updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay) -(user?.totalPayout) -(user?.totalWithdrawal);
                 updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_monthly = (user.lastTodayIncome || 0) + (user.referred_user_pay_monthly || 0) + (user.referred_user_pay);
                 updates.referred_user_pay_weekly = (user.lastTodayIncome || 0) + (user.referred_user_pay_weekly || 0) + (user.referred_user_pay);
-                // updates.referred_user_pay_daily = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay);
                 updates.passive_income = (user.second_user_pay || 0) + (user.first_user_pay) + (updates.passive_income || 0);
                 updates.referred_user_pay_daily = 0;
                 updates.referred_user_pay = 0;
                 updates.lastPaymentDay = currentDay;
+                updates.TodayPayment = 0;
             }
-            Loggers.info("updates" ,updates) 
             if (Object.keys(updates).length > 0) {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
@@ -81,7 +80,7 @@ cron.schedule('0 0 * * *', async () => {
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
             name: "Admin",
-            message: "The daily payment reset job has been successfully completed at midnight.",
+            message: "The daily payment reset job has been successfully completed at midnight. Render Application",
             subject: "✅ Daily Cron Job Completed",
             emailTemplate: CronEmail,
             from: from
