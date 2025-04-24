@@ -81,19 +81,19 @@ cron.schedule('0 0 * * *', async () => {
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
             name: "Admin",
-            message: "The daily payment reset job has been successfully completed at midnight. Render Application",
+            message: "Render Application Daily Cron Job",
             subject: "✅ Daily Cron Job Completed",
             emailTemplate: CronEmail,
             from: from
         });
-        await sendEmail({
-            email: "sainibhim133@gmail.com",
-            name: "Admin",
-            message: "The daily payment reset job has been successfully completed at midnight.",
-            subject: "✅ Daily Cron Job Completed",
-            emailTemplate: CronEmail,
-            from: from
-        });
+        // await sendEmail({
+        //     email: "sainibhim133@gmail.com",
+        //     name: "Admin",
+        //     message: "The daily payment reset job has been successfully completed at midnight.",
+        //     subject: "✅ Daily Cron Job Completed",
+        //     emailTemplate: CronEmail,
+        //     from: from
+        // });
     } catch (error) {
         console.error('❌ Error in daily payment reset job:', error);
     }
