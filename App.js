@@ -51,33 +51,55 @@ app.get("/", (req, res) => {
 });
 
 cron.schedule('0 0 * * *', async () => {
-    // 🟢 DAILY CRON JOB (Runs every day at midnight)
+    // 🟢 DAILY CRON JOB (Runs every day at 7:15 AM)
     try {
         console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
         const users = await User.find({ role: "user" });
-        Loggers.info("Done Cron Daliy")
+
+        Loggers.info("Done Cron Daily");
+
         for (let user of users) {
             let updates = {};
+
             if (user.lastPaymentDay !== currentDay) {
-                updates.UnPaidAmounts = (user.lastTodayIncome || 0)
-                updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.referred_user_pay_daily || 0) + (user.referred_user_pay) -(user?.totalPayout) -(user?.totalWithdrawal);
-                updates.referred_user_pay_overall = (user.lastTodayIncome || 0) + (user.referred_user_pay_overall || 0) + (user.referred_user_pay);
-                updates.referred_user_pay_monthly = (user.lastTodayIncome || 0) + (user.referred_user_pay_monthly || 0) + (user.referred_user_pay);
-                updates.referred_user_pay_weekly = (user.lastTodayIncome || 0) + (user.referred_user_pay_weekly || 0) + (user.referred_user_pay);
-                updates.passive_income = (user.second_user_pay || 0) + (user.first_user_pay) + (updates.passive_income || 0);
-                updates.TodayPayment = user.paymentmanage || 0;
+                const lastTodayIncome = Number(user.lastTodayIncome) || 0;
+                const referredDaily = Number(user.referred_user_pay_daily) || 0;
+                const referredPay = Number(user.referred_user_pay) || 0;
+                const totalPayout = Number(user.totalPayout) || 0;
+                const totalWithdrawal = Number(user.totalWidthrawal) || 0;
+                const referredOverall = Number(user.referred_user_pay_overall) || 0;
+                const referredMonthly = Number(user.referred_user_pay_monthly) || 0;
+                const referredWeekly = Number(user.referred_user_pay_weekly) || 0;
+                const passive1 = Number(user.first_user_pay) || 0;
+                const passive2 = Number(user.second_user_pay) || 0;
+                const todayPayment = Number(user.paymentmanage) || 0;
+
+                updates.UnPaidAmounts = lastTodayIncome;
+
+                updates.lastTodayIncome = lastTodayIncome + referredDaily + referredPay - totalPayout - totalWithdrawal;
+
+                updates.referred_user_pay_overall = lastTodayIncome + referredOverall + referredPay;
+                updates.referred_user_pay_monthly = lastTodayIncome + referredMonthly + referredPay;
+                updates.referred_user_pay_weekly = lastTodayIncome + referredWeekly + referredPay;
+
+                updates.passive_income = passive1 + passive2;
+
+                updates.TodayPayment = todayPayment;
                 updates.referred_user_pay_daily = 0;
                 updates.referred_user_pay = 0;
                 updates.lastPaymentDay = currentDay;
                 updates.paymentmanage = 0;
             }
+
             if (Object.keys(updates).length > 0) {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
         }
+
         const from = "StackEarn Cron Daily <no-reply@stackearn.com>";
         console.log('✅ Daily payment reset job completed.');
+
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
             name: "Admin",
@@ -86,18 +108,22 @@ cron.schedule('0 0 * * *', async () => {
             emailTemplate: CronEmail,
             from: from
         });
+
+        // Optional additional email
         // await sendEmail({
         //     email: "sainibhim133@gmail.com",
         //     name: "Admin",
-        //     message: "The daily payment reset job has been successfully completed at midnight.",
+        //     message: "The daily payment reset job has been successfully completed at 7:15 AM.",
         //     subject: "✅ Daily Cron Job Completed",
         //     emailTemplate: CronEmail,
         //     from: from
         // });
+
     } catch (error) {
         console.error('❌ Error in daily payment reset job:', error);
     }
 });
+
 
 cron.schedule('8 0 * * 1', async () => {
     // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight) Let me know what day/time you want exactly (Sunday night, Monday morning, etc.) and I’ll lock it in precisely.
