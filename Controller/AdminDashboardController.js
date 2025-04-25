@@ -73,7 +73,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     UnPaidAmounts: { $sum: "$UnPaidAmounts" },
                     totalPayout: { $sum: "$totalPayout" },
                     totalWidthrawal: { $sum: "$totalWidthrawal" },
-                    totalAdd: { $sum: "$totalAdd" }
+                    totalAdd: { $sum: "$totalAdd" },
+                    TodayPayment: { $sum: "$TodayPayment" }
                 }
             }
         ]);

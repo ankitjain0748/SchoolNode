@@ -77,7 +77,7 @@ cron.schedule('0 0 * * *', async () => {
 
                 updates.UnPaidAmounts = lastTodayIncome;
 
-                updates.lastTodayIncome = lastTodayIncome + referredDaily + referredPay - totalPayout - totalWithdrawal;
+                updates.lastTodayIncome = lastTodayIncome + referredDaily + referredPay-todayPayment ;
 
                 updates.referred_user_pay_overall = lastTodayIncome + referredOverall + referredPay;
                 updates.referred_user_pay_monthly = lastTodayIncome + referredMonthly + referredPay;
