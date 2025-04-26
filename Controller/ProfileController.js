@@ -96,6 +96,24 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const BankData = await Bank.findOne({ userId: userId });
         const payment = await Payment.findOne({ UserId: userId });
         const AdminPayments = await AdminPay.find({ userId: userId });
+
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const payments = await AdminPay.find({
+            userId: userId,
+            payment_date: { $gte: startOfDay, $lte: endOfDay }
+        });
+
+        let totalPaymentWithdrawal = 0;
+        let totalPayoutPayment = 0;
+        payments.forEach(payment => {
+            totalPaymentWithdrawal += payment.paymentWidthrawal || 0;
+            totalPayoutPayment += payment.payoutpayment || 0;
+        });
         const Transactions = await Transaction.find({ user: user });
         const referralData = await User.find({
             $or: [
@@ -120,6 +138,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             Transactions: Transactions,
             AdminPayments: AdminPayments,
             review: reviews,
+            totalPaymentWithdrawal :totalPaymentWithdrawal,
+            totalPayoutPayment : totalPayoutPayment,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
