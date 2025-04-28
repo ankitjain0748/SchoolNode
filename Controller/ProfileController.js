@@ -89,6 +89,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
         const user = req?.body?.id;
+            const startOfWeek = moment().startOf('isoWeek');
+                const endOfWeek = moment().endOf('isoWeek');
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
@@ -113,6 +115,17 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         payments.forEach(payment => {
             totalPaymentWithdrawal += payment.paymentWidthrawal || 0;
             totalPayoutPayment += payment.payoutpayment || 0;
+        });
+
+        const paymentweeklys = await AdminPay.find({
+            userId: userId,
+            payment_date: { $gte: startOfWeek.toDate(), $lte: endOfWeek.toDate() }
+        });
+        let totalweekPaymentWithdrawal = 0;
+        let totalweekPayoutPayment = 0;
+        paymentweeklys.forEach(payment => {
+            totalweekPaymentWithdrawal += payment.paymentWidthrawal || 0;
+            totalweekPayoutPayment += payment.payoutpayment || 0;
         });
         const Transactions = await Transaction.find({ user: user });
         const referralData = await User.find({
@@ -140,6 +153,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             review: reviews,
             totalPaymentWithdrawal :totalPaymentWithdrawal,
             totalPayoutPayment : totalPayoutPayment,
+            totalweekPaymentWithdrawal : totalweekPaymentWithdrawal,
+            totalweekPayoutPayment : totalweekPayoutPayment,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {

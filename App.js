@@ -114,7 +114,7 @@ cron.schedule('0 0 * * *', async () => {
     }
 });
 
-cron.schedule('8 0 * * 1', async () => {
+cron.schedule('0 0 * * 1', async () => {
     // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight) Let me know what day/time you want exactly (Sunday night, Monday morning, etc.) and I’ll lock it in precisely.
     console.log('⏰ Weekly job running at 12:08 AM on Sunday');
     try {
