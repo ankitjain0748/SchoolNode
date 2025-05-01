@@ -170,8 +170,26 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         ]);
         
         const totalUnpaid = userunpaidweek[0]?.total || 0;
+
+
+        const userunpaidMonth = await User.aggregate([
+            { 
+                $match: { 
+                    created_at: { 
+                        $gte: startOfMonth.toDate(), 
+                        $lt: endOfNextMonth.toDate() 
+                    } 
+                } 
+            },
+            { 
+                $group: { 
+                    _id: null, 
+                    total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } }
+                } 
+            }
+        ]);
         
-        
+        const totalMonthUnpaid = userunpaidMonth[0]?.total || 0;
 
         const paymentThisWeek = await Payment.aggregate([
             { $match: { payment_date: { $gte: startOfWeek.toDate(), $lt: endOfWeek.toDate() }, payment_status: "success" } },
@@ -266,6 +284,47 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
 
 
 
+        const resultMonthly = await Payment.aggregate([
+            {
+                $match: {
+                    payment_date: { $gte: startOfNextMonth.toDate(), $lte: endOfNextMonth.toDate() },
+                    payment_status: "success"
+                }
+            },
+            {
+                $project: {
+                    data: [
+                        { userId: "$referredData3.userId", payAmount: "$referredData3.payAmount" },
+                        { userId: "$referredData1.userId", payAmount: "$referredData1.payAmount" }
+                    ]
+                }
+            },
+            { $unwind: "$data" },
+            { $match: { "data.userId": { $ne: null } } },
+            {
+                $group: {
+                    _id: "$data.userId",
+                    totalPayAmount: { $sum: "$data.payAmount" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    userId: "$_id",
+                    totalPayAmount: 1
+                }
+            }
+        ]);
+
+        const finalMonthResults = resultMonthly.length > 0 ? resultMonthly : [{ userId: null, totalPayAmount: 0 }];
+
+        let totalSumMonthpassive = 0;
+        for (const item of finalMonthResults) {
+            totalSumMonthpassive += item.totalPayAmount;
+        }
+
+
+        
         const resultweekly = await Payment.aggregate([
             {
                 $match: {
@@ -306,6 +365,25 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         }
 
 
+        const userMonthly = await User.aggregate([
+            { 
+                $match: { 
+                    created_at: { 
+                        $gte: startOfMonth.toDate(), 
+                        $lt: endOfNextMonth.toDate() 
+                    } 
+                } 
+            },
+            { 
+                $group: { 
+                    _id: null, 
+                    total: { $sum: { $ifNull: ["$referred_user_pay_monthly", 0] } }
+                } 
+            }
+        ]);
+        
+        const totalMonthrefral  = userMonthly[0]?.total || 0;
+
         res.status(200).json({
             success: true,
             totalSumWeekly: totalSumWeekly || 0,
@@ -331,7 +409,10 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             NextPayoutPayments: NextPayoutPayments[0]?.total || 0,
             overallPassiveIncome: overallPassiveIncome[0] || {},
             totalSum: totalSum || 0,
-            totalUnpaid :totalUnpaid
+            totalUnpaid :totalUnpaid,
+            totalMonthUnpaid :totalMonthUnpaid,
+            totalSumMonthpassive: totalSumMonthpassive || 0,
+            totalMonthrefral :totalMonthrefral || 0
         });
 
     } catch (error) {
