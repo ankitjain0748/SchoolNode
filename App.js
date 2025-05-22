@@ -20,20 +20,22 @@ app.use(express.json({ limit: '2000mb' }));
 app.use(express.urlencoded({ extended: true }));
 const userRoute = require("./Route/User")
 const User = require("./Model/User")
-const contactRoute = require("./Route/Contact")
 const SubscribeRoute = require("./Route/Subscribe")
 const instrutorroute = require("./Route/Instructor")
 const CourseRoute = require("./Route/Course")
 const PaymentRoute = require("./Route/Payment")
 const BlogRoute = require("./Route/BlogRoute")
 const ReviewRoute = require("./Route/ReviewRoute")
+const ContactRoute = require("./Route/contactRoute")
 const RefralRoute = require("./Route/RefralRoute");
 const GalleryRoute = require("./Route/Gallery");
 const Loggers = require("./utill/Loggers");
 const CronEmail = require("./Mail/CronEmail");
 const sendEmail = require("./utill/Emailer");
+const adminRoute = require("./Route/adminroute");
 app.use("/user", userRoute)
-app.use("/contact", contactRoute)
+app.use("/admin", adminRoute)
+
 app.use("/subscribe", SubscribeRoute)
 app.use("/instrutor", instrutorroute)
 app.use("/course", CourseRoute)
@@ -41,6 +43,7 @@ app.use("/payment", PaymentRoute)
 app.use("/blog", BlogRoute)
 app.use("/review", ReviewRoute)
 app.use("/refral", RefralRoute)
+app.use("/contact", ContactRoute)
 app.use("/gallery", GalleryRoute)
 const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
 app.get("/", (req, res) => {

@@ -22,7 +22,10 @@ exports.createBlog = catchAsync(async (req, res) => {
       title,
       content,
       short_content,
-      Image
+      Image,
+      meta_title: req.body.meta_title,
+      meta_description: req.body.meta_description,
+      meta_keyword: req.body.meta_keyword,
     });
     const record = await newBlog.save();
 
@@ -146,7 +149,7 @@ exports.updateBlogById = catchAsync(async (req, res) => {
     }
     const blog = await Blog.findByIdAndUpdate(
       _id,
-      { title, content, Image, short_content },
+      { title, content, Image, short_content, meta_title: req.body.meta_title, meta_description: req.body.meta_description, meta_keyword: req.body.meta_keyword },
       {
         new: true,
         runValidators: true,

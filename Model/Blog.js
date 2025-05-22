@@ -19,6 +19,9 @@ const blogSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  meta_title :String , 
+  meta_description :String ,
+  meta_keyword :String ,
 });
 
 module.exports = mongoose.model('Blog', blogSchema);

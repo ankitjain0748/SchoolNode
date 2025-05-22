@@ -47,9 +47,14 @@ userRoute.post("/refral-active", verifyToken, UserPriceUpdate);
 //AdminDashboard aand prfoile
 
 userRoute.get('/admin_dashboard', verifyToken, AdminDashboard)
-userRoute.post("/adminlogin", adminlogin)
 userRoute.get("/adminprofile", profileadmin)
 userRoute.get("/user_admin_payment", ProfileAdminPayeData)
 userRoute.post("/payment", payoutData);
+
+
+//admin route 
+
+userRoute.post("/adminlogin", adminlogin)
+
 
 module.exports = userRoute;
