@@ -203,3 +203,141 @@
 2025-04-17 21:17:00 [ERROR]: Error fetching users: mongoose is not defined
 2025-04-20 12:35:03 [ERROR]: overallAdminPayments is not defined
 2025-04-20 12:38:19 [ERROR]: overallAdminPayments is not defined
+2025-05-26 21:58:47 [ERROR]: bad auth : authentication failed
+2025-05-26 21:58:57 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-26 21:59:15 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-26 21:59:15 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-26 21:59:26 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-26 22:01:13 [ERROR]: bad auth : authentication failed
+2025-05-26 22:02:02 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-26 22:17:32 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-26 22:18:18 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-27 21:03:11 [ERROR]: bad auth : authentication failed
+2025-05-28 20:17:10 [ERROR]: bad auth : authentication failed
+2025-05-29 20:21:36 [ERROR]: bad auth : authentication failed
+2025-05-30 20:57:52 [ERROR]: bad auth : authentication failed
+2025-05-31 21:02:48 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:02:48 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:04:17 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:07:04 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:07:04 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:09:22 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:09:22 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:10:14 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:10:14 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:12:59 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:12:59 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:14:11 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:14:11 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:14:32 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:14:32 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:15:02 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:15:02 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:17:54 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:17:54 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:18:30 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:18:30 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:18:42 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:18:42 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:19:13 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:19:13 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:19:23 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:19:23 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:19:57 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:20:39 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:20:39 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:21:38 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:22:32 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:22:32 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:24:30 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:24:30 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:25:55 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:25:55 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:26:30 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:26:30 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:27:02 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:27:02 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:27:57 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:27:57 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:28:14 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:28:14 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:29:35 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:29:35 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:30:07 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:30:07 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:32:55 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:32:55 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:33:09 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:33:09 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:34:08 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:34:08 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:34:19 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:34:19 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:35:18 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:35:18 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:35:28 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:35:28 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:35:38 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:35:38 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:37:42 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:37:42 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:38:07 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:39:02 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:39:02 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:43:49 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:43:49 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:44:08 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:44:08 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:45:08 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:45:44 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:45:44 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:46:34 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:46:34 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:47:23 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:47:23 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:47:49 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:47:49 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:48:12 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:48:12 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:48:22 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:48:22 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:50:13 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:50:13 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:52:33 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:52:33 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:54:31 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:54:31 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:54:41 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:54:41 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:55:34 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:55:34 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:55:46 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:55:46 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:56:04 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:56:04 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:56:15 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 21:56:15 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:57:43 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 21:57:43 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 22:00:25 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 22:00:25 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 22:04:16 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 22:04:16 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 22:05:00 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-05-31 22:05:00 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-05-31 22:23:58 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 20:37:11 [ERROR]: bad auth : authentication failed
+2025-06-02 20:38:03 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 20:38:03 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-06-02 20:38:24 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 21:26:53 [ERROR]: bad auth : authentication failed
+2025-06-02 21:41:31 [ERROR]: Error fetching users: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 21:41:31 [ERROR]: Operation `courses.countDocuments()` buffering timed out after 10000ms
+2025-06-02 22:04:05 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 22:04:28 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 22:04:45 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 22:05:39 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 22:12:07 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 22:13:51 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 22:14:05 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
+2025-06-02 22:14:54 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms

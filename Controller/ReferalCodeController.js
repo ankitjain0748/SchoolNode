@@ -93,7 +93,11 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         }
 
         const testReferrals = await User.find(referralQuery)
-            .populate("CourseId", "title discountPrice category courseImage")
+            .select("-password -OTP")
+            .populate({ path: "CourseId", select: "title discountPrice category courseImage" })
+            .populate({ path: "referred_by", model: "User", select: "name email" })
+            .populate({ path: "referred_first", model: "User", select: "name email" })
+            .populate({ path: "referred_second", model: "User", select: "name email" })
             .skip((page - 1) * limit)
             .limit(limit);
 
@@ -204,9 +208,14 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
         // Find all referred users
         const testReferrals = await User.find(referralQuery)
-            .populate("CourseId", "title discountPrice category courseImage")
+            .select("-password -OTP")
+            .populate({ path: "CourseId", select: "title discountPrice category courseImage" })
+            .populate({ path: "referred_by", model: "User", select: "name email" })
+            .populate({ path: "referred_first", model: "User", select: "name email" })
+            .populate({ path: "referred_second", model: "User", select: "name email" })
             .skip((page - 1) * limit)
             .limit(limit);
+
 
         const totalReferrals = await User.countDocuments(referralQuery);
 
@@ -219,23 +228,10 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             payment_status: "success",
         };
 
-        // If `paymentDate` is provided, add the date range filter
-        // if (payment_date) {
-        //     const startOfDay = new Date(payment_date);
-        //     const endOfDay = new Date(payment_date);
-        //     endOfDay.setUTCHours(23, 59, 59, 999); // End of the day
-
-        //     paymentFilter.payment_date = {
-        //         $gte: startOfDay,
-        //         $lte: endOfDay,
-        //     };
-        // }
-
 
         if (payment_date) {
             const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
             const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");
-
             const startUTC = startOfDayIST.clone().utc().toDate();
             const endUTC = endOfDayIST.clone().utc().toDate();
 
