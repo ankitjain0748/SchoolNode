@@ -631,51 +631,76 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
     const limit = Math.max(parseInt(req.query.limit) || 50, 1);
     const skip = (page - 1) * limit;
 
-    const UserPayments = await Payment.find({ payment_status: "success" })
+    const allPayments = await Payment.find({ payment_status: "success" })
       .populate("UserId")
-      .populate("CourseId")
-      .skip(skip)
-      .limit(limit);
+      .populate("CourseId");
 
-    if (!UserPayments || UserPayments.length === 0) {
+    if (!allPayments || allPayments.length === 0) {
       return res.status(204).json({
         status: false,
-        message: "No Payment found for this user.",
+        message: "No successful payments found.",
         Payments: [],
       });
     }
 
-    const CourseIds = UserPayments.map((payment) => payment.CourseId);
-    const courses = await Course.find({ _id: { $in: CourseIds } }).populate("InstrutorId");
+    // Count sales per course
+    const courseSalesCount = {};
+    const coursePaymentsMap = {};
 
-    // Fetch all payments to determine best-selling courses
-    const allPayments = await Payment.find({ payment_status: "success" });
+    for (const payment of allPayments) {
+      const courseId = payment.CourseId?._id?.toString();
+      if (!courseId) continue;
 
-    const courseSalesCount = allPayments.reduce((acc, payment) => {
-      const courseId = payment.CourseId.toString();
-      acc[courseId] = (acc[courseId] || 0) + 1;
-      return acc;
-    }, {});
+      // Count purchases
+      courseSalesCount[courseId] = (courseSalesCount[courseId] || 0) + 1;
 
-    // Sort course IDs by sales count in descending order
-    const sortedCourseIds = Object.keys(courseSalesCount).sort((a, b) => courseSalesCount[b] - courseSalesCount[a]);
-    const bestSellingCourseIds = sortedCourseIds.slice((page - 1) * limit, page * limit); // Pagination applied
+      // Group payments per course
+      if (!coursePaymentsMap[courseId]) {
+        coursePaymentsMap[courseId] = [];
+      }
+      coursePaymentsMap[courseId].push({
+        _id: payment._id,
+        amount: payment.amount,
+        payment_status: payment.payment_status,
+        payment_date: payment.createdAt,
+        User: payment.UserId,
+      });
+    }
 
-    const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } }).populate("InstrutorId").sort({ createdAt: -1 });
+    // Best-selling course IDs
+    const sortedCourseIds = Object.keys(courseSalesCount).sort(
+      (a, b) => courseSalesCount[b] - courseSalesCount[a]
+    );
+    const bestSellingCourseIds = sortedCourseIds.slice(skip, skip + limit);
 
-    // Include the purchase count for each best-selling course and sort by purchase count
-    const bestSellingCoursesWithCount = bestSellingCourses.map((course) => ({
-      ...course.toObject(),
-      purchaseCount: courseSalesCount[course._id.toString()],
-    })).sort((a, b) => b.purchaseCount - a.purchaseCount);
+    // Get course details
+    const bestSellingCourses = await Course.find({ _id: { $in: bestSellingCourseIds } })
+      .populate("InstrutorId");
+
+    // Attach counts + payment info
+    const bestSellingCoursesWithCount = bestSellingCourses.map((course) => {
+      const courseId = course._id.toString();
+      const payments = coursePaymentsMap[courseId] || [];
+
+      const totalAmount = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+      return {
+        ...course.toObject(),
+        purchaseCount: courseSalesCount[courseId],
+        totalAmount,
+        payments, // ✅ Include full payment details for this course
+      };
+    }).sort((a, b) => b.purchaseCount - a.purchaseCount);
+
+    console.log("Best-selling courses with payments:", bestSellingCoursesWithCount);
 
     res.status(200).json({
       status: true,
-      message: "Courses retrieved successfully!",
+      message: "Best-selling courses with payments fetched successfully!",
       BestSellingCourses: bestSellingCoursesWithCount,
       currentPage: page,
-      totalPages: Math.ceil(bestSellingCoursesWithCount.length / limit), // Calculate total pages
-      totalItems: bestSellingCoursesWithCount.length,
+      totalPages: Math.ceil(sortedCourseIds.length / limit),
+      totalItems: sortedCourseIds.length,
     });
   } catch (err) {
     logger.error(err);
@@ -686,5 +711,3 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
