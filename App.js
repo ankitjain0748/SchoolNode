@@ -29,6 +29,8 @@ const ReviewRoute = require("./Route/ReviewRoute")
 const ContactRoute = require("./Route/contactRoute")
 const RefralRoute = require("./Route/RefralRoute");
 const GalleryRoute = require("./Route/Gallery");
+const AuthRoute = require("./Route/authRoute");
+
 const Loggers = require("./utill/Loggers");
 const CronEmail = require("./Mail/CronEmail");
 const sendEmail = require("./utill/Emailer");
@@ -44,7 +46,8 @@ app.use("/blog", BlogRoute)
 app.use("/review", ReviewRoute)
 app.use("/refral", RefralRoute)
 app.use("/contact", ContactRoute)
-app.use("/gallery", GalleryRoute)
+app.use("/gallery", GalleryRoute);
+app.use("/auth", AuthRoute);
 const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
 app.get("/", (req, res) => {
     res.json({
