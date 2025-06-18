@@ -1,7 +1,5 @@
 const user = require("../Model/User");
-
 const catchAsync = require("../utill/catchAsync");
-
 
 exports.UserRefralfind = catchAsync(async (req, res) => {
     try {
@@ -32,5 +30,4 @@ exports.UserRefralfind = catchAsync(async (req, res) => {
         });
     }
 }
-
 );
