@@ -122,7 +122,10 @@ const courseSchema = mongoose.Schema({
   directuser: {
     type: Number,
     default: 0
-
+  },
+  slug: {
+    type: String,
+    required: true
   },
   thumbnail: String,
   createdAt: {

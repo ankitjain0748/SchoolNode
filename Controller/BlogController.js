@@ -17,9 +17,10 @@ exports.createBlog = catchAsync(async (req, res) => {
         message: "All fields (title, content, short content) are required.",
       });
     }
-
+ const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
     const newBlog = new Blog({
       title,
+      slug: slug,
       content,
       short_content,
       Image,
@@ -147,9 +148,15 @@ exports.updateBlogById = catchAsync(async (req, res) => {
         message: "All fields (title, content, Image) are required.",
       });
     }
+    const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+
     const blog = await Blog.findByIdAndUpdate(
       _id,
-      { title, content, Image, short_content, meta_title: req.body.meta_title, meta_description: req.body.meta_description, meta_keyword: req.body.meta_keyword },
+      {
+        title, content, Image, short_content, meta_title: req.body.meta_title,
+        meta_description: req.body.meta_description, meta_keyword: req.body.meta_keyword,
+        slug: slug,
+      },
       {
         new: true,
         runValidators: true,

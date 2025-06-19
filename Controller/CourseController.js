@@ -9,9 +9,12 @@ const Tranning = require("../Model/Video")
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
+        
         const { title, description, thumbnail, courseVideo, sub_content, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
+        const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
         const record = new Course({
             title,
+            slug: slug,
             description,
             category,
             duration,
@@ -113,8 +116,9 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             Onlines,
             sub_content
         } = req.body;
+        const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
 
-       
+
         if (!_id) {
             return res.status(400).json({
                 status: false,
@@ -125,6 +129,7 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             _id,
             {
                 title,
+                slug: slug,
                 sub_content,
                 thumbnail,
                 lectureFiles,
