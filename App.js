@@ -216,4 +216,6 @@ cron.schedule('15 0 28-31 * *', async () => {
     }
 });
 
+console.log("PORT ", PORT)
+
 app.listen(PORT, () => Loggers.http("Server is running at port : " + PORT));

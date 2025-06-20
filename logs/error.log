@@ -342,3 +342,10 @@
 2025-06-02 22:14:05 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-06-02 22:14:54 [ERROR]: Error fetching booking: Operation `users.findOne()` buffering timed out after 10000ms
 2025-06-19 22:04:52 [ERROR]: Cast to ObjectId failed for value "testing-course-for-today" (type string) at path "_id" for model "Course"
+2025-06-20 22:25:36 [ERROR]: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-06-20 22:25:56 [ERROR]: Error fetching booking: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-06-20 22:26:22 [ERROR]: Error fetching booking: getaddrinfo ENOTFOUND cluster0-shard-00-02.g69we.mongodb.net
+2025-06-20 22:52:37 [ERROR]: Error fetching booking: Cannot access 'Profile' before initialization
+2025-06-20 22:52:56 [ERROR]: Error fetching booking: Cannot access 'Profile' before initialization
+2025-06-20 22:54:06 [ERROR]: Error fetching booking: Cannot access 'Profile' before initialization
+2025-06-20 22:54:30 [ERROR]: Error fetching booking: Cannot access 'Profile' before initialization

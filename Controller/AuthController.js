@@ -440,7 +440,6 @@ exports.login = catchAsync(async (req, res, next) => {
     // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      logger.warn("Incorrect password!")
       return res.status(400).json({
         status: false,
         message: "Incorrect password. Please try again.",
@@ -448,7 +447,6 @@ exports.login = catchAsync(async (req, res, next) => {
     }
     // Validate user role
     if (user.role !== role) {
-      logger.warn("Access denied. Only user can log in.")
       return res.status(403).json({
         status: false,
         message: "Access denied. Only user can log in.",
@@ -457,10 +455,15 @@ exports.login = catchAsync(async (req, res, next) => {
 
     // Generate a token for the user
     const token = await signToken(user._id);
+    const Profile = await ProfileData.findOne({
+      userId: user._id
+    })
     res.json({
       status: true,
       message: "Login Successfully!",
       token,
+      user,
+      Profile
     });
   } catch (error) {
     logger.error("Error fetching booking:", error);
