@@ -17,7 +17,13 @@ exports.createBlog = catchAsync(async (req, res) => {
         message: "All fields (title, content, short content) are required.",
       });
     }
- const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+    const slug = title
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\u0900-\u097F\w\-]/g, "")      // keep Hindi + a-z + 0-9 + _
+      .replace(/-+/g, "-")                       // remove multiple dashes
+      .replace(/^-+|-+$/g, "");
     const newBlog = new Blog({
       title,
       slug: slug,
@@ -148,7 +154,14 @@ exports.updateBlogById = catchAsync(async (req, res) => {
         message: "All fields (title, content, Image) are required.",
       });
     }
-    const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+    const slug = title
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\u0900-\u097F\w\-]/g, "")      // keep Hindi + a-z + 0-9 + _
+      .replace(/-+/g, "-")                       // remove multiple dashes
+      .replace(/^-+|-+$/g, "");                  // trim dashes from start/end
+
 
     const blog = await Blog.findByIdAndUpdate(
       _id,

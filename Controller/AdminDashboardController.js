@@ -427,7 +427,6 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
     try {
         const { email, password, role } = req.body;
 
-        // Check if email and password are provided
         if (!email || !password) {
             return res.status(401).json({
                 status: false,
@@ -468,6 +467,7 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
             token,
         });
     } catch (error) {
+        console.log("error" ,error)
         Loggers.error("Error fetching booking:", error);
         return res.status(500).json({
             error,

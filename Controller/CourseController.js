@@ -9,9 +9,16 @@ const Tranning = require("../Model/Video")
 // Course Post API
 exports.CoursePost = async (req, res) => {
     try {
-        
+
         const { title, description, thumbnail, courseVideo, sub_content, category, discountPrice, duration, price, level, InstrutorId, courseImage, lectures, Onlines, lectureFiles } = req.body;
-        const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+        const slug = title
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^\u0900-\u097F\w\-]/g, "")      // keep Hindi + a-z + 0-9 + _
+            .replace(/-+/g, "-")                       // remove multiple dashes
+            .replace(/^-+|-+$/g, "");
+
         const record = new Course({
             title,
             slug: slug,
@@ -116,7 +123,13 @@ exports.CourseUpdate = catchAsync(async (req, res, next) => {
             Onlines,
             sub_content
         } = req.body;
-        const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+        const slug = title
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^\u0900-\u097F\w\-]/g, "")      // keep Hindi + a-z + 0-9 + _
+            .replace(/-+/g, "-")                       // remove multiple dashes
+            .replace(/^-+|-+$/g, "");
 
 
         if (!_id) {

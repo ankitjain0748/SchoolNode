@@ -5,7 +5,7 @@ const logger = require("./utill/Loggers");
 dotenv.config();
 
 mongoose.connect(process.env.DB_URL, {
-   serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+   serverSelectionTimeoutMS: 500000, // 10 seconds timeout
    autoIndex: false,               
    maxPoolSize: 10,                
    socketTimeoutMS: 45000,         

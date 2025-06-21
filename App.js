@@ -37,7 +37,6 @@ const sendEmail = require("./utill/Emailer");
 const adminRoute = require("./Route/adminroute");
 app.use("/user", userRoute)
 app.use("/admin", adminRoute)
-
 app.use("/subscribe", SubscribeRoute)
 app.use("/instrutor", instrutorroute)
 app.use("/course", CourseRoute)
