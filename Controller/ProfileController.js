@@ -12,8 +12,6 @@ const Transaction = require("../Model/Transcation");
 const Review = require("../Model/Review");
 const moment = require("moment-timezone");
 
-
-
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object
     const {
@@ -43,14 +41,14 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
             existingProfile.profileImage = profileImage || existingProfile.profileImage;
             existingProfile.bsemail = bsemail || existingProfile.bsemail;
             const updatedProfile = await existingProfile.save();
-            // Update the User table with the combined username
-            await User.findByIdAndUpdate(userId, {
+            const recorddata = await User.findByIdAndUpdate(userId, {
                 name: `${firstname} ${lastname}`.trim(),
             });
             res.json({
                 status: true,
                 message: "Profile has been successfully updated!",
                 data: updatedProfile,
+                record: recorddata
             });
         } else {
             const newProfile = new Profile({
@@ -64,15 +62,15 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
                 policy,
                 term
             });
-
             const savedProfile = await newProfile.save();
-            await User.findByIdAndUpdate(userId, {
+            const record = await User.findByIdAndUpdate(userId, {
                 name: `${firstname}${lastname}`.trim(),
             });
             res.json({
                 status: true,
                 message: "Profile has been successfully created!",
                 data: savedProfile,
+                record: record
             });
         }
     } catch (error) {
@@ -89,8 +87,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
         const user = req?.body?.id;
-            const startOfWeek = moment().startOf('isoWeek');
-                const endOfWeek = moment().endOf('isoWeek');
+        const startOfWeek = moment().startOf('isoWeek');
+        const endOfWeek = moment().endOf('isoWeek');
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
         const ProfileData = await Profile.findOne({ userId: userId });
         const updatedSocials = await SocialSection.findOne({ userId: userId });
@@ -151,10 +149,10 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             Transactions: Transactions,
             AdminPayments: AdminPayments,
             review: reviews,
-            totalPaymentWithdrawal :totalPaymentWithdrawal,
-            totalPayoutPayment : totalPayoutPayment,
-            totalweekPaymentWithdrawal : totalweekPaymentWithdrawal,
-            totalweekPayoutPayment : totalweekPayoutPayment,
+            totalPaymentWithdrawal: totalPaymentWithdrawal,
+            totalPayoutPayment: totalPayoutPayment,
+            totalweekPaymentWithdrawal: totalweekPaymentWithdrawal,
+            totalweekPayoutPayment: totalweekPayoutPayment,
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
