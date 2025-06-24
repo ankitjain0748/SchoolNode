@@ -95,9 +95,9 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         const testReferrals = await User.find(referralQuery)
             .select("-password -OTP")
             .populate({ path: "CourseId", select: "title discountPrice category courseImage" })
-            .populate({ path: "referred_by", model: "User", select: "name email" })
-            .populate({ path: "referred_first", model: "User", select: "name email" })
-            .populate({ path: "referred_second", model: "User", select: "name email" })
+            .populate({ path: "referred_by", model: "User", select: "name email referral_code" })
+            .populate({ path: "referred_first", model: "User", select: "name email referral_code"})
+            .populate({ path: "referred_second", model: "User", select: "name email referral_code"})
             .skip((page - 1) * limit)
             .limit(limit);
 
@@ -210,9 +210,9 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         const testReferrals = await User.find(referralQuery)
             .select("-password -OTP")
             .populate({ path: "CourseId", select: "title discountPrice category courseImage" })
-            .populate({ path: "referred_by", model: "User", select: "name email" })
-            .populate({ path: "referred_first", model: "User", select: "name email" })
-            .populate({ path: "referred_second", model: "User", select: "name email" })
+            .populate({ path: "referred_by", model: "User", select: "name email referral_code"})
+            .populate({ path: "referred_first", model: "User", select: "name email referral_code"})
+            .populate({ path: "referred_second", model: "User", select: "name email referral_code"})
             .skip((page - 1) * limit)
             .limit(limit);
 
@@ -227,8 +227,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
             UserId: { $in: referralUserIds },
             payment_status: "success",
         };
-
-
         if (payment_date) {
             const startOfDayIST = moment.tz(payment_date, "Asia/Kolkata").startOf("day");
             const endOfDayIST = moment.tz(payment_date, "Asia/Kolkata").endOf("day");

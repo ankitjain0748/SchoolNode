@@ -6,7 +6,6 @@ const cron = require('node-cron');
 a
 cron.schedule('*/1 * * * *', async () => {
     try {
-      console.log('Running daily payment reset job...');
       const currentDate = moment();
       const currentMonth = currentDate.format('YYYY-MM');
       const currentWeek = currentDate.format('YYYY-WW');
@@ -42,7 +41,6 @@ cron.schedule('*/1 * * * *', async () => {
           await User.findByIdAndUpdate(user._id, updates, { new: true });
         }
       }
-      console.log('Payment reset job completed successfully.');
   
       const subject = "✅ Daily Cron Job Completed";
       await sendEmail({

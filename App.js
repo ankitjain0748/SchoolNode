@@ -58,7 +58,6 @@ app.get("/", (req, res) => {
 cron.schedule('0 0 * * *', async () => {
     // 🟢 DAILY CRON JOB (Runs every day at 7:15 AM)
     try {
-        console.log('Running daily payment reset job...');
         const currentDay = moment().format('YYYY-MM-DD');
         const users = await User.find({ role: "user" });
         for (let user of users) {
@@ -93,7 +92,6 @@ cron.schedule('0 0 * * *', async () => {
         }
 
         const from = "StackEarn Cron Daily <no-reply@stackearn.com>";
-        console.log('✅ Daily payment reset job completed.');
 
         await sendEmail({
             email: "ankitkumarjain0748@gmail.com",
@@ -121,9 +119,7 @@ cron.schedule('0 0 * * *', async () => {
 
 cron.schedule('0 0 * * 1', async () => {
     // 🟡 WEEKLY CRON JOB (Runs every Sunday at midnight) Let me know what day/time you want exactly (Sunday night, Monday morning, etc.) and I’ll lock it in precisely.
-    console.log('⏰ Weekly job running at 12:08 AM on Sunday');
     try {
-        console.log('Running weekly payment reset job...');
         const currentWeek = moment().format('YYYY-WW');
         const users = await User.find({ role: "user" });
 
@@ -136,10 +132,8 @@ cron.schedule('0 0 * * 1', async () => {
             if (Object.keys(updates).length > 0) {
                 await User.findByIdAndUpdate(user._id, updates, { new: true });
             }
-            console.log("Weekly payment reset job completed for user:", updates);
         }
 
-        console.log('✅ Weekly payment reset job completed.');
         const from = "StackEarn  Cron Weekly<no-reply@stackearn.com>";
 
         await sendEmail({
@@ -171,7 +165,6 @@ cron.schedule('15 0 28-31 * *', async () => {
         return; // Only run on the last day of the month
     }
     try {
-        console.log('Running monthly payment reset job...');
         const currentMonth = moment().format('YYYY-MM');
         const users = await User.find({ role: "user" });
 
@@ -190,7 +183,6 @@ cron.schedule('15 0 28-31 * *', async () => {
             }
         }
 
-        console.log('✅ Monthly payment reset job completed.');
         const from = "StackEarn  Cron Monthly <no-reply@stackearn.com>";
 
         await sendEmail({
@@ -215,6 +207,5 @@ cron.schedule('15 0 28-31 * *', async () => {
     }
 });
 
-console.log("PORT ", PORT)
 
 app.listen(PORT, () => Loggers.http("Server is running at port : " + PORT));

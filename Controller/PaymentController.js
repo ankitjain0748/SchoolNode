@@ -692,7 +692,6 @@ exports.PaymentGetCourseId = catchAsync(async (req, res, next) => {
       };
     }).sort((a, b) => b.purchaseCount - a.purchaseCount);
 
-    console.log("Best-selling courses with payments:", bestSellingCoursesWithCount);
 
     res.status(200).json({
       status: true,
