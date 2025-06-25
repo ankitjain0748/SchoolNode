@@ -2,6 +2,7 @@
 const dotenv = require("dotenv");
 require("./dbconfigration");
 const initCronJobs = require('./Cron');
+
 dotenv.config();
 const express = require("express");
 const app = express();
@@ -51,6 +52,7 @@ app.get("/", (req, res) => {
     });
 });
 
-initCronJobs(); // Initialize all cron jobs
+initCronJobs(); // No more TypeError
+
 
 app.listen(PORT, () => Loggers.http("Server is running at port : " + PORT));
