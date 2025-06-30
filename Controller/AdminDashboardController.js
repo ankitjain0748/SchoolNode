@@ -49,7 +49,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const endOfToday = moment().endOf('day');
         const endOfNextMonth = moment(startOfNextMonth).endOf('month');
 
-
         // 1. Today Payments
         const adminPaymentsToday = await AdminPayment.aggregate([
             {

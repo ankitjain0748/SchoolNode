@@ -6,7 +6,6 @@ const CronEmail = require('./Mail/CronEmail');
 const Loggers = require('./utill/Loggers');
 
 function initCronJobs() {
-    // ✅ DAILY CRON JOB
     cron.schedule('0 0 * * *', async () => {
         try {
             Loggers.info('⏰ Daily Cron Job started');
@@ -28,7 +27,6 @@ function initCronJobs() {
                     const passive1 = Number(user.first_user_pay) || 0;
                     const passive2 = Number(user.second_user_pay) || 0;
                     const todayPayment = Number(user.paymentmanage) || 0;
-
                     updates.UnPaidAmounts = lastTodayIncome;
                     updates.lastTodayIncome = lastTodayIncome + referredDaily + referredPay;
                     updates.referred_user_pay_overall = lastTodayIncome + referredOverall + referredPay;
@@ -41,15 +39,12 @@ function initCronJobs() {
                     updates.lastPaymentDay = currentDay;
                     updates.paymentmanage = 0;
                 }
-
                 if (Object.keys(updates).length > 0) {
                     await User.findByIdAndUpdate(user._id, updates, { new: true });
                     Loggers.info(`✅ Updated user: ${user._id}`);
                 }
             }
-
             const from = "StackEarn Cron Daily <no-reply@stackearn.com>";
-
             await sendEmail({
                 email: "ankitkumarjain0748@gmail.com",
                 name: "Admin",
@@ -80,14 +75,12 @@ function initCronJobs() {
             Loggers.info('⏰ Weekly Cron Job started');
             const currentWeek = moment().format('YYYY-WW');
             const users = await User.find({ role: "user" });
-
             for (let user of users) {
                 let updates = {};
                 if (user.lastPaymentWeek !== currentWeek) {
                     updates.referred_user_pay_weekly = 0;
                     updates.lastPaymentWeek = currentWeek;
                 }
-
                 if (Object.keys(updates).length > 0) {
                     await User.findByIdAndUpdate(user._id, updates, { new: true });
                     Loggers.info(`✅ Weekly update for user: ${user._id}`);
@@ -95,7 +88,6 @@ function initCronJobs() {
             }
 
             const from = "StackEarn Cron Weekly <no-reply@stackearn.com>";
-
             await sendEmail({
                 email: "ankitkumarjain0748@gmail.com",
                 name: "Admin",
