@@ -30,8 +30,8 @@ function initCronJobs() {
                     updates.UnPaidAmounts = lastTodayIncome;
                     updates.lastTodayIncome = lastTodayIncome + referredDaily + referredPay;
                     updates.referred_user_pay_overall = lastTodayIncome + referredOverall + referredPay;
-                    updates.referred_user_pay_monthly = lastTodayIncome + referredMonthly + referredPay;
-                    updates.referred_user_pay_weekly = lastTodayIncome + referredWeekly + referredPay;
+                    updates.referred_user_pay_monthly = referredMonthly + referredPay;
+                    updates.referred_user_pay_weekly = referredWeekly + referredPay;
                     updates.passive_income = passive1 + passive2;
                     updates.TodayPayment = todayPayment;
                     updates.referred_user_pay_daily = 0;
@@ -124,10 +124,8 @@ function initCronJobs() {
             Loggers.info('⏰ Monthly Cron Job started');
             const currentMonth = moment().format('YYYY-MM');
             const users = await User.find({ role: "user" });
-
             for (let user of users) {
                 let updates = {};
-
                 if (user.lastPaymentMonth !== currentMonth) {
                     updates.referred_user_pay_monthly = 0;
                     updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.second_user_pay || 0) + (user.first_user_pay);
@@ -136,7 +134,6 @@ function initCronJobs() {
                     updates.second_user_pay = 0;
                     updates.first_user_pay = 0;
                 }
-
                 if (Object.keys(updates).length > 0) {
                     await User.findByIdAndUpdate(user._id, updates, { new: true });
                     Loggers.info(`✅ Monthly update for user: ${user._id}`);

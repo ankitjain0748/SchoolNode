@@ -47,7 +47,7 @@ app.use("/auth", AuthRoute);
 const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
 app.get("/", (req, res) => {
     res.json({
-        msg: 'Hello StackEarn in admin and  user Website',
+        msg: 'Hello StackEarn in admin and student Website',
         status: 200,
     });
 });

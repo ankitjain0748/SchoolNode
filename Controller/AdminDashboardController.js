@@ -64,7 +64,9 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: null,
                     totalAdd: { $sum: "$payment_Add" },
                     totalWithdrawal: { $sum: "$paymentWidthrawal" },
-                    totalPayout: { $sum: "$payoutpayment" }
+                    totalPayout: { $sum: "$payoutpayment" },
+
+
                 }
             }
         ]);
@@ -84,7 +86,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: null,
                     totalAdd: { $sum: "$payment_Add" },
                     totalWithdrawal: { $sum: "$paymentWidthrawal" },
-                    totalPayout: { $sum: "$payoutpayment" }
+                    totalPayout: { $sum: "$payoutpayment" },
                 }
             }
         ]);
@@ -104,7 +106,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: null,
                     totalAdd: { $sum: "$payment_Add" },
                     totalWithdrawal: { $sum: "$paymentWidthrawal" },
-                    totalPayout: { $sum: "$payoutpayment" }
+                    totalPayout: { $sum: "$payoutpayment" },
                 }
             }
         ]);
@@ -116,7 +118,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                     _id: null,
                     totalAdd: { $sum: "$payment_Add" },
                     totalWithdrawal: { $sum: "$paymentWidthrawal" },
-                    totalPayout: { $sum: "$payoutpayment" }
+                    totalPayout: { $sum: "$payoutpayment" },
                 }
             }
         ]);
@@ -151,45 +153,39 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
 
+
+        // 🔹 Total unpaid for the same week
         const userunpaidweek = await User.aggregate([
-            { 
-                $match: { 
-                    created_at: { 
-                        $gte: startOfWeek.toDate(), 
-                        $lt: endOfWeek.toDate() 
-                    } 
-                } 
+            {
+                $match: {
+                    lastPaymentWeek: lastPaymentWeek
+                }
             },
-            { 
-                $group: { 
-                    _id: null, 
+            {
+                $group: {
+                    _id: null,
                     total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } }
-                } 
+                }
             }
         ]);
-        
+
         const totalUnpaid = userunpaidweek[0]?.total || 0;
 
-
+        // 🔹 Total unpaid for the same month
         const userunpaidMonth = await User.aggregate([
-            { 
-                $match: { 
-                    created_at: { 
-                        $gte: startOfMonth.toDate(), 
-                        $lt: endOfNextMonth.toDate() 
-                    } 
-                } 
+            {
+                $match: {
+                    lastPaymentMonth: lastPaymentMonth
+                }
             },
-            { 
-                $group: { 
-                    _id: null, 
+            {
+                $group: {
+                    _id: null,
                     total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } }
-                } 
+                }
             }
         ]);
-        
         const totalMonthUnpaid = userunpaidMonth[0]?.total || 0;
-
         const paymentThisWeek = await Payment.aggregate([
             { $match: { payment_date: { $gte: startOfWeek.toDate(), $lt: endOfWeek.toDate() }, payment_status: "success" } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
@@ -323,7 +319,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         }
 
 
-        
+
         const resultweekly = await Payment.aggregate([
             {
                 $match: {
@@ -365,23 +361,23 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
 
 
         const userMonthly = await User.aggregate([
-            { 
-                $match: { 
-                    created_at: { 
-                        $gte: startOfMonth.toDate(), 
-                        $lt: endOfNextMonth.toDate() 
-                    } 
-                } 
+            {
+                $match: {
+                    created_at: {
+                        $gte: startOfMonth.toDate(),
+                        $lt: endOfNextMonth.toDate()
+                    }
+                }
             },
-            { 
-                $group: { 
-                    _id: null, 
+            {
+                $group: {
+                    _id: null,
                     total: { $sum: { $ifNull: ["$referred_user_pay_monthly", 0] } }
-                } 
+                }
             }
         ]);
-        
-        const totalMonthrefral  = userMonthly[0]?.total || 0;
+
+        const totalMonthrefral = userMonthly[0]?.total || 0;
 
         res.status(200).json({
             success: true,
@@ -408,10 +404,10 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             NextPayoutPayments: NextPayoutPayments[0]?.total || 0,
             overallPassiveIncome: overallPassiveIncome[0] || {},
             totalSum: totalSum || 0,
-            totalUnpaid :totalUnpaid,
-            totalMonthUnpaid :totalMonthUnpaid,
+            totalUnpaid: totalUnpaid,
+            totalMonthUnpaid: totalMonthUnpaid,
             totalSumMonthpassive: totalSumMonthpassive || 0,
-            totalMonthrefral :totalMonthrefral || 0
+            totalMonthrefral: totalMonthrefral || 0
         });
 
     } catch (error) {
@@ -466,7 +462,7 @@ exports.adminlogin = catchAsync(async (req, res, next) => {
             token,
         });
     } catch (error) {
-        console.log("error" ,error)
+        console.log("error", error)
         Loggers.error("Error fetching booking:", error);
         return res.status(500).json({
             error,
@@ -527,7 +523,6 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 },
                 { new: true }
             );
-
             // Update counters
             if (userStatus === 'active') {
                 activeCount++;
@@ -535,7 +530,6 @@ exports.profileadmin = catchAsync(async (req, res, next) => {
                 inactiveCount++;
             }
         }
-
 
         res.status(200).json({
             status: true,

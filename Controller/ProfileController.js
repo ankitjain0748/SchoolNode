@@ -86,7 +86,7 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
-        const user = req?.body?.id;
+
         const startOfWeek = moment().startOf('isoWeek');
         const endOfWeek = moment().endOf('isoWeek');
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
@@ -96,11 +96,12 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const BankData = await Bank.findOne({ userId: userId });
         const payment = await Payment.findOne({ UserId: userId });
         const AdminPayments = await AdminPay.find({ userId: userId });
+
+
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date();
         endOfDay.setHours(23, 59, 59, 999);
-
         const payments = await AdminPay.find({
             userId: userId,
             payment_date: { $gte: startOfDay, $lte: endOfDay }
@@ -134,8 +135,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             path: "CourseId",
             select: "title discountPrice category courseImage"
         })
-
-
         return res.status(200).json({
             status: true,
             user: UserData,
