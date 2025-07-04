@@ -154,11 +154,13 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         ]);
 
 
-        // 🔹 Total unpaid for the same week
         const userunpaidweek = await User.aggregate([
             {
                 $match: {
-                    lastPaymentWeek: lastPaymentWeek
+                    created_at: {
+                        $gte: startOfWeek.toDate(),
+                        $lt: endOfWeek.toDate()
+                    }
                 }
             },
             {
@@ -171,11 +173,14 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
 
         const totalUnpaid = userunpaidweek[0]?.total || 0;
 
-        // 🔹 Total unpaid for the same month
+
         const userunpaidMonth = await User.aggregate([
             {
                 $match: {
-                    lastPaymentMonth: lastPaymentMonth
+                    created_at: {
+                        $gte: startOfMonth.toDate(),
+                        $lt: endOfNextMonth.toDate()
+                    }
                 }
             },
             {
@@ -185,6 +190,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
+
         const totalMonthUnpaid = userunpaidMonth[0]?.total || 0;
         const paymentThisWeek = await Payment.aggregate([
             { $match: { payment_date: { $gte: startOfWeek.toDate(), $lt: endOfWeek.toDate() }, payment_status: "success" } },

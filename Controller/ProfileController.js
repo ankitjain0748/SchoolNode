@@ -83,25 +83,33 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     }
 });
 
+
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
 
         const startOfWeek = moment().startOf('isoWeek');
         const endOfWeek = moment().endOf('isoWeek');
-        const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
-        const ProfileData = await Profile.findOne({ userId: userId });
-        const updatedSocials = await SocialSection.findOne({ userId: userId });
-        const reviews = await Review.find({ userId: new mongoose.Types.ObjectId(userId) });
-        const BankData = await Bank.findOne({ userId: userId });
-        const payment = await Payment.findOne({ UserId: userId });
-        const AdminPayments = await AdminPay.find({ userId: userId });
 
+        const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
+
+        const ProfileData = await Profile.findOne({ userId: userId });
+
+        const updatedSocials = await SocialSection.findOne({ userId: userId });
+
+        const reviews = await Review.find({ userId: new mongoose.Types.ObjectId(userId) });
+
+        const BankData = await Bank.findOne({ userId: userId });
+
+        const payment = await Payment.findOne({ UserId: userId });
+
+        const AdminPayments = await AdminPay.find({ userId: userId });
 
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date();
         endOfDay.setHours(23, 59, 59, 999);
+
         const payments = await AdminPay.find({
             userId: userId,
             payment_date: { $gte: startOfDay, $lte: endOfDay }
@@ -118,13 +126,16 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             userId: userId,
             payment_date: { $gte: startOfWeek.toDate(), $lte: endOfWeek.toDate() }
         });
+
         let totalweekPaymentWithdrawal = 0;
         let totalweekPayoutPayment = 0;
         paymentweeklys.forEach(payment => {
             totalweekPaymentWithdrawal += payment.paymentWidthrawal || 0;
             totalweekPayoutPayment += payment.payoutpayment || 0;
         });
-        const Transactions = await Transaction.find({ user: user });
+
+        const Transactions = await Transaction.find({ user: userId });
+
         const referralData = await User.find({
             $or: [
                 { referred_by: UserData?.referred_by },
@@ -134,7 +145,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         }).populate({
             path: "CourseId",
             select: "title discountPrice category courseImage"
-        })
+        });
+
         return res.status(200).json({
             status: true,
             user: UserData,
@@ -153,21 +165,21 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             message: "Users retrieved successfully with enquiry counts updated",
         });
     } catch (error) {
-        logger.error(error)
+        console.error("❌ Error in ProfileData:", error);
         return res.status(500).json({
             status: false,
             message: "An error occurred while fetching users and updating enquiry counts.",
-            error: error.message || "Internal Server Error", // Provide a fallback error message
+            error: error.message || "Internal Server Error",
         });
     }
 });
 
+
 // ProfileAdminPayeData Controller Function
 exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
     try {
-        const userId = req?.query?.id; // Extract userId from query parameters
-        const { page = 1, limit = 10, payment_date } = req.query; // Pagination and payment_date query
-        // Initialize the query with userId
+        const userId = req?.query?.id;
+        const { page = 1, limit = 10, payment_date } = req.query;
         const query = { userId: userId };
 
         if (payment_date) {
@@ -181,13 +193,11 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
         }
 
         const AdminPayments = await AdminPay.find(query)
-            .sort({ payment_date: -1 }) // Sort by payment_date in descending order
-            .skip((page - 1) * limit) // Apply pagination: skip documents
-            .limit((limit)); // Limit documents per page
-        // Count total documents matching the query
+            .sort({ payment_date: -1 })
+            .skip((page - 1) * limit)
+            .limit((limit));
         const totalPayments = await AdminPay.countDocuments(query);
 
-        // Return the response with pagination details
         return res.status(200).json({
             status: true,
             AdminPayments: AdminPayments,
@@ -197,7 +207,6 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
             message: "Users retrieved successfully with payment data filtered by date",
         });
     } catch (error) {
-        // Log the error and return a server error response
         logger.error(error);
         return res.status(500).json({
             status: false,
@@ -207,11 +216,9 @@ exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
     }
 });
 
-
 // Example query: 
 // GET /api/payments?page=1&limit=10&startDate=2024-01-01
 
-// Let me know if you want me to add an end date or any other filters! 🚀
 exports.ProfileDataId = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.User?._id;
@@ -222,10 +229,6 @@ exports.ProfileDataId = catchAsync(async (req, res, next) => {
         const RefralCode = await Refral.findOne({ userId: userId });
 
         const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ msg: "User not found", status: false });
-        }
-
         let referralQuery = {
             $or: [
                 { referred_by: userId },
