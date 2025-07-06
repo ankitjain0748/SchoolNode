@@ -88,21 +88,66 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
 
+        const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
+
+        if (!UserData) {
+            return res.status(404).json({
+                status: false,
+                message: "User not found."
+            });
+        }
+
+        const currentMonthIdentifier = moment().format('YYYY-MM'); // e.g., "2025-07"
+        const currentWeekIdentifier = moment().format('YYYY-WW');   // e.g., "2025-27" (for ISO week)
+        const currentDayIdentifier = moment().format('YYYY-MM-DD'); // e.g., "2025-07-06"
+
+        const Course = UserData;
+
+        // --- Payment Calculations with Date-Based Conditional Logic ---
+
+        // Daily/Current Payment Calculation
+        let datapayment = 0;
+        if (Course?.lastPaymentDay === currentDayIdentifier) {
+            datapayment = (Course?.UnPaidAmounts === 0
+                ? ((Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
+                : ((Course?.lastTodayIncome || 0) - (Course?.UnPaidAmounts || 0) - (Course?.totalWidthrawal || 0))
+            );
+        }
+
+        // Weekly Payment Calculation
+        let WeekPayment = 0;
+        if (Course?.lastPaymentWeek === currentWeekIdentifier) {
+            WeekPayment = (Course?.UnPaidAmounts === 0
+                ? (Course?.UnPaidAmounts || 0)
+                : ((Course?.referred_user_pay_weekly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0)  - (Course?.totalWidthrawal || 0) )
+            );
+        }
+
+        // Monthly Payment Calculation
+        let MonthPayment = 0;
+        if (Course?.lastPaymentMonth === currentMonthIdentifier) {
+            MonthPayment = (Course?.UnPaidAmounts === 0
+                ? (Course?.UnPaidAmounts || 0)
+                : ((Course?.referred_user_pay_monthly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0)  - (Course?.totalWidthrawal || 0) )
+            );
+        }
+
+        const OverAllPayment = (Course?.UnPaidAmounts === 0
+            ? (Course?.UnPaidAmounts || 0)
+            : ((Course?.referred_user_pay_overall || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0)  - (Course?.totalWidthrawal || 0) + (Course?.totalPayout || 0))
+        );
+        // --- End of Payment Calculations ---
+
+
+        // Existing fetches (these remain as is)
         const startOfWeek = moment().startOf('isoWeek');
         const endOfWeek = moment().endOf('isoWeek');
 
-        const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
-
         const ProfileData = await Profile.findOne({ userId: userId });
-
         const updatedSocials = await SocialSection.findOne({ userId: userId });
-
         const reviews = await Review.find({ userId: new mongoose.Types.ObjectId(userId) });
-
         const BankData = await Bank.findOne({ userId: userId });
-
         const payment = await Payment.findOne({ UserId: userId });
-
         const AdminPayments = await AdminPay.find({ userId: userId });
 
         const startOfDay = new Date();
@@ -138,9 +183,9 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         const referralData = await User.find({
             $or: [
-                { referred_by: UserData?.referred_by },
-                { referred_first: userId },
-                { referred_second: userId }
+                { referred_by: UserData?.referred_by }, // Check if current user was referred by this user
+                { referred_first: userId }, // Check if this user is the first referrer
+                { referred_second: userId } // Check if this user is the second referrer
             ]
         }).populate({
             path: "CourseId",
@@ -162,18 +207,22 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             totalPayoutPayment: totalPayoutPayment,
             totalweekPaymentWithdrawal: totalweekPaymentWithdrawal,
             totalweekPayoutPayment: totalweekPayoutPayment,
-            message: "Users retrieved successfully with enquiry counts updated",
+            // Include the newly calculated payment data
+            datapayment: datapayment,
+            WeekPayment: WeekPayment,
+            MonthPayment: MonthPayment,
+            OverAllPayment: OverAllPayment,
+            message: "User profile data retrieved successfully.",
         });
     } catch (error) {
         console.error("❌ Error in ProfileData:", error);
         return res.status(500).json({
             status: false,
-            message: "An error occurred while fetching users and updating enquiry counts.",
+            message: "An error occurred while fetching user profile data.",
             error: error.message || "Internal Server Error",
         });
     }
 });
-
 
 // ProfileAdminPayeData Controller Function
 exports.ProfileAdminPayeData = catchAsync(async (req, res, next) => {
