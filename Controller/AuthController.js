@@ -570,7 +570,6 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
       role: 'user', // Adding filter for users with role 'user'
       lastTodayIncome: { $gt: 0 } // Adding filter for lastTodayIncome greater than 0
     };
-
     const startDate = new Date();
     startDate.setDate(startDate.getDate());
     startDate.setHours(0, 0, 0, 0);
