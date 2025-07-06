@@ -154,44 +154,53 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         ]);
 
 
+
+
+        const currentMonthIdentifier = moment().format('YYYY-MM'); // This will be "2025-07" for July 2025
+        const currentWeekIdentifier = moment().format('YYYY-WW'); // This will be "2025-27" for the current week (ISO 8601)
+        // --- Aggregation for Current Week Unpaid Amount ---
         const userunpaidweek = await User.aggregate([
             {
                 $match: {
-                    created_at: {
-                        $gte: startOfWeek.toDate(),
-                        $lt: endOfWeek.toDate()
-                    }
+                    // Match documents where 'lastPaymentWeek' field equals the current week identifier
+                    lastPaymentWeek: currentWeekIdentifier
                 }
             },
             {
                 $group: {
-                    _id: null,
-                    total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } }
+                    _id: null, // Group all matched documents into a single result
+                    total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } } // Sum 'UnPaidAmounts', treating null/missing as 0
                 }
             }
         ]);
 
-        const totalUnpaid = userunpaidweek[0]?.total || 0;
+        // Extract the total, defaulting to 0 if no documents were found
+        const totalUnpaidWeek = userunpaidweek[0]?.total || 0;
+        console.log(`Total unpaid for the current week: ${totalUnpaidWeek}`);
 
 
+        // --- Aggregation for Current Month Unpaid Amount ---
         const userunpaidMonth = await User.aggregate([
             {
                 $match: {
-                    created_at: {
-                        $gte: startOfMonth.toDate(),
-                        $lt: endOfNextMonth.toDate()
-                    }
+                    // Match documents where 'lastPaymentMonth' field equals the current month identifier
+                    lastPaymentMonth: currentMonthIdentifier
                 }
             },
             {
                 $group: {
-                    _id: null,
-                    total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } }
+                    _id: null, // Group all matched documents into a single result
+                    total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } } // Sum 'UnPaidAmounts', treating null/missing as 0
                 }
             }
         ]);
 
-        const totalMonthUnpaid = userunpaidMonth[0]?.total || 0;
+        // Extract the total, defaulting to 0 if no documents were found
+        const totalUnpaidMonth = userunpaidMonth[0]?.total || 0;
+        console.log(`Total unpaid for the current month: ${totalUnpaidMonth}`);
+
+
+
         const paymentThisWeek = await Payment.aggregate([
             { $match: { payment_date: { $gte: startOfWeek.toDate(), $lt: endOfWeek.toDate() }, payment_status: "success" } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
@@ -410,8 +419,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             NextPayoutPayments: NextPayoutPayments[0]?.total || 0,
             overallPassiveIncome: overallPassiveIncome[0] || {},
             totalSum: totalSum || 0,
-            totalUnpaid: totalUnpaid,
-            totalMonthUnpaid: totalMonthUnpaid,
+            totalUnpaid: totalUnpaidWeek || 0,
+            totalMonthUnpaid: totalUnpaidMonth || 0,
             totalSumMonthpassive: totalSumMonthpassive || 0,
             totalMonthrefral: totalMonthrefral || 0
         });
