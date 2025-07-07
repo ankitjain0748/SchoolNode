@@ -10,14 +10,13 @@ function initCronJobs() {
         try {
             Loggers.info('⏰ Daily Cron Job started');
             const currentDay = moment().format('YYYY-MM-DD');
+            const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
             const users = await User.find({ role: "user" });
-
             Loggers.info(`🧑‍🤝‍🧑 Found ${users.length} users`);
-
             for (let user of users) {
                 let updates = {};
-
-                if (user.lastPaymentDay !== currentDay) {
+                // ✅ only update if lastPaymentDay is exactly yesterday
+                if (user.lastPaymentDay === yesterday) {
                     const lastTodayIncome = Number(user.lastTodayIncome) || 0;
                     const referredDaily = Number(user.referred_user_pay_daily) || 0;
                     const referredPay = Number(user.referred_user_pay) || 0;
@@ -38,12 +37,12 @@ function initCronJobs() {
                     updates.referred_user_pay = 0;
                     updates.lastPaymentDay = currentDay;
                     updates.paymentmanage = 0;
-                }
-                if (Object.keys(updates).length > 0) {
+                    Loggers.verbose(`📝 Preparing to update user: ${user._id}`);
                     await User.findByIdAndUpdate(user._id, updates, { new: true });
                     Loggers.info(`✅ Updated user: ${user._id}`);
                 }
             }
+
             const from = "StackEarn Cron Daily <no-reply@stackearn.com>";
             await sendEmail({
                 email: "ankitkumarjain0748@gmail.com",
