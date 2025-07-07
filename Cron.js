@@ -27,15 +27,14 @@ function initCronJobs() {
                     const passive2 = Number(user.second_user_pay) || 0;
                     const todayPayment = Number(user.paymentmanage) || 0;
                     updates.UnPaidAmounts = lastTodayIncome;
-                    updates.lastTodayIncome = lastTodayIncome + referredDaily + referredPay;
-                    updates.referred_user_pay_overall = lastTodayIncome + referredOverall + referredPay;
+                    updates.lastTodayIncome = referredDaily + referredPay;
+                    updates.referred_user_pay_overall = referredOverall + referredPay;
                     updates.referred_user_pay_monthly = referredMonthly + referredPay;
                     updates.referred_user_pay_weekly = referredWeekly + referredPay;
                     updates.passive_income = passive1 + passive2;
                     updates.TodayPayment = todayPayment;
                     updates.referred_user_pay_daily = 0;
                     updates.referred_user_pay = 0;
-                    updates.lastPaymentDay = currentDay;
                     updates.paymentmanage = 0;
                     Loggers.verbose(`📝 Preparing to update user: ${user._id}`);
                     await User.findByIdAndUpdate(user._id, updates, { new: true });
@@ -78,7 +77,6 @@ function initCronJobs() {
                 let updates = {};
                 if (user.lastPaymentWeek !== currentWeek) {
                     updates.referred_user_pay_weekly = 0;
-                    updates.lastPaymentWeek = currentWeek;
                 }
                 if (Object.keys(updates).length > 0) {
                     await User.findByIdAndUpdate(user._id, updates, { new: true });
@@ -129,7 +127,6 @@ function initCronJobs() {
                     updates.referred_user_pay_monthly = 0;
                     updates.lastTodayIncome = (user.lastTodayIncome || 0) + (user.second_user_pay || 0) + (user.first_user_pay);
                     updates.pervious_passive_income_month = (user.second_user_pay || 0) + (user.first_user_pay);
-                    updates.lastPaymentMonth = currentMonth;
                     updates.second_user_pay = 0;
                     updates.first_user_pay = 0;
                 }

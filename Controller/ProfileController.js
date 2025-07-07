@@ -108,9 +108,9 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         // Daily/Current Payment Calculation
         let datapayment = 0;
         if (Course?.lastPaymentDay === currentDayIdentifier) {
-            datapayment = (Course?.UnPaidAmounts === 0
-                ? ((Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
-                : ((Course?.lastTodayIncome || 0) - (Course?.UnPaidAmounts || 0) - (Course?.totalWidthrawal || 0))
+            datapayment = (Course?.UnPaidAmounts != 0
+                ? (Course?.UnPaidAmounts || 0)
+                : ((Course?.referred_user_pay_daily || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
             );
         }
 
@@ -119,7 +119,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         if (Course?.lastPaymentWeek === currentWeekIdentifier) {
             WeekPayment = (Course?.UnPaidAmounts === 0
                 ? (Course?.UnPaidAmounts || 0)
-                : ((Course?.referred_user_pay_weekly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0)  - (Course?.totalWidthrawal || 0) )
+                : ((Course?.referred_user_pay_weekly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
             );
         }
 
@@ -128,16 +128,14 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
             MonthPayment = (Course?.UnPaidAmounts === 0
                 ? (Course?.UnPaidAmounts || 0)
-                : ((Course?.referred_user_pay_monthly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0)  - (Course?.totalWidthrawal || 0) )
-            );
+                : ((Course?.referred_user_pay_monthly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0)));
         }
 
         const OverAllPayment = (Course?.UnPaidAmounts === 0
             ? (Course?.UnPaidAmounts || 0)
-            : ((Course?.referred_user_pay_overall || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0)  - (Course?.totalWidthrawal || 0) + (Course?.totalPayout || 0))
+            : (  (Course?.referred_user_pay_overall || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0)  + (Course?.totalPayout))
         );
         // --- End of Payment Calculations ---
-
 
         // Existing fetches (these remain as is)
         const startOfWeek = moment().startOf('isoWeek');
