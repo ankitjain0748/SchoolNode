@@ -157,12 +157,14 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const currentMonthIdentifier = moment().format('YYYY-MM'); // This will be "2025-07" for July 2025
         const currentWeekIdentifier = moment().format('YYYY-WW'); // This will be "2025-27" for the current week (ISO 8601)
         console.log("currentWeekIdentifier", currentWeekIdentifier)
+        const lastWeekIdentifier = currentWeekIdentifier - 1;
+
         // --- Aggregation for Current Week Unpaid Amount ---
         const userunpaidweek = await User.aggregate([
             {
                 $match: {
                     // Match documents where 'lastPaymentWeek' field equals the current week identifier
-                    lastPaymentWeek: currentWeekIdentifier
+                    lastPaymentWeek: lastWeekIdentifier
                 }
             },
             {

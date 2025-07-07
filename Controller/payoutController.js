@@ -38,6 +38,8 @@ exports.payoutData = catchAsync(async (req, res) => {
         let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
         let updatedPaymentKey = user.payment_key_daily || 0;
         let updatedLastTodayIncome = user.lastTodayIncome - payment_key || 0;
+        let UnPaidAmounts = user.UnPaidAmounts - payment_key || 0;
+
         // Reset values when period changes
         if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
         if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
@@ -90,6 +92,7 @@ exports.payoutData = catchAsync(async (req, res) => {
                     referred_user_pay_weekly: updatedReferredUserPayWeekly,
                     referred_user_pay_daily: updatedReferredUserPayDaily,
                     lastTodayIncome: updatedLastTodayIncome,
+                    unPaidAmounts: UnPaidAmounts,
                     lastPaymentMonth: currentMonth,
                     lastPaymentWeek: currentWeek,
                     lastPaymentDay: currentDay,
