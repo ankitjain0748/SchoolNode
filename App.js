@@ -2,6 +2,7 @@
 const dotenv = require("dotenv");
 require("./dbconfigration");
 const initCronJobs = require('./Cron');
+const moment = require('moment');
 
 dotenv.config();
 const express = require("express");
@@ -47,10 +48,12 @@ app.use("/auth", AuthRoute);
 const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
 app.get("/", (req, res) => {
     res.json({
-        msg: 'Hello StackEarn in admin and student Website',
+        msg: 'Hello StackEarn in admin and student Website and dashboard ',
         status: 200,
     });
 });
+
+console.log(moment().subtract(1, 'days').format('YYYY-MM-DD'));
 
 initCronJobs(); // No more TypeError
 

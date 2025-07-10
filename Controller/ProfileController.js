@@ -106,13 +106,11 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         // --- Payment Calculations with Date-Based Conditional Logic ---
 
         // Daily/Current Payment Calculation
-        let datapayment = 0;
-        if (Course?.lastPaymentDay === currentDayIdentifier) {
-            datapayment = (Course?.UnPaidAmounts != 0
-                ? (Course?.UnPaidAmounts || 0)
-                : ((Course?.referred_user_pay_daily || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
-            );
-        }
+
+        const datapayment = ((Course?.referred_user_pay_daily || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) );
+
+
+        console.log("datapayment",datapayment)
 
         // Weekly Payment Calculation
         let WeekPayment = 0;

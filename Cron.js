@@ -9,13 +9,11 @@ function initCronJobs() {
     cron.schedule('0 0 * * *', async () => {
         try {
             Loggers.info('⏰ Daily Cron Job started');
-            const currentDay = moment().format('YYYY-MM-DD');
             const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
             const users = await User.find({ role: "user" });
             Loggers.info(`🧑‍🤝‍🧑 Found ${users.length} users`);
             for (let user of users) {
                 let updates = {};
-                // ✅ only update if lastPaymentDay is exactly yesterday
                 if (user.lastPaymentDay === yesterday) {
                     const lastTodayIncome = Number(user.lastTodayIncome) || 0;
                     const referredDaily = Number(user.referred_user_pay_daily) || 0;
