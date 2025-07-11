@@ -49,3 +49,8 @@
 2025-07-11 23:31:26 [INFO]: Connected to MongoDB
 2025-07-11 23:33:45 [INFO]: Connected to MongoDB
 2025-07-11 23:36:03 [INFO]: Connected to MongoDB
+2025-07-12 00:00:00 [INFO]: ⏰ Daily Cron Job started
+2025-07-12 00:00:00 [INFO]: 🧑‍🤝‍🧑 Found 18 users
+2025-07-12 00:00:00 [INFO]: ✅ Updated user: 680a5caffacf56cdd8e82fe5
+2025-07-12 00:00:00 [INFO]: ✅ Updated user: 680af015facf56cdd8e84e94
+2025-07-12 00:00:05 [INFO]: ✅ Daily Cron Job completed successfully
