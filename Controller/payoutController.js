@@ -44,7 +44,15 @@ exports.payoutData = catchAsync(async (req, res) => {
         if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
         if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
         // Add current payments
-        const referralAmount = Number(payment_Add) || 0;
+        // Adjust referral-related amounts conditionally
+        let referralAmount = 0;
+
+        // If payoutpayment is provided, subtract it from referrals
+        if (payoutpayment) {
+            referralAmount = -Math.abs(Number(payoutpayment) || 0); // ensure negative value
+        } else if (payment_Add) {
+            referralAmount = Number(payment_Add) || 0; // otherwise use payment_Add
+        }
         updatedLastTodayIncome += referralAmount;
         updatedReferredUserPayOverall += referralAmount;
         updatedReferredUserPayMonthly += referralAmount;
@@ -73,20 +81,20 @@ exports.payoutData = catchAsync(async (req, res) => {
         };
         const withdrawal = Number(paymentWidthrawal) || 0;
         const payout = Number(payoutpayment) || 0;
-        
+
         const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-        
+
         let paymentmanage = Number(user.paymentmanage) || 0;
-        
+
         if (page !== "Add" || currentDate === today) {
             paymentmanage += withdrawal + payout;
         }
-        
+
         const updatedUser = await User.findByIdAndUpdate(
             Id,
             {
                 $set: {
-                    payment_Add, payment_data,  referred_user_pay,
+                    payment_Add, payment_data, referred_user_pay,
                     referred_user_pay_overall: updatedReferredUserPayOverall,
                     referred_user_pay_monthly: updatedReferredUserPayMonthly,
                     referred_user_pay_weekly: updatedReferredUserPayWeekly,
@@ -97,7 +105,7 @@ exports.payoutData = catchAsync(async (req, res) => {
                     lastPaymentWeek: currentWeek,
                     lastPaymentDay: currentDay,
                     payment_key_daily: updatedPaymentKey,
-                    paymentmanage 
+                    paymentmanage
                 },
                 $inc: incFields
             },
