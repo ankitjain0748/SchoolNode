@@ -107,14 +107,14 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         // Daily/Current Payment Calculation
 
-        const datapayment = ((Course?.referred_user_pay_daily || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0));
+        const datapayment = (Course?.lastTodayIncome || 0);
 
         // Weekly Payment Calculation
         let WeekPayment = 0;
         if (Course?.lastPaymentWeek === currentWeekIdentifier) {
             WeekPayment = (Course?.UnPaidAmounts === 0
                 ? (Course?.UnPaidAmounts || 0)
-                : ((Course?.referred_user_pay_weekly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
+                : ((Course?.referred_user_pay_weekly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) - (Course?.UnPaidAmounts || 0))
             );
         }
 
@@ -123,11 +123,11 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
             MonthPayment = (Course?.UnPaidAmounts === 0
                 ? (Course?.UnPaidAmounts || 0)
-                : ((Course?.referred_user_pay_monthly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0)));
+                : ((Course?.referred_user_pay_monthly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) - (Course?.UnPaidAmounts || 0))
+            )
         }
 
-        const OverAllPayment = ((Course?.referred_user_pay_overall || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) + (Course?.totalPayout));
-        // --- End of Payment Calculations ---
+        const OverAllPayment = ((Course?.referred_user_pay_overall || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) + (Course?.totalPayout) -(Course?.UnPaidAmounts || 0) );
 
         // Existing fetches (these remain as is)
         const startOfWeek = moment().startOf('isoWeek');
