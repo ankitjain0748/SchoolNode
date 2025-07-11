@@ -107,10 +107,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         // Daily/Current Payment Calculation
 
-        const datapayment = ((Course?.referred_user_pay_daily || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) );
-
-
-        console.log("datapayment",datapayment)
+        const datapayment = ((Course?.referred_user_pay_daily || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0));
 
         // Weekly Payment Calculation
         let WeekPayment = 0;

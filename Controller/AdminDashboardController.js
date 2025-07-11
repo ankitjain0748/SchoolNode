@@ -141,10 +141,49 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             }
         ]);
 
+
+        const currentDate = moment().format("YYYY-MM-DD");
+
+        const fields = [
+            'lastTodayIncome', 'referred_user_pay_daily', 'referred_user_pay_weekly',
+            'referred_user_pay_monthly', 'referred_user_pay_overall', 'passive_income',
+            'first_user_pay', 'second_user_pay', 'referred_user_pay',
+            'InActivePercentageamount', 'UnPaidAmounts', 'totalPayout',
+            'totalWidthrawal', 'totalAdd', 'TodayPayment', 'paymentmanage'
+        ];
+
+        function sumFields(fields) {
+            return fields.reduce((acc, field) => {
+                acc[field] = { $sum: { $ifNull: [`$${field}`, 0] } };
+                return acc;
+            }, {});
+        }
+
+        const TotalusertodayAgg = await User.aggregate([
+            {
+                $match: {
+                    lastPaymentDay: currentDate
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    ...sumFields(fields)
+                }
+            }
+        ]);
+
+        const Totalusertoday = fields.reduce((acc, field) => {
+            acc[field] = TotalusertodayAgg[0]?.[field] || 0;
+            return acc;
+        }, {});
+
+
         const paymentToday = await Payment.aggregate([
             { $match: { payment_date: { $gte: today.toDate(), $lt: tomorrow.toDate() }, payment_status: "success" } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
+
 
         const paymentYesterday = await Payment.aggregate([
             { $match: { payment_date: { $gte: yesterday.toDate(), $lt: today.toDate() }, payment_status: "success" } },
@@ -156,7 +195,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
 
         const currentMonthIdentifier = moment().format('YYYY-MM'); // This will be "2025-07" for July 2025
         const currentWeekIdentifier = moment().format('YYYY-WW'); // This will be "2025-27" for the current week (ISO 8601)
-        console.log("currentWeekIdentifier", currentWeekIdentifier)
         const lastWeekIdentifier = currentWeekIdentifier - 1;
 
         // --- Aggregation for Current Week Unpaid Amount ---
@@ -175,7 +213,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             }
         ]);
 
-        console.log("userunpaidweek", userunpaidweek)
 
         // Extract the total, defaulting to 0 if no documents were found
         const totalUnpaidWeek = userunpaidweek[0]?.total || 0;
@@ -420,7 +457,8 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             totalUnpaid: totalUnpaidWeek || 0,
             totalMonthUnpaid: totalUnpaidMonth || 0,
             totalSumMonthpassive: totalSumMonthpassive || 0,
-            totalMonthrefral: totalMonthrefral || 0
+            totalMonthrefral: totalMonthrefral || 0,
+            Totalusertoday: Totalusertoday,
         });
 
     } catch (error) {
