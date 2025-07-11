@@ -36,7 +36,7 @@ const paymentSchema = mongoose.Schema({
     },
     payment_income: {
         type: String,
-        default: "0",
+        default: null,
     },
     payment_type: {
         type: String,
