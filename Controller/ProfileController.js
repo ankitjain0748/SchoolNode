@@ -126,7 +126,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
                 : ((Course?.referred_user_pay_monthly || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) - (Course?.UnPaidAmounts || 0))
             )
         }
-        const OverAllPayment = ((Course?.referred_user_pay_overall || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) + (Course?.totalPayout) -(Course?.UnPaidAmounts || 0) );
+        const OverAllPayment = ((Course?.referred_user_pay_overall || 0) - (Course?.lastTodayIncome || 0) + (Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0) -  (Course?.totalPayout) -(Course?.UnPaidAmounts || 0) );
         // Existing fetches (these remain as is)
         const startOfWeek = moment().startOf('isoWeek');
         const endOfWeek = moment().endOf('isoWeek');
