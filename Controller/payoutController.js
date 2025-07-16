@@ -38,21 +38,11 @@ exports.payoutData = catchAsync(async (req, res) => {
         let updatedReferredUserPayDaily = user.referred_user_pay_daily || 0;
         let updatedPaymentKey = user.payment_key_daily || 0;
         let updatedLastTodayIncome = user.lastTodayIncome - payment_key || 0;
-        let UnPaidAmounts = user.UnPaidAmounts - payment_key || 0;
-
         // Reset values when period changes
         if (user.lastPaymentMonth !== currentMonth) updatedReferredUserPayMonthly = 0;
         if (user.lastPaymentWeek !== currentWeek) updatedReferredUserPayWeekly = 0;
         // Add current payments
-        // Adjust referral-related amounts conditionally
-        let referralAmount = 0;
-
-        // If payoutpayment is provided, subtract it from referrals
-        if (payoutpayment) {
-            referralAmount = -Math.abs(Number(payoutpayment) || 0); // ensure negative value
-        } else if (payment_Add) {
-            referralAmount = Number(payment_Add) || 0; // otherwise use payment_Add
-        }
+        const referralAmount = Number(payment_Add) || 0;
         updatedLastTodayIncome += referralAmount;
         updatedReferredUserPayOverall += referralAmount;
         updatedReferredUserPayMonthly += referralAmount;
@@ -100,7 +90,6 @@ exports.payoutData = catchAsync(async (req, res) => {
                     referred_user_pay_weekly: updatedReferredUserPayWeekly,
                     referred_user_pay_daily: updatedReferredUserPayDaily,
                     lastTodayIncome: updatedLastTodayIncome,
-                    unPaidAmounts: UnPaidAmounts,
                     lastPaymentMonth: currentMonth,
                     lastPaymentWeek: currentWeek,
                     lastPaymentDay: currentDay,

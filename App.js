@@ -53,7 +53,6 @@ app.get("/", (req, res) => {
     });
 });
 
-console.log(moment().subtract(1, 'days').format('YYYY-MM-DD'));
 
 initCronJobs(); // No more TypeError
 
