@@ -14,30 +14,30 @@ function initCronJobs() {
             Loggers.info(`🧑‍🤝‍🧑 Found ${users.length} users`);
             for (let user of users) {
                 let updates = {};
-                if (user.lastPaymentDay === yesterday) {
-                    const lastTodayIncome = Number(user.lastTodayIncome) || 0;
-                    const referredDaily = Number(user.referred_user_pay_daily) || 0;
-                    const referredPay = Number(user.referred_user_pay) || 0;
-                    const referredOverall = Number(user.referred_user_pay_overall) || 0;
-                    const referredMonthly = Number(user.referred_user_pay_monthly) || 0;
-                    const referredWeekly = Number(user.referred_user_pay_weekly) || 0;
-                    const passive1 = Number(user.first_user_pay) || 0;
-                    const passive2 = Number(user.second_user_pay) || 0;
-                    const todayPayment = Number(user.paymentmanage) || 0;
-                    updates.UnPaidAmounts = lastTodayIncome;
-                    updates.lastTodayIncome = referredDaily + referredPay;
-                    updates.referred_user_pay_overall = referredOverall + referredPay;
-                    updates.referred_user_pay_monthly = referredMonthly + referredPay;
-                    updates.referred_user_pay_weekly = referredWeekly + referredPay;
-                    updates.passive_income = passive1 + passive2;
-                    updates.TodayPayment = todayPayment;
-                    updates.referred_user_pay_daily = 0;
-                    updates.referred_user_pay = 0;
-                    updates.paymentmanage = 0;
-                    Loggers.verbose(`📝 Preparing to update user: ${user._id}`);
-                    await User.findByIdAndUpdate(user._id, updates, { new: true });
-                    Loggers.info(`✅ Updated user: ${user._id}`);
-                }
+                // if (user.lastPaymentDay === yesterday) {
+                //     const lastTodayIncome = Number(user.lastTodayIncome) || 0;
+                //     const referredDaily = Number(user.referred_user_pay_daily) || 0;
+                //     const referredPay = Number(user.referred_user_pay) || 0;
+                //     const referredOverall = Number(user.referred_user_pay_overall) || 0;
+                //     const referredMonthly = Number(user.referred_user_pay_monthly) || 0;
+                //     const referredWeekly = Number(user.referred_user_pay_weekly) || 0;
+                //     const passive1 = Number(user.first_user_pay) || 0;
+                //     const passive2 = Number(user.second_user_pay) || 0;
+                //     const todayPayment = Number(user.paymentmanage) || 0;
+                //     updates.UnPaidAmounts = lastTodayIncome;
+                //     updates.lastTodayIncome = referredDaily + referredPay;
+                //     updates.referred_user_pay_overall = referredOverall + referredPay;
+                //     updates.referred_user_pay_monthly = referredMonthly + referredPay;
+                //     updates.referred_user_pay_weekly = referredWeekly + referredPay;
+                //     updates.passive_income = passive1 + passive2;
+                //     updates.TodayPayment = todayPayment;
+                //     updates.referred_user_pay_daily = 0;
+                //     updates.referred_user_pay = 0;
+                //     updates.paymentmanage = 0;
+                //     Loggers.verbose(`📝 Preparing to update user: ${user._id}`);
+                //     await User.findByIdAndUpdate(user._id, updates, { new: true });
+                //     Loggers.info(`✅ Updated user: ${user._id}`);
+                // }
             }
 
             const from = "StackEarn Cron Daily <no-reply@stackearn.com>";
