@@ -120,7 +120,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
                 }
             }
         ]);
-
         // Now handle safely
         const todayData = adminPaymentsToday[0] || { totalAdd: 0, totalWithdrawal: 0, totalPayout: 0 };
         const weekData = adminPaymentsWeek[0] || { totalAdd: 0, totalWithdrawal: 0, totalPayout: 0 };
@@ -184,7 +183,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
 
-
         const paymentYesterday = await Payment.aggregate([
             { $match: { payment_date: { $gte: yesterday.toDate(), $lt: today.toDate() }, payment_status: "success" } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
@@ -192,27 +190,28 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
 
 
 
-
         const currentMonthIdentifier = moment().format('YYYY-MM'); // This will be "2025-07" for July 2025
         const currentWeekIdentifier = moment().format('YYYY-WW'); // This will be "2025-27" for the current week (ISO 8601)
+      console.log("currentWeekIdentifier" ,  currentWeekIdentifier)
         const lastWeekIdentifier = currentWeekIdentifier - 1;
 
         // --- Aggregation for Current Week Unpaid Amount ---
         const userunpaidweek = await User.aggregate([
             {
                 $match: {
-                    // Match documents where 'lastPaymentWeek' field equals the current week identifier
-                    lastPaymentWeek: lastWeekIdentifier
+                    lastPaymentWeek: currentWeekIdentifier
                 }
             },
             {
                 $group: {
-                    _id: null, // Group all matched documents into a single result
+                    _id: null,
                     total: { $sum: { $ifNull: ["$UnPaidAmounts", 0] } } // Sum 'UnPaidAmounts', treating null/missing as 0
                 }
             }
         ]);
 
+        console.log("userunpaidweek", userunpaidweek);
+        console.log("lastWeekIdentifier" ,lastWeekIdentifier)
 
         // Extract the total, defaulting to 0 if no documents were found
         const totalUnpaidWeek = userunpaidweek[0]?.total || 0;
@@ -221,7 +220,6 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
         const userunpaidMonth = await User.aggregate([
             {
                 $match: {
-                    // Match documents where 'lastPaymentMonth' field equals the current month identifier
                     lastPaymentMonth: currentMonthIdentifier
                 }
             },
@@ -454,7 +452,7 @@ exports.AdminDashboard = catchAsync(async (req, res) => {
             NextPayoutPayments: NextPayoutPayments[0]?.total || 0,
             overallPassiveIncome: overallPassiveIncome[0] || {},
             totalSum: totalSum || 0,
-            totalUnpaid: totalUnpaidWeek || 0,
+            totalUnpaidWeek: totalUnpaidWeek || 0,
             totalMonthUnpaid: totalUnpaidMonth || 0,
             totalSumMonthpassive: totalSumMonthpassive || 0,
             totalMonthrefral: totalMonthrefral || 0,
