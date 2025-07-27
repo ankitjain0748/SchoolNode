@@ -507,8 +507,6 @@ exports.profilegettoken = catchAsync(async (req, res, next) => {
   }
 });
 
-
-
 exports.userfilter = catchAsync(async (req, res, next) => {
   try {
     const { username, user_status } = req.body;  // Changed to req.query for query params
@@ -561,34 +559,30 @@ exports.VerifyUser = catchAsync(async (req, res) => {
 }
 );
 
-
-
 exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
     let query = {
-      role: 'user', // Adding filter for users with role 'user'
-      UnPaidAmounts: { $gt: 0 } // Adding filter for UnPaidAmounts greater than 0
+      role: 'user',
     };
+
     const startDate = new Date();
     startDate.setDate(startDate.getDate());
     startDate.setHours(0, 0, 0, 0);
     const formattedDate = startDate.toISOString().split("T")[0];
 
     if (search && search.trim() !== "") {
-      query.name = { $regex: search, $options: "i" }; // Search query for name
+      query.name = { $regex: search, $options: "i" };
     }
 
     const pageNumber = Math.max(1, parseInt(page, 10));
     const limitNumber = Math.max(1, parseInt(limit, 10));
     const skip = (pageNumber - 1) * limitNumber;
 
-    // Fetch users based on the query, with pagination
-    const users = await User.find(query).skip(skip).limit(limitNumber).sort({
-      created_at: -1
-    });
+    // Fetch users based on the query
+    const users = await User.find(query).sort({ created_at: -1 });
 
-    // Fetch additional user details
+    // Fetch and enrich user details
     const userDetails = await Promise.all(
       users.map(async (user) => {
         const [referredBy, referredFirst, referredSecond, userBankDetails] = await Promise.all([
@@ -605,8 +599,15 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
           referredSecond ? Bank.findOne({ userId: referredSecond._id }) : null,
         ]);
 
+        const userObj = user.toObject();
+        const totalAdd = userObj.totalAdd || 0;
+        const totalPayout = userObj.totalPayout || 0;
+        const totalWidthrawal = userObj.totalWidthrawal || 0;
+        const netBalance = totalAdd - totalPayout - totalWidthrawal;
+
         return {
-          ...user.toObject(),
+          ...userObj,
+          netBalance,
           referred_by_details: referredBy,
           referred_first_details: referredFirst,
           referred_second_details: referredSecond,
@@ -619,15 +620,19 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
       })
     );
 
-    const totalUsers = await User.countDocuments(query); // Get total users count with filters
+    // ✅ Filter only those users whose netBalance > 0
+    const filteredUsers = userDetails.filter(user => user.netBalance > 0);
+
+    // Pagination on filtered data
+    const paginatedUsers = filteredUsers.slice(skip, skip + limitNumber);
 
     res.status(200).json({
       status: true,
       message: "Users fetched successfully",
-      userDetails: userDetails,
-      totalUsers,
+      userDetails: paginatedUsers,
+      totalUsers: filteredUsers.length,
       currentPage: pageNumber,
-      totalPages: Math.ceil(totalUsers / limitNumber),
+      totalPages: Math.ceil(filteredUsers.length / limitNumber),
       limit: limitNumber,
     });
   } catch (err) {
@@ -638,7 +643,6 @@ exports.getUsersWithTodayRefDate = catchAsync(async (req, res) => {
     });
   }
 });
-
 
 exports.getUsersWithMonthRefDate = catchAsync(async (req, res) => {
   try {

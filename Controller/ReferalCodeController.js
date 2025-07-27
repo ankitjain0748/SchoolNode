@@ -1,4 +1,5 @@
 const UserModel = require("../Model/User");
+const AdminPay = require("../Model/Adminpay");
 const RefralModel = require("../Model/Referal");
 const logger = require("../utill/Loggers");
 const catchAsync = require("../utill/catchAsync");
@@ -96,8 +97,8 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             .select("-password -OTP")
             .populate({ path: "CourseId", select: "title discountPrice category courseImage" })
             .populate({ path: "referred_by", model: "User", select: "name email referral_code" })
-            .populate({ path: "referred_first", model: "User", select: "name email referral_code"})
-            .populate({ path: "referred_second", model: "User", select: "name email referral_code"})
+            .populate({ path: "referred_first", model: "User", select: "name email referral_code" })
+            .populate({ path: "referred_second", model: "User", select: "name email referral_code" })
             .skip((page - 1) * limit)
             .limit(limit);
 
@@ -153,6 +154,92 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
         const AdminUser = await User.findOne({ role: "admin" });
 
+        const Course = User
+        //  total  payout 
+
+        const payments = await AdminPay.find({
+            userId: userId,
+        });
+
+        let totalPaymentWithdrawal = 0;
+        let totalPayoutPayment = 0;
+        let totalAdd = 0;
+
+        payments.forEach(payment => {
+            totalPaymentWithdrawal += payment.paymentWidthrawal || 0;
+            totalPayoutPayment += payment.payoutpayment || 0;
+            totalAdd += payment.payment_Add || 0;
+        });
+
+
+        // one Day  Payment Calculation
+
+        const datapayment = ((totalAdd) - (totalPayoutPayment) - (totalPaymentWithdrawal) + (user?.first_user_pay || 0) + (user?.second_user_pay || 0) + (user?.referred_user_pay || 0));
+        const startOfWeek = moment().startOf('isoWeek');
+        const endOfWeek = moment().endOf('isoWeek');
+        const currentWeekIdentifier = moment().format('YYYY-WW');   // e.g., "2025-27" (for ISO week)
+        const currentMonthIdentifier = moment().format('YYYY-MM'); // e.g., "2025-07"
+
+
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        //weekly Admin paymnet 
+        const paymentweeklys = await AdminPay.find({
+            userId: userId,
+            payment_date: { $gte: startOfWeek.toDate(), $lte: endOfWeek.toDate() }
+        });
+
+        let totalweekPaymentWithdrawal = 0;
+        let totalweekPayoutPayment = 0;
+        let totalweekAddPayment = 0
+        paymentweeklys.forEach(payment => {
+            totalweekPaymentWithdrawal += payment.paymentWidthrawal || 0;
+            totalweekPayoutPayment += payment.payoutpayment || 0;
+            totalweekAddPayment += payment.payment_Add || 0;
+        });
+        //monthlu payment 
+
+
+        const startOfMonth = moment().startOf('month');
+        const endOfMonth = moment().endOf('month');
+
+        const paymentMonthlys = await AdminPay.find({
+            userId: userId,
+            payment_date: { $gte: startOfMonth.toDate(), $lte: endOfMonth.toDate() }
+        });
+
+        let totalMonthPaymentWithdrawal = 0;
+        let totalMonthPayoutPayment = 0;
+        let totalMonthAddPayment = 0;
+
+        paymentMonthlys.forEach(payment => {
+            totalMonthPaymentWithdrawal += payment.paymentWidthrawal || 0;
+            totalMonthPayoutPayment += payment.payoutpayment || 0;
+            totalMonthAddPayment += payment.payment_Add || 0;
+        });
+
+        // Weekly Payment Calculation
+        let WeekPayment = 0;
+
+        if (user?.lastPaymentWeek === currentWeekIdentifier) {
+            WeekPayment = (user?.UnPaidAmounts === 0
+                ? ((totalweekAddPayment) - (totalweekPaymentWithdrawal))
+                : ((user?.referred_user_pay_weekly) - (user?.lastTodayIncome || 0) + (user?.UnPaidAmounts || 0) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
+            )
+        }
+        let MonthPayment = 0;
+        if (user?.lastPaymentMonth === currentMonthIdentifier) {
+            MonthPayment = (- (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0) + (user?.first_user_pay || 0) + (user?.second_user_pay || 0) + (user?.referred_user_pay || 0));
+        }
+
+        const OverAllPayment =
+            (user?.UnPaidAmounts === 0
+                ? ((user?.totalAdd || 0) - (user?.totalWidthrawal || 0))
+                : ((user?.referred_user_pay_overall) - (user?.lastTodayIncome || 0) + (user?.UnPaidAmounts || 0) + (user?.totalPayout || 0))
+            );
 
         return res.status(200).json({
             msg: "Referral data retrieved successfully",
@@ -164,6 +251,10 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             data: referralUsersWithPayment,
             user,
             AdminUser: AdminUser,
+            datapayment: datapayment,
+            WeekPayment: WeekPayment,
+            MonthPayment: MonthPayment,
+            OverAllPayment: OverAllPayment,
         });
     } catch (error) {
         console.error("Error fetching referral data:", error);
@@ -210,9 +301,9 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         const testReferrals = await User.find(referralQuery)
             .select("-password -OTP")
             .populate({ path: "CourseId", select: "title discountPrice category courseImage" })
-            .populate({ path: "referred_by", model: "User", select: "name email referral_code"})
-            .populate({ path: "referred_first", model: "User", select: "name email referral_code"})
-            .populate({ path: "referred_second", model: "User", select: "name email referral_code"})
+            .populate({ path: "referred_by", model: "User", select: "name email referral_code" })
+            .populate({ path: "referred_first", model: "User", select: "name email referral_code" })
+            .populate({ path: "referred_second", model: "User", select: "name email referral_code" })
             .skip((page - 1) * limit)
             .limit(limit);
 

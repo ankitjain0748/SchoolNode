@@ -103,12 +103,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         const Course = UserData;
 
-
         // Daily/Current Payment Calculation
-
-        const datapayment = (Course?.UnPaidAmounts || 0);
-
-
 
         const startOfWeek = moment().startOf('isoWeek');
         const endOfWeek = moment().endOf('isoWeek');
@@ -118,12 +113,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         const reviews = await Review.find({ userId: new mongoose.Types.ObjectId(userId) });
         const BankData = await Bank.findOne({ userId: userId });
         const payment = await Payment.findOne({ UserId: userId });
-        const AdminPayments = await AdminPay.find({ userId: userId });
-
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date();
-        endOfDay.setHours(23, 59, 59, 999);
+        //  total  payout 
 
         const payments = await AdminPay.find({
             userId: userId,
@@ -131,11 +121,28 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         let totalPaymentWithdrawal = 0;
         let totalPayoutPayment = 0;
+        let totalAdd = 0;
+
         payments.forEach(payment => {
             totalPaymentWithdrawal += payment.paymentWidthrawal || 0;
             totalPayoutPayment += payment.payoutpayment || 0;
+            totalAdd += payment.payment_Add || 0;
         });
 
+
+        // one Day  Payment Calculation
+
+        const datapayment = ((totalAdd) - (totalPayoutPayment) - (totalPaymentWithdrawal) + (Course?.first_user_pay || 0) + (Course?.second_user_pay || 0) + (Course?.referred_user_pay || 0));
+
+
+        const AdminPayments = await AdminPay.find({ userId: userId });
+
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        //weekly Admin paymnet 
         const paymentweeklys = await AdminPay.find({
             userId: userId,
             payment_date: { $gte: startOfWeek.toDate(), $lte: endOfWeek.toDate() }
@@ -143,10 +150,14 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         let totalweekPaymentWithdrawal = 0;
         let totalweekPayoutPayment = 0;
+        let totalweekAddPayment = 0
         paymentweeklys.forEach(payment => {
             totalweekPaymentWithdrawal += payment.paymentWidthrawal || 0;
             totalweekPayoutPayment += payment.payoutpayment || 0;
+            totalweekAddPayment += payment.payment_Add || 0;
         });
+        //monthlu payment 
+
 
         const startOfMonth = moment().startOf('month');
         const endOfMonth = moment().endOf('month');
@@ -158,10 +169,12 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         let totalMonthPaymentWithdrawal = 0;
         let totalMonthPayoutPayment = 0;
+        let totalMonthAddPayment = 0;
 
         paymentMonthlys.forEach(payment => {
             totalMonthPaymentWithdrawal += payment.paymentWidthrawal || 0;
             totalMonthPayoutPayment += payment.payoutpayment || 0;
+            totalMonthAddPayment += payment.payment_Add || 0;
         });
 
 
@@ -182,28 +195,20 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         let WeekPayment = 0;
         if (Course?.lastPaymentWeek === currentWeekIdentifier) {
             WeekPayment = (Course?.UnPaidAmounts === 0
-                ? ((Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
-                : ((Course?.referred_user_pay_weekly) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalweekPayoutPayment || 0))
+                ? ((totalweekAddPayment) - (totalweekPaymentWithdrawal))
+                : ((Course?.referred_user_pay_weekly) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
             )
         }
-        console.log("WeekPayment", WeekPayment)
-
         let MonthPayment = 0;
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
-            MonthPayment = (Course?.UnPaidAmounts === 0
-                ? ((Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
-                : ((Course?.referred_user_pay_monthly) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalMonthPayoutPayment || 0))
-            )
+            MonthPayment = (- (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0) + (Course?.first_user_pay || 0) + (Course?.second_user_pay || 0) + (Course?.referred_user_pay || 0));
         }
-
-        console.log("MonthPayment", MonthPayment)
 
         const OverAllPayment =
             (Course?.UnPaidAmounts === 0
                 ? ((Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
-                : ((Course?.referred_user_pay_overall) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalPayoutPayment || 0))
+                : ((Course?.referred_user_pay_overall) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (Course?.totalPayout || 0))
             );
-        console.log("totalPayoutPayment", totalPayoutPayment)
 
         return res.status(200).json({
             status: true,
@@ -220,7 +225,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             totalPayoutPayment: totalPayoutPayment,
             totalweekPaymentWithdrawal: totalweekPaymentWithdrawal,
             totalweekPayoutPayment: totalweekPayoutPayment,
-            // Include the newly calculated payment data
             datapayment: datapayment,
             WeekPayment: WeekPayment,
             MonthPayment: MonthPayment,

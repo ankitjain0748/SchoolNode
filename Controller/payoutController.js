@@ -11,7 +11,8 @@ exports.payoutData = catchAsync(async (req, res) => {
             Id, data_payment, success_reasons, payment_type, paymentMethod,
             transactionId, payment_data, payment_income,
             referred_user_pay, payment_key, page, withdrawal_reason,
-            paymentWidthrawal, payment_Add, payoutpayment
+            paymentWidthrawal, payment_Add, payoutpayment, UnPaidAmounts,
+
         } = req.body;
         if (!Id) {
             return res.status(400).json({
@@ -63,7 +64,6 @@ exports.payoutData = catchAsync(async (req, res) => {
                 message: "Failed to save payment data."
             });
         }
-        // Update user payment data
         const incFields = {
             ...(payment_Add && { totalAdd: payment_Add }),
             ...(paymentWidthrawal && { totalWidthrawal: paymentWidthrawal }),
@@ -94,7 +94,8 @@ exports.payoutData = catchAsync(async (req, res) => {
                     lastPaymentWeek: currentWeek,
                     lastPaymentDay: currentDay,
                     payment_key_daily: updatedPaymentKey,
-                    paymentmanage
+                    paymentmanage,
+                    UnPaidAmounts : UnPaidAmounts - paymentmanage || 0
                 },
                 $inc: incFields
             },
