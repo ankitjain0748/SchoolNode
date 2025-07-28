@@ -476,22 +476,16 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.profilegettoken = catchAsync(async (req, res, next) => {
   try {
-    // Ensure req.User is populated properly from middleware
     const userId = req?.User?._id;
     if (!userId) {
       return res.status(400).json({ msg: "User not authenticated" });
     }
-
-
-    // Fetch user profile excluding password
     const userProfile = await User.findById(userId).select('-password');
     if (!userProfile) {
       return res.status(404).json({ msg: "User profile not found" });
     }
-
-    // Fetch additional profile data by userId
     const profileData = await ProfileData.findOne({ userId });
-    // Respond with data
+    
     res.status(200).json({
       data: userProfile,
       profileData: profileData,
@@ -499,7 +493,6 @@ exports.profilegettoken = catchAsync(async (req, res, next) => {
     });
   } catch (error) {
     logger.error("Error deleting user record:", error);
-
     res.status(500).json({
       msg: "Failed to fetch profile",
       error: error.message,

@@ -12,6 +12,12 @@ const Transaction = require("../Model/Transcation");
 const Review = require("../Model/Review");
 const moment = require("moment-timezone");
 
+
+
+const getReferralEarnings = require("../utill/getReferralEarnings");
+
+
+
 exports.profileAddOrUpdate = catchAsync(async (req, res) => {
     const userId = req?.User?._id; // Assuming `User` is attached to the request object
     const {
@@ -28,6 +34,8 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
         bio,
     } = req.body;
     try {
+
+
         const existingProfile = await Profile.findOne({ userId });
         if (existingProfile) {
             existingProfile.firstname = firstname || existingProfile.firstname;
@@ -87,6 +95,91 @@ exports.profileAddOrUpdate = catchAsync(async (req, res) => {
 exports.ProfileData = catchAsync(async (req, res, next) => {
     try {
         const userId = req?.body?.id;
+        const now = moment().tz("Asia/Kolkata");
+        const todayStart = now.clone().startOf("day").utc().toDate();
+        const todayEnd = now.clone().endOf("day").utc().toDate();
+        const weekStart = now.clone().startOf("week").utc().toDate();
+        const weekEnd = now.clone().endOf("week").utc().toDate();
+        const monthStart = now.clone().startOf("month").utc().toDate();
+        const monthEnd = now.clone().endOf("month").utc().toDate();
+
+        const referralQuery = {
+            $or: [
+                { referred_by: userId },
+                { referred_first: userId },
+                { referred_second: userId },
+            ],
+        };
+
+        const referredUsers = await User.find(referralQuery)
+            .select("-password -OTP")
+            .populate({ path: "CourseId", select: "title discountPrice category courseImage" })
+            .populate({ path: "referred_by", model: "User", select: "name email referral_code" })
+            .populate({ path: "referred_first", model: "User", select: "name email referral_code" })
+            .populate({ path: "referred_second", model: "User", select: "name email referral_code" });
+
+        const referralUserIds = referredUsers.map(user => user._id);
+
+        console.log("Referral User IDs:", referralUserIds);
+
+        const paymentFilter = {
+            UserId: { $in: referralUserIds },
+            payment_status: "success",
+        };
+
+        const paymentss = await Payment.find(paymentFilter).lean();
+
+        console.log("Payment Data:", paymentss);
+
+        // Group payments by time ranges
+        const earnings = {
+            today: [],
+            week: [],
+            month: [],
+            overall: paymentss, // All valid payments
+        };
+
+        paymentss.forEach(payment => {
+            const payDate = new Date(payment.paymentDate);
+            if (payDate >= todayStart && payDate <= todayEnd) {
+                earnings.today.push(payment);
+            }
+            if (payDate >= weekStart && payDate <= weekEnd) {
+                earnings.week.push(payment);
+            }
+            if (payDate >= monthStart && payDate <= monthEnd) {
+                earnings.month.push(payment);
+            }
+        });
+
+        // Optionally calculate total amount per time period
+        const calculateTotal = (arr, userId) =>
+            arr.reduce((sum, p) => {
+                let total = 0;
+                if (p.referredData1?.userId?.toString() === userId.toString()) {
+                    total += p.referredData1.payAmount || 0;
+                }
+                if (p.referredData2?.userId?.toString() === userId.toString()) {
+                    total += p.referredData2.payAmount || 0;
+                }
+                if (p.referredData3?.userId?.toString() === userId.toString()) {
+                    total += p.referredData3.payAmount || 0;
+                }
+                return sum + total;
+            }, 0);
+
+
+        const totals = {
+            today: calculateTotal(earnings.today, userId),
+            week: calculateTotal(earnings.week, userId),
+            month: calculateTotal(earnings.month, userId),
+            overall: calculateTotal(earnings.overall, userId),
+        };
+
+
+
+        // console.log("Referral earnings data:", earnings);
+        console.log("Referral earnings data:", totals)
 
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
 
@@ -132,7 +225,7 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         // one Day  Payment Calculation
 
-        const datapayment = ((totalAdd) - (totalPayoutPayment) - (totalPaymentWithdrawal) + (Course?.first_user_pay || 0) + (Course?.second_user_pay || 0) + (Course?.referred_user_pay || 0));
+        const datapayment = ((totalAdd) - (totalPayoutPayment) - (totalPaymentWithdrawal) + (totals?.overall || 0));
 
 
         const AdminPayments = await AdminPay.find({ userId: userId });
@@ -196,19 +289,17 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         if (Course?.lastPaymentWeek === currentWeekIdentifier) {
             WeekPayment = (Course?.UnPaidAmounts === 0
                 ? ((totalweekAddPayment) - (totalweekPaymentWithdrawal))
-                : ((Course?.referred_user_pay_weekly) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
+                : ((totals?.week) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
             )
         }
         let MonthPayment = 0;
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
-            MonthPayment = (- (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0) + (Course?.first_user_pay || 0) + (Course?.second_user_pay || 0) + (Course?.referred_user_pay || 0));
+            MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0) + (Course?.first_user_pay || 0) + (Course?.second_user_pay || 0) + (Course?.referred_user_pay || 0));
         }
 
-        const OverAllPayment =
-            (Course?.UnPaidAmounts === 0
-                ? ((Course?.totalAdd || 0) - (Course?.totalWidthrawal || 0))
-                : ((Course?.referred_user_pay_overall) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (Course?.totalPayout || 0))
-            );
+        const OverAllPayment =  ((totals?.overall) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalAdd) -(totalPaymentWithdrawal))
+
+            console.log("OverAllPayment" , OverAllPayment)
 
         return res.status(200).json({
             status: true,
@@ -221,10 +312,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             Transactions: Transactions,
             AdminPayments: AdminPayments,
             review: reviews,
-            totalPaymentWithdrawal: totalPaymentWithdrawal,
-            totalPayoutPayment: totalPayoutPayment,
-            totalweekPaymentWithdrawal: totalweekPaymentWithdrawal,
-            totalweekPayoutPayment: totalweekPayoutPayment,
             datapayment: datapayment,
             WeekPayment: WeekPayment,
             MonthPayment: MonthPayment,

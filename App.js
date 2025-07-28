@@ -45,7 +45,8 @@ app.use("/refral", RefralRoute)
 app.use("/contact", ContactRoute)
 app.use("/gallery", GalleryRoute);
 app.use("/auth", AuthRoute);
-const PORT = process.env.REACT_APP_SERVER_DOMIN || 5000;
+const PORT = process.env.REACT_APP_SERVER_DOMIN || 8000;
+console.log("Server is running on port: " + PORT);
 app.get("/", (req, res) => {
     res.json({
         msg: 'Hello StackEarn in admin and student Website and dashboard ',
