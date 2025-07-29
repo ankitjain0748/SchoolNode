@@ -120,7 +120,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         const referralUserIds = referredUsers.map(user => user._id);
 
-        console.log("Referral User IDs:", referralUserIds);
 
         const paymentFilter = {
             UserId: { $in: referralUserIds },
@@ -129,7 +128,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
 
         const paymentss = await Payment.find(paymentFilter).lean();
 
-        console.log("Payment Data:", paymentss);
 
         // Group payments by time ranges
         const earnings = {
@@ -176,10 +174,6 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             overall: calculateTotal(earnings.overall, userId),
         };
 
-
-
-        // console.log("Referral earnings data:", earnings);
-        console.log("Referral earnings data:", totals)
 
         const UserData = await User.findOne({ _id: userId }).select("-password").populate("CourseId");
 
@@ -287,19 +281,17 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         // Weekly Payment Calculation
         let WeekPayment = 0;
         if (Course?.lastPaymentWeek === currentWeekIdentifier) {
-            WeekPayment = (Course?.UnPaidAmounts === 0
-                ? ((totalweekAddPayment) - (totalweekPaymentWithdrawal))
-                : ((totals?.week) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
-            )
+            WeekPayment = ((totals?.week) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
         }
         let MonthPayment = 0;
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
-            MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0) + (Course?.first_user_pay || 0) + (Course?.second_user_pay || 0) + (Course?.referred_user_pay || 0));
+            MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0));
         }
 
-        const OverAllPayment =  ((totals?.overall) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalAdd) -(totalPaymentWithdrawal))
+        const OverAllPayment = ((totals?.overall) + (totalAdd) - (totalPaymentWithdrawal))
 
-            console.log("OverAllPayment" , OverAllPayment)
+
+        console.log("OverAllPayment", OverAllPayment)
 
         return res.status(200).json({
             status: true,

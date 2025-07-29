@@ -90,7 +90,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
     const referralUserIdss = referredUsers.map(user => user._id);
 
-    console.log("Referral User IDs:", referralUserIdss);
 
     const paymentFilter = {
         UserId: { $in: referralUserIdss },
@@ -99,7 +98,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
     const paymentss = await Payment.find(paymentFilter).lean();
 
-    console.log("Payment Data:", paymentss);
 
     // Group payments by time ranges
     const earnings = {
@@ -148,8 +146,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
 
 
 
-    // console.log("Referral earnings data:", earnings);
-    console.log("Referral earnings data:", totals)
 
     let { page = 1, limit = 10, payment_date, name = "" } = req.query;
     page = parseInt(page, 10);
@@ -380,7 +376,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
     const referralUserIdss = referredUsers.map(user => user._id);
 
-    console.log("Referral User IDs:", referralUserIdss);
 
     const paymentFilter = {
         UserId: { $in: referralUserIdss },
@@ -389,7 +384,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
 
     const paymentss = await Payment.find(paymentFilter).lean();
 
-    console.log("Payment Data:", paymentss);
 
     // Group payments by time ranges
     const earnings = {
@@ -436,10 +430,6 @@ exports.RefralCodeGetId = catchAsync(async (req, res) => {
         overall: calculateTotal(earnings.overall, userId),
     };
 
-
-
-    // console.log("Referral earnings data:", earnings);
-    console.log("Referral earnings data:", totals)
 
     let { page = 1, limit = 10, payment_date, name = "" } = req.query;
     page = parseInt(page, 10);

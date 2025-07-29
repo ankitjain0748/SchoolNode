@@ -95,7 +95,6 @@ exports.payoutData = catchAsync(async (req, res) => {
                     lastPaymentDay: currentDay,
                     payment_key_daily: updatedPaymentKey,
                     paymentmanage,
-                    UnPaidAmounts : UnPaidAmounts - paymentmanage || 0
                 },
                 $inc: incFields
             },
