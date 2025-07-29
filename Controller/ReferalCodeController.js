@@ -307,19 +307,20 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             totalMonthAddPayment += payment.payment_Add || 0;
         });
 
+       // Weekly Payment Calculation
         let WeekPayment = 0;
         if (Course?.lastPaymentWeek === currentWeekIdentifier) {
-            WeekPayment = (Course?.UnPaidAmounts === 0
-                ? ((totalweekAddPayment) - (totalweekPaymentWithdrawal))
-                : ((totals?.week) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
-            )
-        }
-        let MonthPayment = 0;
-        if (Course?.lastPaymentMonth === currentMonthIdentifier) {
-            MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0) + (Course?.first_user_pay || 0) + (Course?.second_user_pay || 0) + (Course?.referred_user_pay || 0));
+            WeekPayment = ((totals?.week) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
         }
 
-        const OverAllPayment = ((totals?.overall) - (Course?.lastTodayIncome || 0) + (Course?.UnPaidAmounts || 0) + (totalAdd) - (totalPaymentWithdrawal))
+        console.log("WeekPayment" ,WeekPayment)
+        let MonthPayment = 0;
+        if (Course?.lastPaymentMonth === currentMonthIdentifier) {
+            MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0));
+        }
+
+        const OverAllPayment = ((totals?.overall) + (totalAdd) - (totalPaymentWithdrawal))
+
 
         console.log("OverAllPayment", OverAllPayment)
 
