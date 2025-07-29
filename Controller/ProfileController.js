@@ -283,6 +283,8 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
         if (Course?.lastPaymentWeek === currentWeekIdentifier) {
             WeekPayment = ((totals?.week) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
         }
+
+        console.log("WeekPayment" ,WeekPayment)
         let MonthPayment = 0;
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
             MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0));
