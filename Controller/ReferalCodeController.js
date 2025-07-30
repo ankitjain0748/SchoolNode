@@ -313,7 +313,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
             WeekPayment = ((totals?.week) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
         }
 
-        console.log("WeekPayment" ,WeekPayment)
         let MonthPayment = 0;
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
             MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0));
@@ -322,7 +321,6 @@ exports.RefralCodeGet = catchAsync(async (req, res) => {
         const OverAllPayment = ((totals?.overall) + (totalAdd) - (totalPaymentWithdrawal))
 
 
-        console.log("OverAllPayment", OverAllPayment)
 
         return res.status(200).json({
             msg: "Referral data retrieved successfully",

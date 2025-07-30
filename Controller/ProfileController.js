@@ -284,16 +284,12 @@ exports.ProfileData = catchAsync(async (req, res, next) => {
             WeekPayment = ((totals?.week) + (totalweekAddPayment) - (totalweekPaymentWithdrawal))
         }
 
-        console.log("WeekPayment" ,WeekPayment)
         let MonthPayment = 0;
         if (Course?.lastPaymentMonth === currentMonthIdentifier) {
             MonthPayment = ((totals?.month) - (totalMonthPaymentWithdrawal || 0) + (totalMonthAddPayment || 0));
         }
 
         const OverAllPayment = ((totals?.overall) + (totalAdd) - (totalPaymentWithdrawal))
-
-
-        console.log("OverAllPayment", OverAllPayment)
 
         return res.status(200).json({
             status: true,

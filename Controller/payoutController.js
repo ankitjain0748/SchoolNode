@@ -37,9 +37,9 @@ exports.payoutData = catchAsync(async (req, res) => {
     // Handle unpaid logic
     if (referralAmount > 0) {
         unPaidAmount += referralAmount; }
-    // } else if (withdrawal > 0 || payout > 0) {
-    //     unPaidAmount -= (withdrawal + payout);
-    // }
+    else if (withdrawal > 0 || payout > 0) {
+        unPaidAmount -= (withdrawal + payout);
+    }
 
     // Handle reset logic
     let updatedReferredUserPayOverall = user.referred_user_pay_overall || 0;
